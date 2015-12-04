@@ -10,8 +10,8 @@ framework set
 依赖的第三方库
 -------------
 
-> 1.net-thrift：thrift、boost 
-> 2.utils：libuuid、openssl
+> - net-thrift : boost、thrift.
+> - utils : libuuid、openssl.
 
 开发平台
 -------------
