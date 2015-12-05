@@ -34,5 +34,5 @@ framework set
 > - export UUID_LIB_PATH="/usr/local/uuid/lib"
 > - export OPENSSL_INCLUDE_PATH="/usr/local/ssl/include"
 > - export OPENSSL_LIB_PATH="/usr/local/ssl/lib"
-> - export LD_LIBRARY_PATH="\$OPENSSL_LIB_PATH:\$UUID_LIB_PATH:\$THRIFT_LIB_PATH:\$BOOST_LIB_PATH:\$LD_LIBRARY_PATH"
+> - export LD_LIBRARY_PATH="$OPENSSL_LIB_PATH:$UUID_LIB_PATH:$THRIFT_LIB_PATH:$BOOST_LIB_PATH:$LD_LIBRARY_PATH"
 > - 最后退出/etc/profile并执行source /etc/profile让更改立即生效。
