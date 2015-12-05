@@ -2,7 +2,7 @@ framework set
 ===================
 
 
-目前该框架包括网络框架（thrift）、常用工具库、之后还会添加db操作库以及日志库。
+目前该框架集合包括网络框架、常用工具库，之后还会添加db框架、日志框架、消息队列框架等。
 
 ----------
 
@@ -10,8 +10,8 @@ framework set
 依赖的第三方库
 -------------
 
-> - net-thrift : boost、thrift.
-> - utils : libuuid、openssl.
+> - net-thrift框架依赖boost、thrift
+> - utils框架依赖libuuid、openssl
 
 开发平台
 -------------
@@ -22,7 +22,7 @@ framework set
 开发平台搭建
 -------------
 
-将boost、thrift、libuuid、openssl库使用git clone到本地计算机，并将这些第三方库拷贝到/usr/local下，并在/etc/profile添加环境变量：
+[developmentkit](https://github.com/chxuan/developmentkit)是该框架集合所依赖的三方库以及三方库的源代码仓库，使用git将[developmentkit](https://github.com/chxuan/developmentkit)克隆到本地计算机，并将这些三方库拷贝到/usr/local下，并在/etc/profile添加环境变量。
 
 > **/etc/profile:**
 
@@ -34,4 +34,5 @@ framework set
 > - export UUID_LIB_PATH="/usr/local/uuid/lib"
 > - export OPENSSL_INCLUDE_PATH="/usr/local/ssl/include"
 > - export OPENSSL_LIB_PATH="/usr/local/ssl/lib"
+> - export LD_LIBRARY_PATH="\$OPENSSL_LIB_PATH:\$UUID_LIB_PATH:\$THRIFT_LIB_PATH:\$BOOST_LIB_PATH:\$LD_LIBRARY_PATH"
 > - 最后退出/etc/profile并执行source /etc/profile让更改立即生效。
