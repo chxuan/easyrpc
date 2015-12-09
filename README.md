@@ -2,7 +2,7 @@ framework set
 ===================
 
 
-目前该框架集合包括网络框架、常用工具库，之后还会添加db框架、日志框架、消息队列框架等。
+目前该框架集合包括日志框架、网络框架、常用工具库，之后还会添加db框架、消息队列框架等。
 
 ----------
 
@@ -10,6 +10,7 @@ framework set
 依赖的第三方库
 -------------
 
+> - clog框架依赖log4cpp、utils
 > - net-thrift框架依赖boost、thrift
 > - utils框架依赖libuuid、openssl
 
@@ -34,5 +35,9 @@ framework set
 > - export UUID_LIB_PATH="/usr/local/uuid/lib"
 > - export OPENSSL_INCLUDE_PATH="/usr/local/ssl/include"
 > - export OPENSSL_LIB_PATH="/usr/local/ssl/lib"
+> - export LOG4CPP_INCLUDE_PATH="/usr/local/log4cpp/include"
+> - export LOG4CPP_LIB_PATH="/usr/local/log4cpp/lib"
 > - export LD_LIBRARY_PATH="$OPENSSL_LIB_PATH:$UUID_LIB_PATH:$THRIFT_LIB_PATH:$BOOST_LIB_PATH:$LD_LIBRARY_PATH"
-> - 最后退出/etc/profile并执行source /etc/profile让更改立即生效。
+
+编辑完/etc/profile后执行以下命令，让更改立即生效。
+> source /etc/profile
