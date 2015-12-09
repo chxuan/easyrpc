@@ -43,7 +43,7 @@ void logPrint(const char* filePath,
               unsigned int priorityLevel,
               const char* format, ...);
 
-/// 代码定为宏
+/// 代码定位宏
 #define LOCATION_INFO          __FILE__, __FUNCTION__, __LINE__
 
 #define LOG_FATAL(format, ...)   logPrint(LOCATION_INFO, FatalLevel, format, ##__VA_ARGS__)
