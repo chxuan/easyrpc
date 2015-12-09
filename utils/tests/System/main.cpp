@@ -32,5 +32,17 @@ int main()
     str = "中国";
     std::cout << str << ": " << utils::System::sha1(str) << std::endl;
 
+    unsigned long totalram = utils::System::totalMemery();
+    if (totalram != 0)
+    {
+        std::cout << "总内存大小：" << totalram / (1024 * 1024 * 1024 * 1.0) << "GB" << std::endl;
+    }
+
+    unsigned long freeram = utils::System::freeMemery();
+    if (freeram != 0)
+    {
+        std::cout << "可用内存大小：" << freeram / (1024 * 1024 * 1024 * 1.0) << "GB" << std::endl;
+    }
+
     return 0;
 }

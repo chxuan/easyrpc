@@ -211,6 +211,8 @@ namespace utils
         * @brief currentWorkPath 获取当前程序的工作目录
         *
         * @return 工作目录
+        *
+        * @note 失败将返回空字符串
         */
         static std::string currentWorkPath();
 
@@ -227,6 +229,8 @@ namespace utils
         * @brief currentExePath 获得当前可执行文件所在目录
         *
         * @return 可执行文件所在目录
+        *
+        * @note 失败将返回空字符串
         */
         static std::string currentExePath();
 
@@ -234,6 +238,8 @@ namespace utils
         * @brief currentExeName 获得当前可执行文件名
         *
         * @return 可执行文件名
+        *
+        * @note 失败将返回空字符串
         */
         static std::string currentExeName();
 
@@ -267,12 +273,54 @@ namespace utils
         static bool remove(const std::string& path);
     };
 
+    /**
+    * @brief 系统相关操作
+    */
     class System
     {
       public:
+        /**
+        * @brief uuid 获取uuid
+        *
+        * @return uuid字符串
+        */
         static std::string uuid();
+
+        /**
+        * @brief md5 对字符串进行md5加密
+        *
+        * @param str 待加密的字符串
+        *
+        * @return 加密后的字符串
+        *
+        * @note 若加密失败，则返回空字符串
+        */
         static std::string md5(const std::string& str);
+
+        /**
+        * @brief sha1 对字符串进行sha1加密
+        *
+        * @param str 待加密的字符串
+        *
+        * @return 加密后的字符串
+        *
+        * @note 若加密失败，则返回空字符串
+        */
         static std::string sha1(const std::string& str);
+
+        /**
+        * @brief totalMemery 获取系统总内存大小
+        *
+        * @return 成功返回总内存大小，失败返回0
+        */
+        static unsigned long totalMemery();
+
+        /**
+        * @brief freeMemery 获取系统可用内存大小
+        *
+        * @return 成功返回可用内存大小，失败返回0
+        */
+        static unsigned long freeMemery();
     };
 }
 

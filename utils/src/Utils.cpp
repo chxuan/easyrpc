@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/sysinfo.h>
 #include <uuid/uuid.h>
 #include <openssl/crypto.h>
 #include <openssl/md5.h>
@@ -370,4 +371,30 @@ std::string utils::System::sha1(const std::string& str)
     }
 
     return sha1Text;
+}
+
+unsigned long utils::System::totalMemery()
+{
+    struct sysinfo info;
+
+    int ret = sysinfo(&info);
+    if (ret == -1)
+    {
+        return 0;
+    }
+
+    return info.totalram;
+}
+
+unsigned long utils::System::freeMemery()
+{
+    struct sysinfo info;
+
+    int ret = sysinfo(&info);
+    if (ret == -1)
+    {
+        return 0;
+    }
+
+    return info.freeram;
 }
