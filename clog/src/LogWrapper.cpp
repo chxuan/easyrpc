@@ -19,6 +19,17 @@
 #include <iostream>
 #include <string>
 
+/**
+* @brief createLogContent 创建一个日志文本
+*
+* @param filePath 文件路径
+* @param function 函数名
+* @param line 代码行数
+* @param priorityLevel 日志优先级
+* @param content 日志输入文本
+*
+* @return 一个带有日志定为功能的日志文本
+*/
 static std::string createLogContent(const char* filePath,
                                     const char* function,
                                     unsigned long line,
@@ -27,9 +38,19 @@ static std::string createLogContent(const char* filePath,
 {
     std::string strLine = utils::String::uint64ToString(line);
     std::string logContent = std::string(filePath) + " " + function + "(" + strLine + ") " + content;
+
     return logContent;
 }
 
+/**
+* @brief logPrintImpl 日志打印函数
+*
+* @param filePath 文件路径
+* @param function 函数名
+* @param line 代码行数
+* @param priorityLevel 日志优先级
+* @param content 日志输入文本
+*/
 static void logPrintImpl(const char* filePath,
                     const char* function,
                     unsigned long line,
@@ -37,17 +58,11 @@ static void logPrintImpl(const char* filePath,
                     const char* content)
 {
     std::string logContent = createLogContent(filePath, function, line, priorityLevel, content);
-/*
-    bool ok = LogImpl::getInstance()->printToFile(priorityLevel, logContent);
+
+    bool ok = LogImpl::getInstance()->logPrint(priorityLevel, logContent);
     if (!ok)
     {
         std::cout << "Print log to file failed, log: " << logContent << std::endl;
-    }
-*/
-    bool ok = LogImpl::getInstance()->printToConsole(priorityLevel, logContent);
-    if (!ok)
-    {
-        std::cout << "Print log to console failed, log: " << logContent << std::endl;
     }
 }
 

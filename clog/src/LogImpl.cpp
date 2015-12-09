@@ -16,9 +16,12 @@
 #include <stdio.h>
 #include <iostream>
 
+#define DEFAULT_LOG_PRIORITY        (log4cpp::Priority::DEBUG)      // 日志文件默认优先级
+#define MAX_LOGFILE_SIZE            (3*1024*1024)                   // 日志文件默认大小
+#define MAX_BACKUP_LOGFILE_COUNT    (30)                            // 默认保存历史日志数量
+
 LogImpl::LogImpl()
-    : m_fileRoot(NULL),
-    m_consoleRoot(NULL),
+    : m_root(NULL),
     m_isInitSuccess(false)
 {
     m_isInitSuccess = init();
@@ -35,30 +38,20 @@ LogImpl::~LogImpl()
 
 LogImpl* LogImpl::getInstance()
 {
+    // 使用c++11的编译器能够保证静态局部变量构造时线程安全
+    // 如果是c++98编译器的话就需要加锁
     static LogImpl logImpl;
     return &logImpl;
 }
 
-bool LogImpl::printToFile(unsigned int priorityLevel, const std::string& logContent)
+bool LogImpl::logPrint(unsigned int priorityLevel, const std::string& logContent)
 {
     if (!m_isInitSuccess)
     {
         return false;
     }
 
-    m_fileRoot->log(priorityLevel, logContent);
-
-    return true;
-}
-
-bool LogImpl::printToConsole(unsigned int priorityLevel, const std::string& logContent)
-{
-    if (!m_isInitSuccess)
-    {
-        return false;
-    }
-
-    m_consoleRoot->log(priorityLevel, logContent);
+    m_root->log(priorityLevel, logContent);
 
     return true;
 }
@@ -75,7 +68,7 @@ bool LogImpl::init()
     bool ok = initLogCore(logFileName);
     if (!ok)
     {
-        std::cout << "Init log core failed" << std::endl;
+        std::cout << "Init log core failed, log file name: " << logFileName << std::endl;
         return false;
     }
 
@@ -118,71 +111,37 @@ std::string LogImpl::createLogFile()
     std::string logFileName = logPath + "/" + exeName + ".log";
 
     return logFileName;
-    
 }
 
 bool LogImpl::initLogCore(const std::string& logFileName)
 {
-    bool ok = initLogFile(logFileName);
-    if (!ok)
-    {
-        std::cout << "Init log file failed, log file name: " << logFileName << std::endl;
-        return false;
-    }
-
-    ok = initLogConsole();
-    if (!ok)
-    {
-        std::cout << "Init log console failed" << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool LogImpl::initLogFile(const std::string& logFileName)
-{
-    log4cpp::PatternLayout* patternLayout = NULL;
-    patternLayout = new log4cpp::PatternLayout();
-    if (patternLayout == NULL)
+    log4cpp::PatternLayout* fileLayout = NULL;
+    fileLayout = new log4cpp::PatternLayout();
+    if (fileLayout == NULL)
     {
         return false;
     }
 
-    patternLayout->setConversionPattern("%d: [%-5p] %c%x: %m%n");
+    fileLayout->setConversionPattern("%d: [%-5p] %c%x: %m%n");
+
+    log4cpp::PatternLayout* consoleLayout = NULL;
+    consoleLayout = new log4cpp::PatternLayout();
+    if (consoleLayout == NULL)
+    {
+        return false;
+    }
+
+    consoleLayout->setConversionPattern("%d: [%-5p] %c%x: %m%n");
 
     log4cpp::RollingFileAppender* rollfileAppender = NULL;
-    rollfileAppender = new log4cpp::RollingFileAppender("rollfileAppender", logFileName, 5*1024*1024, 1);
+    rollfileAppender = new log4cpp::RollingFileAppender("rollfileAppender", logFileName, MAX_LOGFILE_SIZE, 1);
     if (rollfileAppender == NULL)
     {
         return false;
     }
 
-    rollfileAppender->setMaxBackupIndex(30);
-    rollfileAppender->setLayout(patternLayout);
-
-    m_fileRoot = &(log4cpp::Category::getRoot().getInstance(""));
-    if (m_fileRoot == NULL)
-    {
-        return false;
-    }
-
-    m_fileRoot->addAppender(rollfileAppender);
-    m_fileRoot->setPriority(log4cpp::Priority::DEBUG);
-
-    return true;
-}
-
-bool LogImpl::initLogConsole()
-{
-    log4cpp::PatternLayout* patternLayout = NULL;
-    patternLayout = new log4cpp::PatternLayout();
-    if (patternLayout == NULL)
-    {
-        return false;
-    }
-
-    patternLayout->setConversionPattern("%d: [%-5p] %c%x: %m%n");
+    rollfileAppender->setMaxBackupIndex(MAX_BACKUP_LOGFILE_COUNT);
+    rollfileAppender->setLayout(fileLayout);
 
     log4cpp::OstreamAppender* osAppender = NULL;
     osAppender = new log4cpp::OstreamAppender("osAppender", &std::cout);
@@ -191,16 +150,19 @@ bool LogImpl::initLogConsole()
         return false;
     }
 
-    osAppender->setLayout(patternLayout);
+    osAppender->setLayout(consoleLayout);
 
-    m_consoleRoot = &(log4cpp::Category::getRoot().getInstance(""));
-    if (m_consoleRoot == NULL)
+    m_root = &(log4cpp::Category::getRoot().getInstance(""));
+    if (m_root == NULL)
     {
         return false;
     }
 
-    m_consoleRoot->addAppender(osAppender);
-    m_consoleRoot->setPriority(log4cpp::Priority::DEBUG);
-    
+    // 一个Category可以附加多个Appender
+    m_root->setAdditivity(true);
+    m_root->addAppender(rollfileAppender);
+    m_root->addAppender(osAppender);
+    m_root->setPriority(DEFAULT_LOG_PRIORITY);
+
     return true;
 }

@@ -22,21 +22,57 @@
 #include <log4cpp/OstreamAppender.hh>
 #include <string>
 
+/**
+* @brief 日志实现类
+*/
 class LogImpl
 {
   public:
+    /**
+    * @brief getInstance 得到日志实现类指针
+    *
+    * @return 日志实现类指针
+    */
     static LogImpl* getInstance();
 
-    bool printToFile(unsigned int priorityLevel, const std::string& logContent);
-    bool printToConsole(unsigned int priorityLevel, const std::string& logContent);
+    /**
+    * @brief logPrint 打印日志
+    *
+    * @param priorityLevel 日志优先级
+    * @param logContent 日志内容
+    *
+    * @return 成功返回true，否则返回false
+    */
+    bool logPrint(unsigned int priorityLevel, const std::string& logContent);
 
   private:
+    /**
+    * @brief init 初始化日志框架
+    *
+    * @return 成功返回true，否则返回false
+    */
     bool init();
+
+    /**
+    * @brief deinit 释放资源
+    */
     void deinit();
+
+    /**
+    * @brief createLogFile 创建日志输出文件
+    *
+    * @return 日志文件路径
+    */
     std::string createLogFile();
+
+    /**
+    * @brief initLogCore 初始化日志框架核心
+    *
+    * @param logFileName 日志文件路径
+    *
+    * @return 成功返回true，否则返回false
+    */
     bool initLogCore(const std::string& logFileName);
-    bool initLogFile(const std::string& logFileName);
-    bool initLogConsole();
 
   private:
     LogImpl();
@@ -45,9 +81,8 @@ class LogImpl
     LogImpl& operator = (const LogImpl& var);
 
   private:
-    log4cpp::Category*      m_fileRoot;
-    log4cpp::Category*      m_consoleRoot;
-    bool                    m_isInitSuccess;
+    log4cpp::Category*      m_root;             /// 日志类别指针
+    bool                    m_isInitSuccess;    /// 日志框架是否初始化成功
 };
 
 #endif
