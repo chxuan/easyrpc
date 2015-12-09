@@ -376,25 +376,15 @@ std::string utils::System::sha1(const std::string& str)
 unsigned long utils::System::totalMemery()
 {
     struct sysinfo info;
-
     int ret = sysinfo(&info);
-    if (ret == -1)
-    {
-        return 0;
-    }
 
-    return info.totalram;
+    return ret == -1 ? 0 : info.totalram;
 }
 
 unsigned long utils::System::freeMemery()
 {
     struct sysinfo info;
-
     int ret = sysinfo(&info);
-    if (ret == -1)
-    {
-        return 0;
-    }
 
-    return info.freeram;
+    return ret == -1 ? 0 : info.freeram;
 }
