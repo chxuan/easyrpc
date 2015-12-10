@@ -78,7 +78,7 @@ std::string utils::String::time_tToString(time_t n)
            p->tm_min,
            p->tm_sec);
 
-    return std::string(time);
+    return time;
 }
 
 bool utils::String::stringToInt32(const std::string& str, int& n)
@@ -137,10 +137,10 @@ std::string utils::FileSystem::currentWorkPath()
     char buf[PATH_MAX] = {'\0'};
     if (getcwd(buf, sizeof (buf) - 1) != NULL)
     {
-        return std::string(buf);
+        return buf;
     }
 
-    return std::string();
+    return "";
 }
 
 bool utils::FileSystem::setCurrentWorkPath(const std::string& path)
@@ -156,7 +156,7 @@ std::string utils::FileSystem::currentExePath()
     int ret = readlink("/proc/self/exe", buf, PATH_MAX);
     if (ret < 0 || ret >= PATH_MAX)
     {
-        return std::string();
+        return "";
     }
 
     std::string path(buf);
@@ -173,7 +173,7 @@ std::string utils::FileSystem::currentExePath()
 
     if (pos == -1)
     {
-        return std::string();
+        return "";
     }
 
     path = path.substr(0, pos);
@@ -188,7 +188,7 @@ std::string utils::FileSystem::currentExeName()
     int ret = readlink("/proc/self/exe", buf, PATH_MAX);
     if (ret < 0 || ret >= PATH_MAX)
     {
-        return std::string();
+        return "";
     }
 
     std::string path(buf);
@@ -287,7 +287,7 @@ std::string utils::System::uuid()
     char buf[37] = {'\0'};
     uuid_unparse_upper(uuid, buf);
 
-    return std::string(buf);
+    return buf;
 }
 
 std::string utils::System::md5(const std::string& str)
@@ -298,19 +298,19 @@ std::string utils::System::md5(const std::string& str)
     int ret = MD5_Init(&hashCtx);
     if (ret == 0)
     {
-        return std::string();
+        return "";
     }
 
     ret = MD5_Update(&hashCtx, str.c_str(), str.size());
     if (ret == 0)
     {
-        return std::string();
+        return "";
     }
 
     ret = MD5_Final(hashRet, &hashCtx);
     if (ret == 0)
     {
-        return std::string();
+        return "";
     }
 
     OPENSSL_cleanse(&hashCtx, sizeof (hashCtx));
@@ -343,19 +343,19 @@ std::string utils::System::sha1(const std::string& str)
     int ret = SHA1_Init(&hashCtx);
     if (ret == 0)
     {
-        return std::string();
+        return "";
     }
 
     ret = SHA1_Update(&hashCtx, str.c_str(), str.size());
     if (ret == 0)
     {
-        return std::string();
+        return "";
     }
 
     ret = SHA1_Final(hashRet, &hashCtx);
     if (ret == 0)
     {
-        return std::string();
+        return "";
     }
 
     OPENSSL_cleanse(&hashCtx, sizeof (hashCtx));
