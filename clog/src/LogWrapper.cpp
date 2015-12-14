@@ -37,7 +37,10 @@ static std::string createLogContent(const char* filePath,
                                     const char* content)
 {
     std::string strLine = utils::String::uint64ToString(line);
-    std::string logContent = std::string(filePath) + " " + function + "(" + strLine + ") " + content;
+
+    std::string strFilePath(filePath);
+    int pos = strFilePath.find_last_of("/");
+    std::string logContent = strFilePath.substr(pos + 1) + " " + function + "(" + strLine + ") " + content;
 
     return logContent;
 }
