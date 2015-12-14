@@ -4,8 +4,8 @@ set(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/bin")
 aux_source_directory(. DIR_SRCS)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
-link_directories(${PROJECT_SOURCE_DIR}/lib)
 
+link_directories(${PROJECT_SOURCE_DIR}/lib)
 link_directories(${PROJECT_SOURCE_DIR}/../utils/lib)
 link_directories($ENV{LOG4CPP_LIB_PATH})
 link_directories($ENV{UUID_LIB_PATH})
