@@ -1,8 +1,10 @@
 *~
 *.so
 *.a
+*.la
 *.o
 *.d
 *.log
 *.bundle
+*.cmake
 
