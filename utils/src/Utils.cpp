@@ -160,17 +160,7 @@ std::string utils::FileSystem::currentExePath()
     }
 
     std::string path(buf);
-
-    int pos = -1;
-    for (int i = path.size() - 1; i >= 0; --i)
-    {
-        if (path[i] == '/')
-        {
-            pos = i;
-            break;
-        }
-    }
-
+    int pos = path.find_last_of("/");
     if (pos == -1)
     {
         return "";
@@ -192,20 +182,10 @@ std::string utils::FileSystem::currentExeName()
     }
 
     std::string path(buf);
-
-    int pos = -1;
-    for (int i = path.size() - 1; i >= 0; --i)
-    {
-        if (path[i] == '/')
-        {
-            pos = i;
-            break;
-        }
-    }
-
+    int pos = path.find_last_of("/");
     if (pos == -1)
     {
-        return std::string();
+        return "";
     }
 
     path = path.substr(pos + 1, path.size() - 1);
