@@ -7,7 +7,7 @@
 * @file ThriftClientWrapper.cpp
 * @brief thrift客户端通信包装实现文件
 * @author highway-9, 787280310@qq.com
-* @version 0.1.0
+* @version 1.1.0
 * @date 2015-11-25
 */
 

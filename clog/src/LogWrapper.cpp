@@ -7,7 +7,7 @@
  * @file LogWrapper.cpp
  * @brief 日志库包装接口实现
  * @author highway-9, 787280310@qq.com
- * @version 0.1.0
+ * @version 1.1.0
  * @date 2015-12-05
  */
 
