@@ -19,3 +19,8 @@ set_target_properties(${SHAREDLIBNAME} PROPERTIES VERSION 1.1.0 SOVERSION 1)
 
 target_link_libraries(${SHAREDLIBNAME} -Wl,--whole-archive -lthrift -lboost_serialization -Wl,--no-whole-archive)
 
+install(TARGETS ${STATICLIBNAME} ARCHIVE DESTINATION /usr/local/framework/net-thrift/lib)
+install(TARGETS ${SHAREDLIBNAME} LIBRARY DESTINATION /usr/local/framework/net-thrift/lib)
+install(FILES ${PROJECT_SOURCE_DIR}/include/Message.h DESTINATION /usr/local/framework/net-thrift/include/net-thrift)
+install(FILES ${PROJECT_SOURCE_DIR}/include/ThriftServerWrapper.h DESTINATION /usr/local/framework/net-thrift/include/net-thrift)
+install(FILES ${PROJECT_SOURCE_DIR}/include/ThriftClientWrapper.h DESTINATION /usr/local/framework/net-thrift/include/net-thrift)

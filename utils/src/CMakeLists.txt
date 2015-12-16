@@ -18,3 +18,7 @@ set_target_properties(${SHAREDLIBNAME} PROPERTIES OUTPUT_NAME ${STATICLIBNAME})
 set_target_properties(${SHAREDLIBNAME} PROPERTIES VERSION 1.1.0 SOVERSION 1)
 
 target_link_libraries(${SHAREDLIBNAME} -Wl,--whole-archive -luuid -lcrypto -Wl,--no-whole-archive)
+
+install(TARGETS ${STATICLIBNAME} ARCHIVE DESTINATION /usr/local/framework/utils/lib)
+install(TARGETS ${SHAREDLIBNAME} LIBRARY DESTINATION /usr/local/framework/utils/lib)
+install(FILES ${PROJECT_SOURCE_DIR}/include/Utils.h DESTINATION /usr/local/framework/utils/include/utils)
