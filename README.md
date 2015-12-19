@@ -27,17 +27,28 @@ framework set
 
 > **/etc/profile:**
 
-> - export BOOST_INCLUDE_PATH="/usr/local/boost/include"
-> - export BOOST_LIB_PATH="/usr/local/boost/lib"
-> - export THRIFT_INCLUDE_PATH="/usr/local/thrift/include"
-> - export THRIFT_LIB_PATH="/usr/local/thrift/lib"
-> - export UUID_INCLUDE_PATH="/usr/local/uuid/include"
-> - export UUID_LIB_PATH="/usr/local/uuid/lib"
-> - export OPENSSL_INCLUDE_PATH="/usr/local/ssl/include"
-> - export OPENSSL_LIB_PATH="/usr/local/ssl/lib"
-> - export LOG4CPP_INCLUDE_PATH="/usr/local/log4cpp/include"
-> - export LOG4CPP_LIB_PATH="/usr/local/log4cpp/lib"
+> - export BOOST_INCLUDE_PATH="/usr/local/3rdParty/boost/include"
+> - export BOOST_LIB_PATH="/usr/local/3rdParty/boost/lib"
+> - export THRIFT_INCLUDE_PATH="/usr/local/3rdParty/thrift/include"
+> - export THRIFT_LIB_PATH="/usr/local/3rdParty/thrift/lib"
+> - export UUID_INCLUDE_PATH="/usr/local/3rdParty/uuid/include"
+> - export UUID_LIB_PATH="/usr/local/3rdParty/uuid/lib"
+> - export OPENSSL_INCLUDE_PATH="/usr/local/3rdParty/ssl/include"
+> - export OPENSSL_LIB_PATH="/usr/local/3rdParty/ssl/lib"
+> - export LOG4CPP_INCLUDE_PATH="/usr/local/3rdParty/log4cpp/include"
+> - export LOG4CPP_LIB_PATH="/usr/local/3rdParty/log4cpp/lib"
 > - export LD_LIBRARY_PATH="$OPENSSL_LIB_PATH:$UUID_LIB_PATH:$THRIFT_LIB_PATH:$BOOST_LIB_PATH:$LD_LIBRARY_PATH"
 
 编辑完/etc/profile后执行以下命令，让更改立即生效。
 > source /etc/profile
+
+
+编译framework
+-------------
+
+> cd framework
+> cmake .
+> make 
+> make install
+
+其中make将会自动编译出静态库和动态库并输出到各自项目的lib文件夹下，make install默认将编译好的静态库、动态库以及头文件安装到/usr/local/framework/目录下，编译好framework后，需要设置环境变量以便后续使用framework进行开发。
