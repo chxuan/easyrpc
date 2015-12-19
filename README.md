@@ -46,6 +46,7 @@ framework set
 编译framework
 -------------
 
+> cd framework
 > cmake .
 > make
 > make install
