@@ -40,7 +40,7 @@ framework set
 > - export LD_LIBRARY_PATH="$OPENSSL_LIB_PATH:$UUID_LIB_PATH:$THRIFT_LIB_PATH:$BOOST_LIB_PATH:$LD_LIBRARY_PATH"
 
 编辑完/etc/profile后执行以下命令，让更改立即生效。
-> source /etc/profile
+> sudo source /etc/profile
 
 
 编译framework
