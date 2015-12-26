@@ -51,4 +51,5 @@ framework set
 > - make
 > - make install
 
-其中make将会自动编译出静态库和动态库并输出到各自项目的lib文件夹下，make install默认将编译好的静态库、动态库以及头文件安装到/usr/local/framework/目录下，编译好framework后，需要设置环境变量以便后续使用framework进行开发。
+其中make将会自动编译出静态库和动态库并输出到各自项目的lib文件夹下，测试程序（例子程序）的可执行文件会输出到bin文件夹下，make install默认将编译好的静态库、动态库以及头文件安装到/usr/local/framework/目录下，编译好framework后，需要设置环境变量以便后续使用framework进行开发。
+
