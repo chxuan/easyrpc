@@ -53,3 +53,44 @@ framework set
 
 其中make将会自动编译出静态库和动态库并输出到各自项目的lib文件夹下，测试程序（例子程序）的可执行文件会输出到bin文件夹下，make install默认将编译好的静态库、动态库以及头文件安装到/usr/local/framework/目录下，编译好framework后，需要设置环境变量以便后续使用framework进行开发。
 
+
+使用framework
+-------------
+
+###1.使用clog
+```
+//main.cpp
+#include <iostream>
+#include <string>
+#include "LogWrapper.h"
+
+int main(int argc, char* argv[])
+{
+    LOG_FATAL("Fatal log");
+    LOG_ALERT("Alert log");
+    LOG_CRIT("Crit log");
+    LOG_ERROR("Error log");
+    LOG_WARN("Warn log");
+    LOG_NOTICE("Notice log");
+
+    int sum = 10;
+    LOG_INFO("a + b = %d", sum);
+
+    std::string str = "Debug log";
+    LOG_DEBUG("message: %s", str.c_str());
+    return 0;
+}
+```
+正如你所看到的，使用clog提供的API很简单，和printf一样支持格式化输出，clog会同时将日志输出到屏幕和日志文件(logs/exename.log)，下面是输出日志。
+```
+2015-12-26 09:09:22,832: [FATAL] : main.cpp main(14) Fatal log
+2015-12-26 09:09:22,832: [ALERT] : main.cpp main(15) Alert log
+2015-12-26 09:09:22,832: [CRIT ] : main.cpp main(16) Crit log
+2015-12-26 09:09:22,832: [ERROR] : main.cpp main(17) Error log
+2015-12-26 09:09:22,832: [WARN ] : main.cpp main(18) Warn log
+2015-12-26 09:09:22,832: [NOTICE] : main.cpp main(19) Notice log
+2015-12-26 09:09:22,833: [INFO ] : main.cpp main(22) a + b = 10
+2015-12-26 09:09:22,833: [DEBUG] : main.cpp main(25) message: Debug log
+```
+
+

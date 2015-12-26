@@ -6,39 +6,22 @@
  ************************************************************************/
 
 #include <iostream>
-using namespace std;
+#include <string>
 #include "LogWrapper.h"
 
-class TestA
+int main(int argc, char* argv[])
 {
-  public:
-    TestA()
-    {
-        LOG_INFO("Create TestA");
-    }
+    LOG_FATAL("Fatal log");
+    LOG_ALERT("Alert log");
+    LOG_CRIT("Crit log");
+    LOG_ERROR("Error log");
+    LOG_WARN("Warn log");
+    LOG_NOTICE("Notice log");
 
-    void printLog()
-    {
-        LOG_DEBUG("Hello log4cpp");
-    }
+    int sum = 10;
+    LOG_INFO("a + b = %d", sum);
 
-    ~TestA()
-    {
-        LOG_INFO("Delete TestA");
-    }
-};
-
-int main()
-{
-    TestA a;
-    a.printLog();
-    LOG_FATAL("Hello world");
-    LOG_ALERT("Hello world");
-    LOG_CRIT("Hello world");
-    LOG_ERROR("Hello world");
-    LOG_WARN("Hello world");
-    LOG_NOTICE("Hello world");
-    LOG_INFO("Hello world");
-    LOG_DEBUG("Hello world");
+    std::string str = "Debug log";
+    LOG_DEBUG("message: %s", str.c_str());
     return 0;
 }
