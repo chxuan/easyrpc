@@ -23,9 +23,9 @@ framework set
 开发平台搭建
 -------------
 
-[developmentkit](https://github.com/chxuan/developmentkit)是该框架集合所依赖的三方库以及三方库的源代码仓库，使用git将[developmentkit](https://github.com/chxuan/developmentkit)克隆到本地计算机，并将这些三方库拷贝到/usr/local下，并在/etc/profile添加环境变量。
+[developmentkit](https://github.com/chxuan/developmentkit)是该框架集合所依赖的三方库以及三方库的源代码仓库，使用git将[developmentkit](https://github.com/chxuan/developmentkit)克隆到本地计算机，并将这些三方库拷贝到/usr/local下，并在/etc/bashrc添加环境变量。
 
-> **/etc/profile:**
+> **/etc/bashrc:**
 
 > - export BOOST_INCLUDE_PATH="/usr/local/3rdParty/boost/include"
 > - export BOOST_LIB_PATH="/usr/local/3rdParty/boost/lib"
@@ -39,8 +39,8 @@ framework set
 > - export LOG4CPP_LIB_PATH="/usr/local/3rdParty/log4cpp/lib"
 > - export LD_LIBRARY_PATH="$OPENSSL_LIB_PATH:$UUID_LIB_PATH:$THRIFT_LIB_PATH:$BOOST_LIB_PATH:$LD_LIBRARY_PATH"
 
-编辑完/etc/profile后执行以下命令，让更改立即生效。
-> sudo source /etc/profile
+编辑完/etc/bashrc后执行以下命令，让更改立即生效。
+> sudo source /etc/bashrc
 
 
 编译framework
