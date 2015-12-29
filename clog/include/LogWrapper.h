@@ -15,16 +15,17 @@
 #define _LOGWRAPPER_H
 
 /// 日志优先级，值越低优先级越高
+/// LogWrapper的优先级和log4cpp的优先级一样，方便映射
 enum LogPriorityLevel
 {
-    FatalLevel  = 0,
-    AlertLevel  = 100,
-    CritLevel   = 200,
-    ErrorLevel  = 300,
-    WarnLevel   = 400,
-    NoticeLevel = 500,
-    InfoLevel   = 600,
-    DebugLevel  = 700
+    LogFatalLevel  = 0,
+    LogAlertLevel  = 100,
+    LogCritLevel   = 200,
+    LogErrorLevel  = 300,
+    LogWarnLevel   = 400,
+    LogNoticeLevel = 500,
+    LogInfoLevel   = 600,
+    LogDebugLevel  = 700
 };
 
 /**
@@ -46,13 +47,13 @@ void logPrint(const char* filePath,
 /// 代码定位宏
 #define LOCATION_INFO          __FILE__, __FUNCTION__, __LINE__
 
-#define LOG_FATAL(format, ...)   logPrint(LOCATION_INFO, FatalLevel, format, ##__VA_ARGS__)
-#define LOG_ALERT(format, ...)   logPrint(LOCATION_INFO, AlertLevel, format, ##__VA_ARGS__)
-#define LOG_CRIT(format, ...)    logPrint(LOCATION_INFO, CritLevel,  format, ##__VA_ARGS__)
-#define LOG_ERROR(format, ...)   logPrint(LOCATION_INFO, ErrorLevel, format, ##__VA_ARGS__)
-#define LOG_WARN(format, ...)    logPrint(LOCATION_INFO, WarnLevel,  format, ##__VA_ARGS__)
-#define LOG_NOTICE(format, ...)  logPrint(LOCATION_INFO, NoticeLevel,format, ##__VA_ARGS__)
-#define LOG_INFO(format, ...)    logPrint(LOCATION_INFO, InfoLevel,  format, ##__VA_ARGS__)
-#define LOG_DEBUG(format, ...)   logPrint(LOCATION_INFO, DebugLevel, format, ##__VA_ARGS__)
+#define LOG_FATAL(format, ...)   logPrint(LOCATION_INFO, LogFatalLevel, format, ##__VA_ARGS__)
+#define LOG_ALERT(format, ...)   logPrint(LOCATION_INFO, LogAlertLevel, format, ##__VA_ARGS__)
+#define LOG_CRIT(format, ...)    logPrint(LOCATION_INFO, LogCritLevel,  format, ##__VA_ARGS__)
+#define LOG_ERROR(format, ...)   logPrint(LOCATION_INFO, LogErrorLevel, format, ##__VA_ARGS__)
+#define LOG_WARN(format, ...)    logPrint(LOCATION_INFO, LogWarnLevel,  format, ##__VA_ARGS__)
+#define LOG_NOTICE(format, ...)  logPrint(LOCATION_INFO, LogNoticeLevel,format, ##__VA_ARGS__)
+#define LOG_INFO(format, ...)    logPrint(LOCATION_INFO, LogInfoLevel,  format, ##__VA_ARGS__)
+#define LOG_DEBUG(format, ...)   logPrint(LOCATION_INFO, LogDebugLevel, format, ##__VA_ARGS__)
 
 #endif
