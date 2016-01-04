@@ -11,7 +11,8 @@ framework set
 -------------
 
 > - clog框架依赖log4cpp、utils
-> - net-thrift框架依赖boost、thrift
+> - net-thrift框架依赖thrift、boost
+> - net-rcf框架依赖RCF、boost
 > - utils框架依赖libuuid、openssl
 
 开发平台
@@ -37,7 +38,9 @@ framework set
 > - export OPENSSL_LIB_PATH="/usr/local/3rdParty/ssl/lib"
 > - export LOG4CPP_INCLUDE_PATH="/usr/local/3rdParty/log4cpp/include"
 > - export LOG4CPP_LIB_PATH="/usr/local/3rdParty/log4cpp/lib"
-> - export LD_LIBRARY_PATH="$OPENSSL_LIB_PATH:$UUID_LIB_PATH:$THRIFT_LIB_PATH:$BOOST_LIB_PATH:$LD_LIBRARY_PATH"
+> - export RCF_INCLUDE_PATH="/usr/local/3rdParty/RCF/include"
+> - export RCF_LIB_PATH="/usr/local/3rdParty/RCF/lib"
+> - export LD_LIBRARY_PATH="$RCF_LIB_PATH:$LOG4CPP_LIB_PATH:$OPENSSL_LIB_PATH:$UUID_LIB_PATH:$THRIFT_LIB_PATH:$BOOST_LIB_PATH:$LD_LIBRARY_PATH"
 
 编辑完/etc/bashrc后执行以下命令，让更改立即生效。
 > sudo source /etc/bashrc
@@ -64,7 +67,7 @@ framework set
 #include <string>
 #include "LogWrapper.h"
 
-int main(int argc, char* argv[])
+int main()
 {
     LOG_FATAL("Fatal log");
     LOG_ALERT("Alert log");
