@@ -19,17 +19,13 @@ ThriftServerWrapper::ThriftServerWrapper()
 {
     if (m_impl == NULL)
     {
-        m_impl = new ThriftServerImpl;
+        m_impl = std::make_shared<ThriftServerImpl>();
     }
 }
 
 ThriftServerWrapper::~ThriftServerWrapper()
 {
-    if (m_impl != NULL)
-    {
-        delete m_impl;
-        m_impl = NULL;
-    }
+    // Do nothing
 }
 
 void ThriftServerWrapper::init(const unsigned int& port)

@@ -20,17 +20,13 @@ ThriftClientWrapper::ThriftClientWrapper()
 {
     if (m_impl == NULL)
     {
-        m_impl = new ThriftClientImpl;
+        m_impl = std::make_shared<ThriftClientImpl>();
     }
 }
 
 ThriftClientWrapper::~ThriftClientWrapper()
 {
-    if (m_impl != NULL)
-    {
-        delete m_impl;
-        m_impl = NULL;
-    }
+    // Do nothing
 }
 
 void ThriftClientWrapper::init(const std::string& ip, const unsigned int& port)

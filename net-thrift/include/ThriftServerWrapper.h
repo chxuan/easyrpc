@@ -16,6 +16,7 @@
 
 #include "Message.h"
 #include <string>
+#include <memory>
 
 class ThriftServerImpl;
 
@@ -73,7 +74,8 @@ class ThriftServerWrapper
     void setMessageCallback(MESSAGE_CALLBACK func);
 
   private:
-    ThriftServerImpl*           m_impl;     ///< thrift服务器实现类指针
+    typedef std::shared_ptr<ThriftServerImpl> ThriftServerImplPtr;
+    ThriftServerImplPtr           m_impl;     ///< thrift服务器实现类指针
 };
 
 #endif

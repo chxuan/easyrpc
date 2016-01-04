@@ -15,6 +15,7 @@
 #define _THRIFTCLIENTWRAPPER_H
 
 #include <string>
+#include <memory>
 
 class Message;
 class ThriftClientImpl;
@@ -80,7 +81,8 @@ class ThriftClientWrapper
     void setRecivedMsecTimeoutOnce(const unsigned int& recivedMsecTimeout);
 
   private:
-    ThriftClientImpl*       m_impl;     ///< thrift客户端实现类指针
+    typedef std::shared_ptr<ThriftClientImpl> ThriftClientImplPtr;
+    ThriftClientImplPtr       m_impl;     ///< thrift客户端实现类指针
 };
 
 #endif
