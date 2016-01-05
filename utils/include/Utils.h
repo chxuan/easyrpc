@@ -174,7 +174,7 @@ namespace utils
           *
           * @return string类型
           */
-        template <typename T>
+        template<typename T>
         static std::string tToString(T t)
         {
             std::stringstream ss;
@@ -191,7 +191,7 @@ namespace utils
         *
         * @return 成功返回true，否则返回false
         */
-        template <typename T>
+        template<typename T>
         static bool stringToT(const std::string& str, T& t)
         {
             std::stringstream ss;
