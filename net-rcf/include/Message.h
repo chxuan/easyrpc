@@ -12,6 +12,7 @@
 */
 
 #ifndef _MESSAGE_H
+#define _MESSAGE_H
 
 #include <string>
 #include <RCF/RCF.hpp>
@@ -75,5 +76,4 @@ RCF_BEGIN(I_RcfMessage, "I_RcfMessage")
     RCF_METHOD_V2(void, sendMesage, Mesage*, Message*)
 RCF_END(I_RcfMessage)
 
-#define _MESSAGE_H
 #endif
