@@ -28,7 +28,7 @@ namespace utils
     */
     class String
     {
-      public:
+    public:
         /**
         * @brief int32ToString int类型转换成string类型
         *
@@ -165,15 +165,15 @@ namespace utils
         */
         static time_t stringToTime_t(const std::string& time);
 
-      private:
-          /**
-          * @brief tToString 其他类型转换成string类型
-          *
-          * @tparam T 其他类型
-          * @param t 其他类型
-          *
-          * @return string类型
-          */
+    private:
+        /**
+        * @brief tToString 其他类型转换成string类型
+        *
+        * @tparam T 其他类型
+        * @param t 其他类型
+        *
+        * @return string类型
+        */
         template<typename T>
         static std::string tToString(T t)
         {
@@ -206,7 +206,7 @@ namespace utils
     */
     class FileSystem
     {
-      public:
+    public:
         /**
         * @brief currentWorkPath 获取当前程序的工作目录
         *
@@ -278,7 +278,7 @@ namespace utils
     */
     class System
     {
-      public:
+    public:
         /**
         * @brief uuid 获取uuid
         *
