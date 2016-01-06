@@ -27,7 +27,7 @@
 */
 class LogImpl
 {
-  public:
+public:
     /**
     * @brief getInstance 得到日志实现类指针
     *
@@ -45,7 +45,7 @@ class LogImpl
     */
     bool logPrint(unsigned int priorityLevel, const std::string& logContent);
 
-  private:
+private:
     /**
     * @brief init 初始化日志框架
     *
@@ -74,13 +74,13 @@ class LogImpl
     */
     bool initLogCore(const std::string& logFileName);
 
-  private:
+private:
     LogImpl();
     ~LogImpl();
     LogImpl(const LogImpl& var);
     LogImpl& operator = (const LogImpl& var);
 
-  private:
+private:
     log4cpp::Category*      m_root;             /// 日志类别指针
     bool                    m_isInitSuccess;    /// 日志框架是否初始化成功
 };

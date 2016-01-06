@@ -38,8 +38,6 @@ LogImpl::~LogImpl()
 
 LogImpl* LogImpl::getInstance()
 {
-    // 使用c++11的编译器能够保证静态局部变量构造时线程安全
-    // 如果是c++98编译器的话就需要加锁
     static LogImpl logImpl;
     return &logImpl;
 }
