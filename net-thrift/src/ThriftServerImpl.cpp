@@ -77,7 +77,7 @@ ThriftServerImpl::~ThriftServerImpl()
     deinit();
 }
 
-void ThriftServerImpl::init(const unsigned int& port)
+void ThriftServerImpl::init(unsigned int port)
 {
     m_port = port;
 }
@@ -88,7 +88,7 @@ bool ThriftServerImpl::start()
     {
         if (m_thread == NULL)
         {
-            m_thread = new std::thread(serverStart, this);
+            m_thread = std::make_shared<std::thread>(serverStart, this);
         }
     } catch (TException& e)
     {
@@ -109,14 +109,11 @@ bool ThriftServerImpl::stop()
 
             if (m_thread != NULL)
             {
-                m_thread->join();
-
-                delete m_thread;
-                m_thread = NULL;
+                if (m_thread->joinable())
+                {
+                    m_thread->join();
+                }
             }
-
-            delete m_threadedServer;
-            m_threadedServer = NULL;
         }
     } catch (TException& e)
     {
@@ -140,7 +137,7 @@ void ThriftServerImpl::serverStart(ThriftServerImpl* server)
     shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
     shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 
-    server->m_threadedServer = new TThreadedServer(processor, serverTransport, transportFactory, protocolFactory);
+    server->m_threadedServer = std::make_shared<TThreadedServer>(processor, serverTransport, transportFactory, protocolFactory);
 
     try
     {

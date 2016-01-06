@@ -31,7 +31,6 @@
 
 #include "ThriftClientImpl.h"
 #include "Message.h"
-#include <mutex>
 
 #define CONNECT_MSEC_TIMEOUT        3000            // 默认连接超时时间，单位：毫秒
 #define SEND_MSEC_TIMEOUT           10000           // 默认发送超时时间，单位：毫秒
@@ -52,7 +51,7 @@ ThriftClientImpl::~ThriftClientImpl()
     deinit();
 }
 
-void ThriftClientImpl::init(const std::string& ip, const unsigned int& port)
+void ThriftClientImpl::init(const std::string& ip, unsigned int port)
 {
     m_ip = ip;
     m_port = port;
@@ -65,9 +64,6 @@ void ThriftClientImpl::deinit()
 
 bool ThriftClientImpl::sendMessage(Message* message, Message* retMessage)
 {
-    static std::mutex mt;
-    std::lock_guard<std::mutex> locker(mt);
-
     if (message == NULL || retMessage == NULL)
     {
         std::cout << "message or retMessage is NULL" << std::endl;
@@ -94,6 +90,7 @@ bool ThriftClientImpl::sendMessage(Message* message, Message* retMessage)
             std::cout << "Recived content is empty" << std::endl;
             return false;
         }
+
         retMessage->deserializeSelf(retContent);
 
         transport->close();
@@ -106,17 +103,17 @@ bool ThriftClientImpl::sendMessage(Message* message, Message* retMessage)
     return true;
 }
 
-void ThriftClientImpl::setConnectMsecTimeoutOnce(const unsigned int& connectMsecTimeout)
+void ThriftClientImpl::setConnectMsecTimeoutOnce(unsigned int connectMsecTimeout)
 {
     m_connectMsecTimeout = connectMsecTimeout;
 }
 
-void ThriftClientImpl::setSendMsecTimeoutOnce(const unsigned int& sendMsecTimeout)
+void ThriftClientImpl::setSendMsecTimeoutOnce(unsigned int sendMsecTimeout)
 {
     m_sendMsecTimeout = sendMsecTimeout;
 }
 
-void ThriftClientImpl::setRecivedMsecTimeoutOnce(const unsigned int& recivedMsecTimeout)
+void ThriftClientImpl::setRecivedMsecTimeoutOnce(unsigned int recivedMsecTimeout)
 {
     m_recivedMsecTimeout = recivedMsecTimeout;
 }

@@ -45,7 +45,7 @@ class ThriftServerWrapper
     *
     * @param port 监听端口，默认为9090
     */
-    void init(const unsigned int& port = 9090);
+    void init(unsigned int port = 9090);
 
     /**
     * @brief start 开始服务器

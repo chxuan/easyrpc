@@ -42,7 +42,7 @@ class ThriftClientWrapper
     * @param ip 服务器ip地址
     * @param port 服务器端口号，默认为9090
     */
-    void init(const std::string& ip, const unsigned int& port = 9090);
+    void init(const std::string& ip, unsigned int port = 9090);
 
     /**
     * @brief sendMessage 发送消息到服务器端
@@ -64,21 +64,21 @@ class ThriftClientWrapper
     *
     * @param connectMsecTimeout 超时时间，单位：毫秒
     */
-    void setConnectMsecTimeoutOnce(const unsigned int& connectMsecTimeout);
+    void setConnectMsecTimeoutOnce(unsigned int connectMsecTimeout);
 
     /**
     * @brief setSendMsecTimeoutOnce 设置单次发送超时
     *
     * @param sendMsecTimeout 超时时间，单位：毫秒
     */
-    void setSendMsecTimeoutOnce(const unsigned int& sendMsecTimeout);
+    void setSendMsecTimeoutOnce(unsigned int sendMsecTimeout);
 
     /**
     * @brief setRecivedMsecTimeoutOnce 设置单次接收超时
     *
     * @param recivedMsecTimeout 超时时间，单位：毫秒
     */
-    void setRecivedMsecTimeoutOnce(const unsigned int& recivedMsecTimeout);
+    void setRecivedMsecTimeoutOnce(unsigned int recivedMsecTimeout);
 
   private:
     typedef std::shared_ptr<ThriftClientImpl> ThriftClientImplPtr;

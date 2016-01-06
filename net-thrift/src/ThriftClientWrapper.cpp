@@ -29,7 +29,7 @@ ThriftClientWrapper::~ThriftClientWrapper()
     // Do nothing
 }
 
-void ThriftClientWrapper::init(const std::string& ip, const unsigned int& port)
+void ThriftClientWrapper::init(const std::string& ip, unsigned int port)
 {
     if (m_impl != NULL)
     {
@@ -55,7 +55,7 @@ void ThriftClientWrapper::deinit()
     }
 }
 
-void ThriftClientWrapper::setConnectMsecTimeoutOnce(const unsigned int& connectMsecTimeout)
+void ThriftClientWrapper::setConnectMsecTimeoutOnce(unsigned int connectMsecTimeout)
 {
     if (m_impl != NULL)
     {
@@ -63,7 +63,7 @@ void ThriftClientWrapper::setConnectMsecTimeoutOnce(const unsigned int& connectM
     }
 }
 
-void ThriftClientWrapper::setSendMsecTimeoutOnce(const unsigned int& sendMsecTimeout)
+void ThriftClientWrapper::setSendMsecTimeoutOnce(unsigned int sendMsecTimeout)
 {
     if (m_impl != NULL)
     {
@@ -71,7 +71,7 @@ void ThriftClientWrapper::setSendMsecTimeoutOnce(const unsigned int& sendMsecTim
     }
 }
 
-void ThriftClientWrapper::setRecivedMsecTimeoutOnce(const unsigned int& recivedMsecTimeout)
+void ThriftClientWrapper::setRecivedMsecTimeoutOnce(unsigned int recivedMsecTimeout)
 {
     if (m_impl != NULL)
     {

@@ -19,6 +19,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <memory>
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TThreadedServer.h>
 #include <thrift/transport/TServerSocket.h>
@@ -52,7 +53,7 @@ class ThriftServerImpl
     *
     * @param port 监听端口，默认为9090
     */
-    void init(const unsigned int& port = 9090);
+    void init(unsigned int port = 9090);
 
     /**
     * @brief start 开始服务器
@@ -92,9 +93,12 @@ class ThriftServerImpl
     MESSAGE_CALLBACK         m_messageCallback;         ///< 消息回调函数
 
   private:
-    TThreadedServer*         m_threadedServer;          ///< thrift服务
-    std::thread*             m_thread;                  ///< 启动服务的线程
-    unsigned int             m_port;                    ///< 监听端口
+    typedef std::shared_ptr<TThreadedServer> TThreadedServerPtr;
+    TThreadedServerPtr         m_threadedServer;          ///< thrift服务
+
+    typedef std::shared_ptr<std::thread> ThreadPtr;
+    ThreadPtr                  m_thread;                  ///< 启动服务的线程
+    unsigned int               m_port;                    ///< 监听端口
 };
 
 #endif

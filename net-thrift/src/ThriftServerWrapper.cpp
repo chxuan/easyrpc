@@ -28,7 +28,7 @@ ThriftServerWrapper::~ThriftServerWrapper()
     // Do nothing
 }
 
-void ThriftServerWrapper::init(const unsigned int& port)
+void ThriftServerWrapper::init(unsigned int port)
 {
     if (m_impl != NULL)
     {
