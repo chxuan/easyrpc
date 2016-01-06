@@ -26,7 +26,7 @@
 */
 class Message
 {
-  public:
+public:
     /**
     * @brief serializeSelf 序列化
     *
@@ -60,7 +60,7 @@ namespace boost
 {
     namespace serialization
     {
-        template <class Archive>
+        template<class Archive>
         void serialize(Archive& ar, Message& message, const unsigned int version)
         {
             (void)version;

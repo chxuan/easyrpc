@@ -29,7 +29,7 @@ typedef void (*MESSAGE_CALLBACK) (Message* message, Message* retMessage);
 */
 class ThriftServerWrapper
 {
-  public:
+public:
     /**
     * @brief ThriftServerWrapper 构造函数
     */
@@ -73,7 +73,7 @@ class ThriftServerWrapper
     */
     void setMessageCallback(MESSAGE_CALLBACK func);
 
-  private:
+private:
     typedef std::shared_ptr<ThriftServerImpl> ThriftServerImplPtr;
     ThriftServerImplPtr           m_impl;     ///< thrift服务器实现类指针
 };

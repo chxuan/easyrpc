@@ -37,7 +37,7 @@ using boost::shared_ptr;
 */
 class ThriftServerImpl
 {
-  public:
+public:
     /**
     * @brief ThriftServerImpl 构造函数
     */
@@ -81,7 +81,7 @@ class ThriftServerImpl
     */
     void setMessageCallback(MESSAGE_CALLBACK func);
 
-  private:
+private:
     /**
     * @brief serverStart 开始服务，该函数被线程调用
     *
@@ -89,10 +89,10 @@ class ThriftServerImpl
     */
     static void serverStart(ThriftServerImpl* server);
 
-  public:
+public:
     MESSAGE_CALLBACK         m_messageCallback;         ///< 消息回调函数
 
-  private:
+private:
     typedef std::shared_ptr<TThreadedServer> TThreadedServerPtr;
     TThreadedServerPtr         m_threadedServer;          ///< thrift服务
 

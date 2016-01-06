@@ -5,7 +5,7 @@
 
 class QueryPeopleInfoMessage
 {
-  public:
+public:
     std::string serializeSelf()
     {
         std::ostringstream os;
@@ -39,7 +39,7 @@ namespace boost
 
 class Cat
 {
-  public:
+public:
     std::string m_name;
     int m_age;
 };
@@ -48,7 +48,7 @@ namespace boost
 {
     namespace serialization
     {
-        template <class Archive>
+        template<class Archive>
         void serialize(Archive& ar, Cat& message, const unsigned int version)
         {
             (void)version;
@@ -60,7 +60,7 @@ namespace boost
 
 class PeopleInfoMessage
 {
-  public:
+public:
     std::string serializeSelf()
     {
         std::ostringstream os;
@@ -86,7 +86,7 @@ namespace boost
 {
     namespace serialization
     {
-        template <class Archive>
+        template<class Archive>
         void serialize(Archive& ar, PeopleInfoMessage& message, const unsigned int version)
         {
             (void)version;

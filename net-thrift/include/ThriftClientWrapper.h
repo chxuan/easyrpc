@@ -25,7 +25,7 @@ class ThriftClientImpl;
 */
 class ThriftClientWrapper
 {
-  public:
+public:
     /**
     * @brief ThriftClientWrapper 构造函数
     */
@@ -80,7 +80,7 @@ class ThriftClientWrapper
     */
     void setRecivedMsecTimeoutOnce(unsigned int recivedMsecTimeout);
 
-  private:
+private:
     typedef std::shared_ptr<ThriftClientImpl> ThriftClientImplPtr;
     ThriftClientImplPtr       m_impl;     ///< thrift客户端实现类指针
 };

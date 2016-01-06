@@ -31,7 +31,7 @@ class Message;
 */
 class ThriftClientImpl
 {
-  public:
+public:
     /**
     * @brief ThriftClientImpl 构造函数
     */
@@ -86,7 +86,7 @@ class ThriftClientImpl
     */
     void setRecivedMsecTimeoutOnce(unsigned int recivedMsecTimeout);
 
-  private:
+private:
     std::string         m_ip;                       ///< 服务器ip地址
     unsigned int        m_port;                     ///< 服务器端口号
     unsigned int        m_connectMsecTimeout;       ///< 连接超时

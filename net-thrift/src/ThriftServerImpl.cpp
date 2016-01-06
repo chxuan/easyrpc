@@ -20,7 +20,7 @@
 */
 class RPCMessageServiceHandler : virtual public RPCMessageServiceIf 
 {
-  public:
+public:
     RPCMessageServiceHandler(ThriftServerImpl* thriftServer)
     {
         // Your initialization goes here
@@ -59,7 +59,7 @@ class RPCMessageServiceHandler : virtual public RPCMessageServiceIf
         }
     }
 
-  private:
+private:
     ThriftServerImpl*       m_thriftServer;
 };
 
