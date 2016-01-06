@@ -14,12 +14,49 @@
 #include "RCFServerImpl.h"
 
 RCFServerImpl::RCFServerImpl()
+    : m_rcfInit(NULL),
+    m_rcfServer(NULL),
+    m_port(50001)
 {
-
+    // Do nothing
 }
 
 RCFServerImpl::~RCFServerImpl()
 {
     stop();
     deinit();
+}
+
+void RCFServerImpl::init(unsigned int port)
+{
+    m_port = port;
+}
+
+bool RCFServerImpl::start()
+{
+    try
+    {
+        if (m_rcfInit == NULL)
+        {
+            m_rcfInit = std::make_shared<RCF::RcfInitDeinit>();
+        }
+
+
+    }
+    catch ()
+    {
+
+    }
+
+    return true;
+}
+
+bool RCFServerImpl::stop()
+{
+    return true;
+}
+
+void RCFServerImpl::deinit()
+{
+    
 }

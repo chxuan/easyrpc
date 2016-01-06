@@ -16,7 +16,7 @@
 
 class RCFClientImpl
 {
-  public:
+public:
     RCFClientImpl();
     ~RCFClientImpl();
 };

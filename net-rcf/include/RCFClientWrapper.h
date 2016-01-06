@@ -16,7 +16,7 @@
 
 class RCFClientWrapper
 {
-  public:
+public:
     RCFClientWrapper();
     ~RCFClientWrapper();
 };

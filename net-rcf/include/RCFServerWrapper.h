@@ -16,7 +16,7 @@
 
 class RCFServerWrapper
 {
-  public:
+public:
     RCFServerWrapper();
     ~RCFServerWrapper();
 };

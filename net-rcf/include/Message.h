@@ -22,7 +22,7 @@
 */
 class Message
 {
-  public:
+public:
     /**
     * @brief Message 构造函数
     *
@@ -52,7 +52,7 @@ class Message
         ar & m_messageType;
     }
 
-  public:
+public:
     int m_messageType;          /// 消息类型
 };
 
@@ -66,7 +66,7 @@ class Message
 template<class T>
 class RegisterType
 {
-  public:
+public:
     /**
     * @brief RegisterType 构造函数
     *

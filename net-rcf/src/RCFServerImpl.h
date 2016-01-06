@@ -16,19 +16,29 @@
 
 #include <memory>
 #include <RCF/RCF.hpp>
+#include "Message.h"
+
+class RcfMessageImpl
+{
+public:
+    void sendMessage(Message* message, Message* retMessage)
+    {
+
+    }
+};
 
 class RCFServerImpl
 {
-  public:
+public:
     RCFServerImpl();
     ~RCFServerImpl();
 
-    void init(unsigned int port);
+    void init(unsigned int port = 50001);
     bool start();
     bool stop();
     void deinit();
 
-  private:
+private:
     typedef std::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
     RcfInitDeinitPtr        m_rcfInit;
 
