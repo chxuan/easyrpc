@@ -80,8 +80,8 @@ public:
 };
 
 // RCF方法定义,其中第一个Message*是发送参数，第二个Message*是返回参数
-RCF_BEGIN(I_RcfMessage, "I_RcfMessage")
+RCF_BEGIN(I_RCFMessage, "I_RCFMessage")
     RCF_METHOD_V2(void, sendMessage, Message*, Message*)
-RCF_END(I_RcfMessage)
+RCF_END(I_RCFMessage)
 
 #endif

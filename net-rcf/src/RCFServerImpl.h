@@ -18,13 +18,10 @@
 #include <RCF/RCF.hpp>
 #include "Message.h"
 
-class RcfMessageImpl
+class RCFMessageImpl
 {
 public:
-    void sendMessage(Message* message, Message* retMessage)
-    {
-
-    }
+    void sendMessage(Message* message, Message* retMessage);
 };
 
 class RCFServerImpl
@@ -44,6 +41,7 @@ private:
 
     typedef std::shared_ptr<RCF::RcfServer> RcfServerPtr;
     RcfServerPtr            m_rcfServer;
+    RCFMessageImpl          m_rcfMessageImpl;
     unsigned int            m_port;
 };
 
