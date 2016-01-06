@@ -74,6 +74,7 @@ ThriftServerImpl::ThriftServerImpl()
 
 ThriftServerImpl::~ThriftServerImpl()
 {
+    stop();
     deinit();
 }
 

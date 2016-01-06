@@ -12,3 +12,14 @@
 */
 
 #include "RCFServerImpl.h"
+
+RCFServerImpl::RCFServerImpl()
+{
+
+}
+
+RCFServerImpl::~RCFServerImpl()
+{
+    stop();
+    deinit();
+}
