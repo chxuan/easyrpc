@@ -91,7 +91,8 @@ bool ThriftServerImpl::start()
         {
             m_thread = std::make_shared<std::thread>(serverStart, this);
         }
-    } catch (TException& e)
+    }
+    catch (TException& e)
     {
         std::cout << "Start server failed, error: " << e.what() << std::endl;
         return false;
@@ -116,7 +117,8 @@ bool ThriftServerImpl::stop()
                 }
             }
         }
-    } catch (TException& e)
+    }
+    catch (TException& e)
     {
         std::cout << "Stop server failed, error: " << e.what() << std::endl;
         return false;
@@ -143,7 +145,8 @@ void ThriftServerImpl::serverStart(ThriftServerImpl* server)
     try
     {
         server->m_threadedServer->serve();
-    } catch (TException& e)
+    }
+    catch (TException& e)
     {
         std::cout << "Error: " << e.what() << std::endl;
     }
