@@ -17,10 +17,18 @@
 #include <RCF/RCF.hpp>
 #include "Message.h"
 
+class RCFServerImpl;
+
 class RCFMessageImpl
 {
 public:
+    RCFMessageImpl(const RCFServerImpl* impl);
+    ~RCFMessageImpl();
+
     void sendMessage(Message* message, Message* retMessage);
+
+private:
+    RCFServerImpl*      m_impl;
 };
 
 class RCFServerImpl

@@ -12,36 +12,48 @@
 */
 
 #include "RCFServerImpl.h"
+#include <assert.h>
 
 #define MAX_THREAD_NUM      25      // 最大线程数量
 
+RCFMessageImpl::RCFMessageImpl(const RCFServerImpl* impl)
+{
+    assert(impl != NULL);
+    m_impl = impl;
+}
+
+RCFMessageImpl::~RCFMessageImpl()
+{
+    // Do nothing
+}
+
 void RCFMessageImpl::sendMessage(Message* message, Message* retMessage)
 {
-        Message* msg = new Message;
-        msg->deserializeSelf(message);
+    Message* msg = new Message;
+    msg->deserializeSelf(message);
         
-        if (m_thriftServer->m_messageCallback != NULL)
+    if (m_impl->m_messageCallback != NULL)
+    {
+        Message* retMsg = new Message;
+        retMsg->m_messageType = msg->m_messageType;
+        m_impl->m_messageCallback(msg, retMsg);
+        if (retMsg != NULL)
         {
-            Message* retMsg = new Message;
-            retMsg->m_messageType = msg->m_messageType;
-            m_thriftServer->m_messageCallback(msg, retMsg);
-            if (retMsg != NULL)
-            {
-                _return = retMsg->serializeSelf();
-                delete retMsg;
-                retMsg = NULL;
-            }
+            _return = retMsg->serializeSelf();
+            delete retMsg;
+            retMsg = NULL;
         }
-        else
-        {
-            std::cout << "Message callback function is NULL" << std::endl;
-        }
+    }
+    else
+    {
+        std::cout << "Message callback function is NULL" << std::endl;
+    }
 
-        if (msg != NULL)
-        {
-            delete msg;
-            msg = NULL;
-        }
+    if (msg != NULL)
+    {
+        delete msg;
+        msg = NULL;
+    }
 }
 
 RCFServerImpl::RCFServerImpl()
