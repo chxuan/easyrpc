@@ -14,7 +14,6 @@
 #ifndef _RCFSERVERIMPL_H
 #define _RCFSERVERIMPL_H
 
-#include <memory>
 #include <RCF/RCF.hpp>
 #include "Message.h"
 
@@ -36,10 +35,10 @@ public:
     void deinit();
 
 private:
-    typedef std::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
+    typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
     RcfInitDeinitPtr        m_rcfInit;
 
-    typedef std::shared_ptr<RCF::RcfServer> RcfServerPtr;
+    typedef boost::shared_ptr<RCF::RcfServer> RcfServerPtr;
     RcfServerPtr            m_rcfServer;
     RCFMessageImpl          m_rcfMessageImpl;
     unsigned int            m_port;

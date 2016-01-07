@@ -45,12 +45,12 @@ bool RCFServerImpl::start()
     {
         if (m_rcfInit == NULL)
         {
-            m_rcfInit = std::make_shared<RCF::RcfInitDeinit>();
+            m_rcfInit = boost::make_shared<RCF::RcfInitDeinit>();
         }
 
         if (m_rcfServer == NULL)
         {
-            m_rcfServer = std::make_shared<RCF::RcfServer>(RCF::TcpEndPoint(m_port));
+            m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndPoint(m_port));
             m_rcfServer->bind<I_RCFMessage>(m_rcfMessage);
 
             RCf::ThreadPoolPtr threadPool(new RCF::ThreadPool(1, MAX_THREAD_NUM));
