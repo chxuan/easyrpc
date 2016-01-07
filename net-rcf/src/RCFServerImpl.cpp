@@ -17,11 +17,36 @@
 
 void RCFMessageImpl::sendMessage(Message* message, Message* retMessage)
 {
+        Message* msg = new Message;
+        msg->deserializeSelf(message);
+        
+        if (m_thriftServer->m_messageCallback != NULL)
+        {
+            Message* retMsg = new Message;
+            retMsg->m_messageType = msg->m_messageType;
+            m_thriftServer->m_messageCallback(msg, retMsg);
+            if (retMsg != NULL)
+            {
+                _return = retMsg->serializeSelf();
+                delete retMsg;
+                retMsg = NULL;
+            }
+        }
+        else
+        {
+            std::cout << "Message callback function is NULL" << std::endl;
+        }
 
+        if (msg != NULL)
+        {
+            delete msg;
+            msg = NULL;
+        }
 }
 
 RCFServerImpl::RCFServerImpl()
-    : m_rcfInit(NULL),
+    : messageCallback(NULL),
+    m_rcfInit(NULL),
     m_rcfServer(NULL),
     m_port(50001)
 {
@@ -70,10 +95,28 @@ bool RCFServerImpl::start()
 
 bool RCFServerImpl::stop()
 {
+    try
+    {
+        m_rcfServer->stop();    
+    }
+    catch (const RCF::Exception& e)
+    {
+        std::cout << "Error: " << e.getErrorString() << std::endl;
+        return false;
+    }
+
     return true;
 }
 
 void RCFServerImpl::deinit()
 {
    // Do nothing 
+}
+
+void RCFServerImpl::setMessageCallback(MESSAGE_CALLBACK func)
+{
+    if (func != NULL)
+    {
+        m_messageCallback = func;
+    }
 }
