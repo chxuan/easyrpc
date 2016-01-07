@@ -29,8 +29,7 @@ RCFMessageImpl::~RCFMessageImpl()
 
 void RCFMessageImpl::sendMessage(Message* message, Message* retMessage)
 {
-    assert(m_impl->m_messageCallback != NULL)
-
+    assert(m_impl->m_messageCallback != NULL);
     m_impl->m_messageCallback(message, retMessage);
 }
 
