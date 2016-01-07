@@ -29,31 +29,9 @@ RCFMessageImpl::~RCFMessageImpl()
 
 void RCFMessageImpl::sendMessage(Message* message, Message* retMessage)
 {
-    Message* msg = new Message;
-    msg->deserializeSelf(message);
-        
-    if (m_impl->m_messageCallback != NULL)
-    {
-        Message* retMsg = new Message;
-        retMsg->m_messageType = msg->m_messageType;
-        m_impl->m_messageCallback(msg, retMsg);
-        if (retMsg != NULL)
-        {
-            _return = retMsg->serializeSelf();
-            delete retMsg;
-            retMsg = NULL;
-        }
-    }
-    else
-    {
-        std::cout << "Message callback function is NULL" << std::endl;
-    }
+    assert(m_impl->m_messageCallback != NULL)
 
-    if (msg != NULL)
-    {
-        delete msg;
-        msg = NULL;
-    }
+    m_impl->m_messageCallback(message, retMessage);
 }
 
 RCFServerImpl::RCFServerImpl()
