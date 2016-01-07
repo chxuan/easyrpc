@@ -37,6 +37,7 @@ RCFServerImpl::RCFServerImpl()
     : messageCallback(NULL),
     m_rcfInit(NULL),
     m_rcfServer(NULL),
+    m_rcfMessage(NULL),
     m_port(50001)
 {
     // Do nothing
@@ -65,7 +66,13 @@ bool RCFServerImpl::start()
         if (m_rcfServer == NULL)
         {
             m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndPoint(m_port));
-            m_rcfServer->bind<I_RCFMessage>(m_rcfMessage);
+
+            if (m_rcfMessage == NULL)
+            {
+                m_rcfMessage = boost::make_shared<RCFMessageImpl>(this);
+            }
+
+            m_rcfServer->bind<I_RCFMessage>(*m_rcfMessage);
 
             RCf::ThreadPoolPtr threadPool(new RCF::ThreadPool(1, MAX_THREAD_NUM));
             m_rcfServer->setThreadPool(threadPool);

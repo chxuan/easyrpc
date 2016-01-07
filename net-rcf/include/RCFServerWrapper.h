@@ -21,6 +21,9 @@ class RCFServerImpl;
 ///  消息回调函数定义
 typedef void (*MESSAGE_CALLBACK) (Message* message, Message* retMessage);
 
+/**
+* @brief RCF服务端通信框架包装类
+*/
 class RCFServerWrapper
 {
 public:

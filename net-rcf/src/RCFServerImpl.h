@@ -19,22 +19,50 @@
 
 class RCFServerImpl;
 
+/**
+* @brief RCF消息处理类
+*/
 class RCFMessageImpl
 {
 public:
+    /**
+    * @brief RCFMessageImpl 构造函数
+    *
+    * @param impl RCF服务端实现对象
+    */
     RCFMessageImpl(const RCFServerImpl* impl);
-    ~RCFMessageImpl();
 
+    /**
+    * @brief ~RCFMessageImpl 析构函数
+    */
+   ~RCFMessageImpl();
+
+    /**
+    * @brief sendMessage 消息处理函数
+    *
+    * @param message 接收的消息
+    * @param retMessage 返回的消息
+    */
     void sendMessage(Message* message, Message* retMessage);
 
 private:
-    RCFServerImpl*      m_impl;
+    RCFServerImpl*      m_impl;             ///< RCF服务端实现对象
 };
 
+/**
+* @brief RCF服务端通信框架实现类
+*/
 class RCFServerImpl
 {
 public:
+    /**
+    * @brief RCFServerImpl 构造函数
+    */
     RCFServerImpl();
+
+    /**
+    * @brief ~RCFServerImpl 析构函数
+    */
     ~RCFServerImpl();
 
     /**
@@ -75,12 +103,15 @@ public:
 
 private:
     typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
-    RcfInitDeinitPtr        m_rcfInit;
+    RcfInitDeinitPtr        m_rcfInit;                  ///< RCF服务器初始化对象
 
     typedef boost::shared_ptr<RCF::RcfServer> RcfServerPtr;
-    RcfServerPtr            m_rcfServer;
-    RCFMessageImpl          m_rcfMessageImpl;
-    unsigned int            m_port;                    ///< 监听端口
+    RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
+
+    typedef boost::shared_ptr<RCFMessageImpl> RCFMessageImplPtr;
+    RCFMessageImplPtr       m_rcfMessageImpl;           ///< RCF消息处理对象
+
+    unsigned int            m_port;                     ///< 监听端口
 };
 
 #endif
