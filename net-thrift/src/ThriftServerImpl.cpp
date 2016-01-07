@@ -14,6 +14,7 @@
 */
 
 #include "ThriftServerImpl.h"
+#include <assert.h>
 
 /**
 * @brief thrift自动生成的代码，用于接收客户端发送的消息
@@ -25,6 +26,7 @@ public:
     {
         // Your initialization goes here
 
+        assert(thriftServer != NULL);
         m_thriftServer = thriftServer;
     }
 
