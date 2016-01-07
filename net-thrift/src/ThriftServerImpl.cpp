@@ -33,25 +33,20 @@ public:
     void sendMessage(std::string& _return, const std::string& message)
     {
         // Your implementation goes here
-        
+       
+        assert(m_thriftServer->m_messageCallback != NULL);
+
         Message* msg = new Message;
         msg->deserializeSelf(message);
         
-        if (m_thriftServer->m_messageCallback != NULL)
+        Message* retMsg = new Message;
+        retMsg->m_messageType = msg->m_messageType;
+        m_thriftServer->m_messageCallback(msg, retMsg);
+        if (retMsg != NULL)
         {
-            Message* retMsg = new Message;
-            retMsg->m_messageType = msg->m_messageType;
-            m_thriftServer->m_messageCallback(msg, retMsg);
-            if (retMsg != NULL)
-            {
-                _return = retMsg->serializeSelf();
-                delete retMsg;
-                retMsg = NULL;
-            }
-        }
-        else
-        {
-            std::cout << "Message callback function is NULL" << std::endl;
+            _return = retMsg->serializeSelf();
+            delete retMsg;
+            retMsg = NULL;
         }
 
         if (msg != NULL)
