@@ -64,10 +64,10 @@ void RCFServerWrapper::deinit()
     }
 }
 
-void RCFServerWrapper::setMessageCallback(MESSAGE_CALLBACK func)
+void RCFServerWrapper::setMessageHandler(RCFMessageHandler* rcfMessageHandler)
 {
     if (m_impl != NULL)
     {
-        m_impl->setMessageCallback(func);
+        m_impl->setMessageHandler(rcfMessageHandler);
     }
 }

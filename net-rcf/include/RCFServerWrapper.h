@@ -14,12 +14,10 @@
 #ifndef _RCFSERVERWRAPPER_H
 #define _RCFSERVERWRAPPER_H
 
-#include "Message.h"
+#include <boost/shared_ptr.hpp>
 
 class RCFServerImpl;
-
-///  消息回调函数定义
-typedef void (*MESSAGE_CALLBACK) (Message* message, Message* retMessage);
+class RCFMessageHandler;
 
 /**
 * @brief RCF服务端通信框架包装类
@@ -64,11 +62,11 @@ public:
     void deinit();
 
     /**
-    * @brief setMessageCallback 设置消息回调函数
+    * @brief setMessageHandler 设置消息处理类
     *
-    * @param func 回调函数指针
+    * @param rcfMessageHandler 消息处理类对象
     */
-    void setMessageCallback(MESSAGE_CALLBACK func);
+    void setMessageHandler(RCFMessageHandler* rcfMessageHandler);
 
 private:
     typedef boost::shared_ptr<RCFServerImpl> RCFServerImplPtr;

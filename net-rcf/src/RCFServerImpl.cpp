@@ -12,32 +12,13 @@
 */
 
 #include "RCFServerImpl.h"
-#include <assert.h>
 
 #define MAX_THREAD_NUM      25      // 最大线程数量
 
-RCFMessageImpl::RCFMessageImpl(const RCFServerImpl* impl)
-{
-    assert(impl != NULL);
-    m_impl = impl;
-}
-
-RCFMessageImpl::~RCFMessageImpl()
-{
-    // Do nothing
-}
-
-void RCFMessageImpl::sendMessage(Message* message, Message* retMessage)
-{
-    assert(m_impl->m_messageCallback != NULL);
-    m_impl->m_messageCallback(message, retMessage);
-}
-
 RCFServerImpl::RCFServerImpl()
-    : messageCallback(NULL),
-    m_rcfInit(NULL),
+    : m_rcfInit(NULL),
     m_rcfServer(NULL),
-    m_rcfMessage(NULL),
+    m_rcfMessageHandler(NULL),
     m_port(50001)
 {
     // Do nothing
@@ -56,6 +37,12 @@ void RCFServerImpl::init(unsigned int port)
 
 bool RCFServerImpl::start()
 {
+    if (m_rcfMessageHandler == NULL)
+    {
+        std::cout << "RCF message hander is NULL" << std::endl;
+        return false;
+    }
+
     try
     {
         if (m_rcfInit == NULL)
@@ -67,12 +54,7 @@ bool RCFServerImpl::start()
         {
             m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndPoint(m_port));
 
-            if (m_rcfMessage == NULL)
-            {
-                m_rcfMessage = boost::make_shared<RCFMessageImpl>(this);
-            }
-
-            m_rcfServer->bind<I_RCFMessage>(*m_rcfMessage);
+            m_rcfServer->bind<RCFMessageHandler>(*m_rcfMessageHandler);
 
             RCf::ThreadPoolPtr threadPool(new RCF::ThreadPool(1, MAX_THREAD_NUM));
             m_rcfServer->setThreadPool(threadPool);
@@ -109,10 +91,10 @@ void RCFServerImpl::deinit()
    // Do nothing 
 }
 
-void RCFServerImpl::setMessageCallback(MESSAGE_CALLBACK func)
+void RCFServerImpl::setMessageHandler(RCFMessageHandler rcfMessageHandler)
 {
-    if (func != NULL)
+    if (rcfMessageHandler != NULL)
     {
-        m_messageCallback = func;
+        m_rcfMessageHandler = rcfMessageHandler;
     }
 }

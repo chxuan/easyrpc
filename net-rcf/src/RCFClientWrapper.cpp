@@ -12,4 +12,35 @@
 */
 
 #include "RCFClientWrapper.h"
+#include "RCFClientImpl.h"
+
+RCFClientWrapper::RCFClientWrapper()
+    : m_impl(NULL)
+{
+    if (m_impl == NULL)
+    {
+        m_impl = std::make_shared<RCFClientImpl>();
+    }
+}
+
+RCFClientWrapper::~RCFClientWrapper()
+{
+    // Do nothing
+}
+
+void RCFClientWrapper::init(const std::string& ip, unsigned int port)
+{
+    if (m_impl != NULL)
+    {
+        m_impl->init(ip, port);
+    }
+}
+
+void RCFClientWrapper::deinit()
+{
+    if (m_impl != NULL)
+    {
+        m_impl->deinit();
+    }
+}
 
