@@ -94,7 +94,8 @@ bool ThriftClientImpl::sendMessage(Message* message, Message* retMessage)
         retMessage->deserializeSelf(retContent);
 
         transport->close();
-    } catch (TException& e)
+    } 
+    catch (TException& e)
     {
         std::cout << "ERROR: " << e.what() << std::endl;
         return false;
