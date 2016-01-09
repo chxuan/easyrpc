@@ -21,9 +21,9 @@
 /**
 * @brief RCF客户端通信框架实现类
 *
-* @tparam T 类类型
+* @tparam I_RCFMessageHandler 类类型
 */
-template<typename T>
+template<typename I_RCFMessageHandler>
 class RCFClientImpl
 {
 public:
@@ -76,7 +76,7 @@ public:
 
             if (m_rcfClient == NULL)
             {
-                m_rcfClient = boost::make_shared<RcfClient<T> >(RCF::TcpEndPoint(m_ip, m_port));
+                m_rcfClient = boost::make_shared<RcfClient<I_RCFMessageHandler> >(RCF::TcpEndPoint(m_ip, m_port));
             }
         }
         catch (const RCF::Exception& e)
@@ -110,7 +110,7 @@ private:
     typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
     RcfInitDeinitPtr        m_rcfInit;                  ///< RCF客户端服务初始化对象
 
-    typedef boost::shared_ptr<RcfClient<T> > RcfClientPtr;
+    typedef boost::shared_ptr<RcfClient<I_RCFMessageHandler> > RcfClientPtr;
     RcfClientPtr            m_rcfClient;                ///< RCF客户端对象
 
     std::string             m_ip;                       ///< 服务器ip地址
