@@ -15,11 +15,13 @@
 #define _RCFSERVERIMPL_H
 
 #include <RCF/RCF.hpp>
-#include "RCFServerWrapper.h"
 
 /**
 * @brief RCF服务端通信框架实现类
+*
+* @tparam T 类类型
 */
+template<typename T>
 class RCFServerImpl
 {
 public:
@@ -62,9 +64,17 @@ public:
     /**
     * @brief setMessageHandler 设置消息处理类
     *
-    * @param rcfMessageHandler 消息处理类对象
+    * @tparam T2 类类型
+    * @param rcfMessageHandler 消息处理对象
     */
-    void setMessageHandler(RCFMessageHandler* rcfMessageHandler);
+    template<typename T2>
+    void setMessageHandler(T2* rcfMessageHandler)
+    {
+        if (m_rcfMessageHandler != NULL) 
+        {
+            m_rcfMessageHandler = rcfMessageHandler;
+        }
+    }
 
 private:
     typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
@@ -73,7 +83,7 @@ private:
     typedef boost::shared_ptr<RCF::RcfServer> RcfServerPtr;
     RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
 
-    RCFMessageHandler*      m_rcfMessageHandler;        ///< RCF消息处理对象
+    T2*                     m_rcfMessageHandler;        ///< RCF消息处理对象
     unsigned int            m_port;                     ///< 监听端口
 };
 

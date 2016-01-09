@@ -12,14 +12,13 @@
 */
 
 #include "RCFServerWrapper.h"
-#include "RCFServerImpl.h"
 
 RCFServerWrapper::RCFServerWrapper()
     : m_impl(NULL)
 {
     if (m_impl == NULL)
     {
-        m_impl = boost::make_shared<RCFServerImpl>();
+        m_impl = boost::make_shared<RCFServerImpl<T> >();
     }
 }
 
@@ -61,13 +60,5 @@ void RCFServerWrapper::deinit()
     if (m_impl != NULL)
     {
         m_impl->deinit();
-    }
-}
-
-void RCFServerWrapper::setMessageHandler(RCFMessageHandler* rcfMessageHandler)
-{
-    if (m_impl != NULL)
-    {
-        m_impl->setMessageHandler(rcfMessageHandler);
     }
 }
