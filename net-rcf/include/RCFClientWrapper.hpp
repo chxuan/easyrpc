@@ -27,11 +27,17 @@ class RCFClientWrapper
 public:
     /**
     * @brief RCFClientWrapper 构造函数
+    *
+    * @param ip 服务器ip地址
+    * @param port 端口号
     */
-    RCFClientWrapper()
-        : m_impl(NULL)
+    RCFClientWrapper(const std::string& ip, unsigned int port)
     {
-        m_impl = boost::make_shared<RCFClientImpl<I_RCFMessageHandler> >();
+        m_impl.reset();
+        if (m_impl == NULL)
+        {
+            m_impl = boost::make_shared<RCFClientImpl<I_RCFMessageHandler> >(ip, port);
+        }
     }
 
     /**
@@ -43,28 +49,14 @@ public:
     }
 
     /**
-    * @brief init 初始化RCF客户端
+    * @brief rcfClientObject 得到RCF客户端对象
     *
-    * @param ip 服务器ip地址
-    * @param port 服务器端口号，默认为50001
+    * @return 成功返回RCF客户端对象，失败返回NULL
     */
-    void init(const std::string& ip, unsigned int port = 50001)
+    RcfClientPtr rcfClientObject() const
     {
-        if (m_impl != NULL)
-        {
-            m_impl->init(ip, port);
-        }
-    }
-
-    /**
-    * @brief deinit 反初始化，释放一些资源
-    */
-    void deinit()
-    {
-        if (m_impl != NULL)
-        {
-            m_impl->deinit();
-        }
+        assert(m_impl != NULL);
+        return m_impl->rcfClientObject();
     }
 
 private:

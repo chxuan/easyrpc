@@ -28,12 +28,12 @@ public:
     /**
     * @brief RCFServerWrapper 构造函数
     */
-    RCFServerWrapper()
-        : m_impl(NULL)
+    RCFServerWrapper(unsigned int port)
     {
+        m_impl.reset();
         if (m_impl == NULL)
         {
-            m_impl = boost::make_shared<RCFServerImpl<I_RCFMessageHander> >();
+            m_impl = boost::make_shared<RCFServerImpl<I_RCFMessageHander> >(port);
         }
     }
 
@@ -46,31 +46,18 @@ public:
     }
 
     /**
-    * @brief init 初始化RCF服务器端
+    * @brief start 开启服务器
     *
-    * @param port 监听端口，默认为50001
-    */
-    void init(unsigned int port = 50001)
-    {
-        if (m_impl != NULL)
-        {
-            m_impl->init(port);
-        }
-    }
-
-    /**
-    * @brief start 开始服务器
+    * @tparam RCFMessageHandler 类类型
+    * @param rcfMessageHandler 消息处理对象
     *
     * @return 成功返回true，否则返回false
     */
-    bool start()
+    template<typename RCFMessageHandler>
+    bool start(RCFMessageHandler& rcfMessageHandler)
     { 
-        if (m_impl != NULL)    
-        {
-            return m_impl->start();
-        }
-
-        return false;
+        assert(m_impl != NULL);
+        return m_impl->start(rcfMessageHandler);
     }
 
     /**
@@ -80,42 +67,12 @@ public:
     */
     bool stop()
     {
-        if (m_impl != NULL)
-        {
-            return m_impl->stop();
-        }
-
-        return false;
-    }
-
-    /**
-    * @brief deinit 反初始化，释放一些资源
-    */
-    void deinit()
-    {
-        if (m_impl != NULL)
-        {
-            m_impl->deinit();
-        }
-    }
-
-    /**
-    * @brief setMessageHandler 设置消息处理类
-    *
-    * @tparam RCFMessageHandler 类类型
-    * @param rcfMessageHandler 消息处理类对象
-    */
-    template<typename RCFMessageHandler>
-    void setMessageHandler(RCFMessageHandler* rcfMessageHandler)
-    {
-        if (m_impl != NULL)
-        {
-            m_impl->setMessageHandler(rcfMessageHandler);
-        }
+        assert(m_impl != NULL);
+        return m_impl->stop();
     }
 
 private:
-    typedef boost::shared_ptr<RCFServerImpl<RCFMessageHandler> > RCFServerImplPtr;
+    typedef boost::shared_ptr<RCFServerImpl<I_RCFMessageHander> > RCFServerImplPtr;
     RCFServerImplPtr           m_impl;     ///< RCF服务器实现类指针
 };
 

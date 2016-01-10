@@ -14,9 +14,14 @@
 #ifndef _RCFCLIENTIMPL_H
 #define _RCFCLIENTIMPL_H
 
-#include <RCF/RCF.hpp>
+#include <assert.h>
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <string>
+#include <boost/smart_ptr.hpp>
+#include <RCF/RCF.hpp>
+
+typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
+typedef boost::shared_ptr<RcfClient<I_RCFMessageHandler> > RcfClientPtr;
 
 /**
 * @brief RCF客户端通信框架实现类
@@ -29,14 +34,18 @@ class RCFClientImpl
 public:
     /**
     * @brief RCFClientImpl 构造函数
+    *
+    * @param ip 服务器ip地址
+    * @param port 端口号
     */
-    RCFClientImpl()
-        : m_rcfInit(NULL),
-        m_rcfClient(NULL),
-        m_ip(127.0.0.1),
-        m_port(50001)
+    RCFClientImpl(const std::string& ip, unsigned int port)
+        : m_ip(ip),
+        m_port(port)
     {
-        // Do nothing
+        m_rcfInit.reset();
+        m_rcfClient.reset();
+        bool ok = init();
+        assert(ok);
     }
 
     /**
@@ -44,28 +53,26 @@ public:
     */
     ~RCFClientImpl()
     {
-        stop();
-        deinit();
+        // Do nothing
     }
 
     /**
-    * @brief init 初始化RCF客户端
+    * @brief rcfClientObject 得到RCF客户端对象
     *
-    * @param ip 服务器ip地址
-    * @param port 服务器端口号，默认为50001
+    * @return 成功返回RCF客户端对象，失败返回NULL
     */
-    void init(const std::string& ip, unsigned int port = 50001)
+    RcfClientPtr rcfClientObject() const
     {
-        m_ip = ip;
-        m_port = port;
+        return m_rcfClient;
     }
 
+private:
     /**
-    * @brief start 开启客户端服务
+    * @brief init 初始化客户端服务
     *
     * @return 成功返回true，否则返回false
     */
-    bool start()
+    bool init()
     {
         try
         {
@@ -76,7 +83,7 @@ public:
 
             if (m_rcfClient == NULL)
             {
-                m_rcfClient = boost::make_shared<RcfClient<I_RCFMessageHandler> >(RCF::TcpEndPoint(m_ip, m_port));
+                m_rcfClient = boost::make_shared<RcfClient<I_RCFMessageHandler> >(RCF::TcpEndpoint(m_ip, m_port));
             }
         }
         catch (const RCF::Exception& e)
@@ -88,31 +95,9 @@ public:
         return true;
     }
 
-    /**
-    * @brief stop 停止客户端服务
-    *
-    * @return 成功返回true，否则返回false
-    */
-    bool stop()
-    {
-        return true;
-    }
-
-    /**
-    * @brief deinit 反初始化，释放一些资源
-    */
-    void deinit()
-    {
-        // Do nothing
-    }
-
 private:
-    typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
     RcfInitDeinitPtr        m_rcfInit;                  ///< RCF客户端服务初始化对象
-
-    typedef boost::shared_ptr<RcfClient<I_RCFMessageHandler> > RcfClientPtr;
     RcfClientPtr            m_rcfClient;                ///< RCF客户端对象
-
     std::string             m_ip;                       ///< 服务器ip地址
     unsigned int            m_port;                     ///< 服务器端口号
 };

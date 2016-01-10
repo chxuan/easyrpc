@@ -16,7 +16,9 @@
 
 #include <RCF/RCF.hpp>
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <boost/smart_ptr.hpp>
+
+#define MAX_THREAD_NUM 25    ///< 最大线程数量
 
 /**
 * @brief RCF服务端通信框架实现类
@@ -29,14 +31,14 @@ class RCFServerImpl
 public:
     /**
     * @brief RCFServerImpl 构造函数
+    *
+    * @param port 端口号
     */
-    RCFServerImpl()
-        : m_rcfInit(NULL),
-        m_rcfServer(NULL),
-        m_rcfMessageHandler(NULL),
-        m_port(50001)
+    RCFServerImpl(unsigned int port)
+        : m_port(port)
     {
-        // Do nothing
+        m_rcfInit.reset();
+        m_rcfServer.reset();
     }
 
     /**
@@ -45,32 +47,19 @@ public:
     ~RCFServerImpl()
     {
         stop();
-        deinit();
     }
 
     /**
-    * @brief init 初始化RCF服务器端
+    * @brief start 开启服务器
     *
-    * @param port 监听端口，默认为50001
-    */
-    void init(unsigned int port = 50001)
-    {
-        m_port = port;
-    }
-
-    /**
-    * @brief start 开始服务器
+    * @tparam RCFMessageHandler 类类型
+    * @param rcfMessageHandler 消息处理对象
     *
     * @return 成功返回true，否则返回false
     */
-    bool start()
+    template<typename RCFMessageHandler>
+    bool start(RCFMessageHandler& rcfMessageHandler)
     {
-        if (m_rcfMessageHandler == NULL)
-        {
-            std::cout << "RCF message hander is NULL" << std::endl;
-            return false;
-        }
-
         try
         {
             if (m_rcfInit == NULL)
@@ -80,8 +69,8 @@ public:
 
             if (m_rcfServer == NULL)
             {
-                m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndPoint(m_port));
-                m_rcfServer->bind<I_RCFMessageHandler>(*m_rcfMessageHandler);
+                m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndpoint(m_port));
+                m_rcfServer->bind<I_RCFMessageHandler>(rcfMessageHandler);
 
                 RCF::ThreadPoolPtr threadPool(new RCF::ThreadPool(1, MAX_THREAD_NUM));
                 m_rcfServer->setThreadPool(threadPool);
@@ -118,29 +107,6 @@ public:
         return true;
     }
 
-    /**
-    * @brief deinit 反初始化，释放一些资源
-    */
-    void deinit()
-    {
-        // Do nothing    
-    }
-
-    /**
-    * @brief setMessageHandler 设置消息处理类
-    *
-    * @tparam RCFMessageHandler 类类型
-    * @param rcfMessageHandler 消息处理对象
-    */
-    template<typename RCFMessageHandler>
-    void setMessageHandler(RCFMessageHandler* rcfMessageHandler)
-    {
-        if (m_rcfMessageHandler != NULL) 
-        {
-            m_rcfMessageHandler = rcfMessageHandler;
-        }
-    }
-
 private:
     typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
     RcfInitDeinitPtr        m_rcfInit;                  ///< RCF服务器初始化对象
@@ -148,7 +114,6 @@ private:
     typedef boost::shared_ptr<RCF::RcfServer> RcfServerPtr;
     RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
 
-    RCFMessageHandler*      m_rcfMessageHandler;        ///< RCF消息处理对象
     unsigned int            m_port;                     ///< 监听端口
 };
 
