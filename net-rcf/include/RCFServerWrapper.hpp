@@ -71,6 +71,17 @@ public:
         return m_impl->stop();
     }
 
+    /**
+    * @brief clientAddress 获取客户端的ip地址和端口号
+    *
+    * @return 返回客户端的ip地址和端口号
+    */
+    std::string clientAddress() const
+    {
+        assert(m_impl != NULL);
+        return m_impl->clientAddress();
+    }
+
 private:
     typedef boost::shared_ptr<RCFServerImpl<I_RCFMessageHander> > RCFServerImplPtr;
     RCFServerImplPtr           m_impl;     ///< RCF服务器实现类指针

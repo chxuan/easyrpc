@@ -38,13 +38,13 @@ public:
     bool stop();
 
 public:
+    typedef boost::shared_ptr<RCFServerWrapper<I_RCFMessageHandler> > RCFServerWrapperPtr;
+    RCFServerWrapperPtr         m_rcfServerWrapper;
+
     typedef boost::shared_ptr<RCFClientWrapper<I_RCFMessageHandler> > RCFClientWrapperPtr;
     RCFClientWrapperPtr         m_rcfDBServerClientWrapper;
 
 private:
-    typedef boost::shared_ptr<RCFServerWrapper<I_RCFMessageHandler> > RCFServerWrapperPtr;
-    RCFServerWrapperPtr         m_rcfServerWrapper;
-
     typedef boost::shared_ptr<RCFMessageHandler> RCFMessageHandlerPtr;
     RCFMessageHandlerPtr        m_rcfMessageHandler;
 };

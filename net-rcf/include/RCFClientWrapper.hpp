@@ -59,6 +59,28 @@ public:
         return m_impl->rcfClientObject();
     }
 
+    /**
+    * @brief setConnectTimeoutMs 设置连接超时
+    *
+    * @param time 超时时间，单位为毫秒
+    */
+    void setConnectTimeoutMs(long long time)
+    {
+        assert(m_impl != NULL);
+        m_impl->setConnectTimeoutMs(time);
+    }
+
+    /**
+    * @brief setRemoteCallTimeoutMs 设置远程调用超时
+    *
+    * @param time 超时时间，单位为毫秒
+    */
+    void setRemoteCallTimeoutMs(long long time)
+    {
+        assert(m_impl != NULL);
+        m_impl->setRemoteCallTimeoutMs(time);
+    }
+
 private:
     typedef boost::shared_ptr<RCFClientImpl<I_RCFMessageHandler> > RCFClientImplPtr;
     RCFClientImplPtr        m_impl;		///< RCF客户端实现类指针

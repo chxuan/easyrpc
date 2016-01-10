@@ -107,6 +107,18 @@ public:
         return true;
     }
 
+    /**
+    * @brief clientAddress 获取客户端的ip地址和端口号
+    *
+    * @return 返回客户端的ip地址和端口号
+    */
+    std::string clientAddress() const
+    {
+        RCF::RcfSession& session = RCF::getCurrentRcfSession();
+        const RCF::RemoteAddress& address = session.getClientAddress();
+        return address.string();
+    }
+
 private:
     typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
     RcfInitDeinitPtr        m_rcfInit;                  ///< RCF服务器初始化对象

@@ -23,6 +23,11 @@ bool RCFMessageHandler::queryPeopleInfoByID(int id, PeopleInfoMessage& peopleInf
 {
     try
     {
+        assert(m_centerNetServer->m_rcfServerWrapper != NULL);
+        std::string address = m_centerNetServer->m_rcfServerWrapper->clientAddress();
+        std::cout << "Client address: " << address << std::endl;
+
+        assert(m_centerNetServer->m_rcfDBServerClientWrapper != NULL);
         return m_centerNetServer->m_rcfDBServerClientWrapper->rcfClientObject()->queryPeopleInfoByID(id, peopleInfo);
     }
     catch (const RCF::Exception& e)

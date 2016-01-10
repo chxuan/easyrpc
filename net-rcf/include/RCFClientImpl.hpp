@@ -20,6 +20,9 @@
 #include <boost/smart_ptr.hpp>
 #include <RCF/RCF.hpp>
 
+#define MAX_CONNECT_TIMEOUTMS             (5*1000)          ///< 连接超时时间
+#define MAX_REMOTE_CALL_TIMEOUTMS         (10*1000)         ///< 远程调用超时时间
+
 typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
 typedef boost::shared_ptr<RcfClient<I_RCFMessageHandler> > RcfClientPtr;
 
@@ -46,6 +49,9 @@ public:
         m_rcfClient.reset();
         bool ok = init();
         assert(ok);
+
+        setConnectTimeoutMs(MAX_CONNECT_TIMEOUTMS);
+        setRemoteCallTimeoutMs(MAX_REMOTE_CALL_TIMEOUTMS);
     }
 
     /**
@@ -64,6 +70,28 @@ public:
     RcfClientPtr rcfClientObject() const
     {
         return m_rcfClient;
+    }
+
+    /**
+    * @brief setConnectTimeoutMs 设置连接超时
+    *
+    * @param time 超时时间，单位为毫秒
+    */
+    void setConnectTimeoutMs(long long time)
+    {
+        assert(m_rcfClient != NULL);
+        m_rcfClient->getClientStub().setConnectTimeoutMs(time);
+    }
+
+    /**
+    * @brief setRemoteCallTimeoutMs 设置远程调用超时
+    *
+    * @param time 超时时间，单位为毫秒
+    */
+    void setRemoteCallTimeoutMs(long long time)
+    {
+        assert(m_rcfClient != NULL);
+        m_rcfClient->getClientStub().setRemoteCallTimeoutMs(time);
     }
 
 private:
