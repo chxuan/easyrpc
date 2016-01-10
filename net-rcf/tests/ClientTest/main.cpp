@@ -15,7 +15,18 @@ int main()
 
     try
     {
-        client.rcfClientObject()->print("Hello world");
+        PeopleInfoMessage peopleInfo;
+        int id = 1000;
+        bool ok = client.rcfClientObject()->queryPeopleInfoByID(id, peopleInfo);
+        if (ok)
+        {
+            std::cout << "name: " << peopleInfo.m_name << std::endl;
+            std::cout << "age: " << peopleInfo.m_age << std::endl;
+        }
+        else
+        {
+            std::cout << "queryPeopleInfoByID failed" << std::endl;
+        }
     }
     catch (const RCF::Exception& e)
     {

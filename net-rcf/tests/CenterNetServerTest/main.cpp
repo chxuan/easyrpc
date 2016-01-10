@@ -6,30 +6,34 @@
  ************************************************************************/
 
 #include <iostream>
-#include "ProtolDef.h"
-#include "RCFServerWrapper.hpp"
-
-class RCFMessageHandler
-{
-public:
-    void print(const std::string& str)
-    {
-        std::cout << str << std::endl;
-    }
-};
+#include "CenterNetServer.h"
 
 int main()
 {
-    RCFMessageHandler rcfMessageHandler;
-    RCFServerWrapper<I_RCFMessageHandler> server(50001);
-    server.start(rcfMessageHandler);
-
-    std::cout << "Center net server start..." << std::endl;
+    CenterNetServer server;
+    bool ok = server.start();
+    if (ok)
+    {
+        std::cout << "Center net server start..." << std::endl;
+    }
+    else
+    {
+        std::cout << "Center net server start failed" << std::endl;
+        return -1;
+    }
 
     std::cin.get();
 
-    server.stop();
-    std::cout << "Center net server stoped..." << std::endl;
+    ok = server.stop();
+    if (ok)
+    {
+        std::cout << "Center net server stoped..." << std::endl;
+    }
+    else
+    {
+        std::cout << "Center net server stoped failed" << std::endl;
+        return -1;
+    }
 
     return 0;
 }

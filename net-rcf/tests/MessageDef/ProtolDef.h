@@ -9,9 +9,10 @@
 #define _PROTOLDEF_H
 
 #include <RCF/RCF.hpp>
+#include "PeopleInfoMessage.h"
 
 RCF_BEGIN(I_RCFMessageHandler, "I_RCFMessageHandler")
-    RCF_METHOD_V1(void, print, const std::string&)
+    RCF_METHOD_R2(bool, queryPeopleInfoByID, int, PeopleInfoMessage&)
 RCF_END(I_RCFMessageHandler)
 
 #endif

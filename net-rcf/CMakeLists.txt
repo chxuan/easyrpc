@@ -7,4 +7,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2")
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
 
+install(FILES ${PROJECT_SOURCE_DIR}/include/RCFServerWrapper.hpp DESTINATION /usr/local/framework/net-rcf/include/net-rcf)
+install(FILES ${PROJECT_SOURCE_DIR}/include/RCFServerImpl.hpp DESTINATION /usr/local/framework/net-rcf/include/net-rcf)
+install(FILES ${PROJECT_SOURCE_DIR}/include/RCFClientWrapper.hpp DESTINATION /usr/local/framework/net-rcf/include/net-rcf)
+install(FILES ${PROJECT_SOURCE_DIR}/include/RCFClientImpl.hpp DESTINATION /usr/local/framework/net-rcf/include/net-rcf)
+
 
