@@ -1,4 +1,4 @@
-set(OUTPUTNAME ClientTest)
+set(OUTPUTNAME ThriftClientTest)
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/bin")
 
 aux_source_directory(. DIR_SRCS)
