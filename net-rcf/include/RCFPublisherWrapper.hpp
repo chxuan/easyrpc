@@ -11,3 +11,27 @@
 * @date 2016-01-12
 */
 
+#include "RCFPublisherImpl.hpp"
+
+template<typename I_RCFMessageHandler>
+class RCFPublisherWrapper
+{
+public:
+    RCFPublisherWrapper()
+    {
+        m_impl.reset();
+        if (m_impl == NULL)
+        {
+            m_impl = boost::make_shared<RCFPublisherImpl<I_RCFMessageHandler> >();
+        }
+    }
+
+    ~RCFPublisherWrapper()
+    {
+        // Do nothing
+    }
+
+private:
+    typedef boost::shared_ptr<RCFPublisherImpl<I_RCFMessageHandler> > RCFPublisherImplPtr;
+    RCFPublisherImplPtr             m_impl;
+};
