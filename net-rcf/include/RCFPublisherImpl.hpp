@@ -15,6 +15,7 @@
 #define _RCFPUBLISHERIMPL_H
 
 #include <RCF/RCF.hpp>
+#include <assert.h>
 #include <iostream>
 #include <unordered_map>
 #include <boost/smart_ptr.hpp>
@@ -23,10 +24,20 @@ typedef boost::shared_ptr<RCF::RcfInitDeinit>                   RcfInitDeinitPtr
 typedef boost::shared_ptr<RCF::RcfServer>                       RcfServerPtr;
 typedef boost::shared_ptr<RCF::Publisher<I_RCFMessageHandler> > RcfPublisherPtr;
 
+/**
+* @brief 发布者实现类
+*
+* @tparam I_RCFMessageHandler 类类型
+*/
 template<typename I_RCFMessageHandler>
 class RCFPublisherImpl
 {
 public:
+    /**
+    * @brief RCFPublisherImpl 构造函数
+    *
+    * @param port 发布的端口号
+    */
     RCFPublisherImpl(unsigned int port)
         : m_port(port)
     {
@@ -35,11 +46,21 @@ public:
         m_rcfPublisher.reset();
     }
 
+    /**
+    * @brief ~RCFPublisherImpl 析构函数
+    */
     ~RCFPublisherImpl()
     {
         stop();       
     }
 
+    /**
+    * @brief start 开启服务器
+    *
+    * @note 开启服务器之后，才能调用createPublisher函数
+    *
+    * @return 成功返回true，否则返回false
+    */
     bool start()
     {
         try
@@ -64,6 +85,15 @@ public:
         return true;
     }
 
+    /**
+    * @brief createPublisher 通过主题来创建发布者
+    *
+    * @param topicName 主题名称
+    *
+    * @note 调用该函数之前，请先调用start函数开启服务器
+    *
+    * @return 成功返回true，否则返回false
+    */
     bool createPublisher(const std::string& topicName)
     {
         if (isPublisherExists(topicName))
@@ -73,6 +103,7 @@ public:
 
         try
         {
+            assert(m_rcfServer != NULL);
             RCF::PublisherParms pubParms;
             pubParms.setTopicName(topicName);
             RcfPublisherPtr rcfPublisher = m_rcfServer->createPublisher<I_RCFMessageHandler>(pubParms);
@@ -88,6 +119,11 @@ public:
         return true;
     }
 
+    /**
+    * @brief stop 停止发布者服务器
+    *
+    * @return 成功返回true，否则返回false
+    */
     bool stop()
     {
         bool ok = closeAllPublisher();
@@ -98,6 +134,7 @@ public:
 
         try
         {
+            assert(m_rcfServer != NULL);
             m_rcfServer->stop();    
         }
         catch (const RCF::Exception& e)
@@ -110,12 +147,26 @@ public:
     }
 
 private:
+    /**
+    * @brief isPublisherExists 判断主题是否存在
+    *
+    * @param topicName 主题名称
+    *
+    * @return 存在返回true，否则返回false
+    */
     bool isPublisherExists(const std::string& topicName)
     {
         RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
         return (iter != m_rcfPublisherMap.end()) ? true : false;
     }
 
+    /**
+    * @brief closePublisher 通过主题来停止发布者
+    *
+    * @param topicName 主题名称
+    *
+    * @return 成功返回true，否则返回false
+    */
     bool closePublisher(const std::string& topicName)
     {
         RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
@@ -139,6 +190,11 @@ private:
         return false;
     }
 
+    /**
+    * @brief closeAllPublisher 停止所有的发布者
+    *
+    * @return 成功返回true，否则返回false
+    */
     bool closeAllPublisher()
     {
         RcfPublisherMap::const_iterator begin = m_rcfPublisherMap.begin();

@@ -15,6 +15,7 @@
 #define _RCFSERVERIMPL_H
 
 #include <RCF/RCF.hpp>
+#include <assert.h>
 #include <iostream>
 #include <boost/smart_ptr.hpp>
 
@@ -96,6 +97,7 @@ public:
     {
         try
         {
+            assert(m_rcfServer != NULL);
             m_rcfServer->stop();    
         }
         catch (const RCF::Exception& e)

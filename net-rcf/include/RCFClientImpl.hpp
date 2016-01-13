@@ -23,8 +23,8 @@
 #define MAX_CONNECT_TIMEOUTMS             (5*1000)          ///< 连接超时时间
 #define MAX_REMOTE_CALL_TIMEOUTMS         (10*1000)         ///< 远程调用超时时间
 
-typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
-typedef boost::shared_ptr<RcfClient<I_RCFMessageHandler> > RcfClientPtr;
+typedef boost::shared_ptr<RCF::RcfInitDeinit>               RcfInitDeinitPtr;
+typedef boost::shared_ptr<RcfClient<I_RCFMessageHandler> >  RcfClientPtr;
 
 /**
 * @brief RCF客户端通信框架实现类
