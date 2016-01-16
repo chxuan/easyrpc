@@ -59,6 +59,22 @@ public:
     */
     bool stop();
 
+    /**
+    * @brief closePublisher 通过主题来停止发布者
+    *
+    * @param topicName 主题名称
+    *
+    * @return 成功返回true，否则返回false
+    */
+    bool closePublisher(const std::string& topicName);
+
+    /**
+    * @brief closeAllPublisher 停止所有的发布者
+    *
+    * @return 成功返回true，否则返回false
+    */
+    bool closeAllPublisher();
+
 private:
     typedef boost::shared_ptr<RCFPublisherImpl<I_RCFMessageHandler> > RCFPublisherImplPtr;
     RCFPublisherImplPtr             m_impl;             ///< RCF发布者实现对象
@@ -93,6 +109,20 @@ bool RCFPublisherWrapper<I_RCFMessageHandler>::stop()
 {
     assert(m_impl != NULL);
     return m_impl->stop();
+}
+
+template<typename I_RCFMessageHandler>
+bool RCFPublisherWrapper::<I_RCFMessageHandler>::closePublisher(const std::string& topicName)
+{
+    assert(m_impl != NULL);
+    return m_impl->closePublisher(topicName);
+}
+
+template<typename I_RCFMessageHandler>
+bool RCFPublisherWrapper<I_RCFMessageHandler>::closeAllPublisher()
+{
+    assert(m_impl != NULL);
+    return m_impl->closeAllPublisher();
 }
 
 #endif

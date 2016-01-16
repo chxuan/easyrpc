@@ -19,6 +19,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <boost/smart_ptr.hpp>
+#include <boost/thread.hpp>
 
 typedef boost::shared_ptr<RCF::RcfInitDeinit>                   RcfInitDeinitPtr;
 typedef boost::shared_ptr<RCF::RcfServer>                       RcfServerPtr;
@@ -72,16 +73,6 @@ public:
     */
     bool stop();
 
-private:
-    /**
-    * @brief isPublisherExists 判断发布者是否存在
-    *
-    * @param topicName 主题名称
-    *
-    * @return 存在返回true，否则返回false
-    */
-    bool isPublisherExists(const std::string& topicName);
-
     /**
     * @brief closePublisher 通过主题来停止发布者
     *
@@ -99,12 +90,24 @@ private:
     bool closeAllPublisher();
 
 private:
+    /**
+    * @brief isPublisherExists 判断发布者是否存在
+    *
+    * @param topicName 主题名称
+    *
+    * @return 存在返回true，否则返回false
+    */
+    bool isPublisherExists(const std::string& topicName);
+
+private:
     RcfInitDeinitPtr        m_rcfInit;                  ///< RCF服务器初始化对象
     RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
     unsigned int            m_port;                     ///< 发布的端口号
 
     typedef std::unordered_map<std::string, RcfPublisherPtr> RcfPublisherMap;
     RcfPublisherMap         m_rcfPublisherMap;          ///< 发布者map，key：主题名，value：发布者
+
+    boost::mutex            m_mutex;                    ///< 发布者map互斥锁
 };
 
 template<typename I_RCFMessageHandler>
@@ -148,6 +151,8 @@ bool RCFPublisherImpl<I_RCFMessageHandler>::start()
 template<typename I_RCFMessageHandler>
 bool RCFPublisherImpl<I_RCFMessageHandler>::createPublisher(const std::string& topicName)
 {
+    boost::lock_guard<boost::mutex> locker(m_mutex);
+
     if (isPublisherExists(topicName))
     {
         return false;
@@ -195,20 +200,10 @@ bool RCFPublisherImpl<I_RCFMessageHandler>::stop()
 }
 
 template<typename I_RCFMessageHandler>
-bool RCFPublisherImpl<I_RCFMessageHandler>::isPublisherExists(const std::string& topicName)
-{
-    RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
-    if (iter != m_rcfPublisherMap.end())
-    {
-        return true;
-    }
-
-    return false;
-}
-
-template<typename I_RCFMessageHandler>
 bool RCFPublisherImpl::<I_RCFMessageHandler>::closePublisher(const std::string& topicName)
 {
+    boost::lock_guard<boost::mutex> locker(m_mutex);
+
     RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
     if (iter != m_rcfPublisherMap.end())
     {
@@ -233,6 +228,8 @@ bool RCFPublisherImpl::<I_RCFMessageHandler>::closePublisher(const std::string& 
 template<typename I_RCFMessageHandler>
 bool RCFPublisherImpl<I_RCFMessageHandler>::closeAllPublisher()
 {
+    boost::lock_guard<boost::mutex> locker(m_mutex);
+
     RcfPublisherMap::const_iterator begin = m_rcfPublisherMap.begin();
     RcfPublisherMap::const_iterator end = m_rcfPublisherMap.end();
 
@@ -252,6 +249,19 @@ bool RCFPublisherImpl<I_RCFMessageHandler>::closeAllPublisher()
     }
 
     m_rcfPublisherMap.clear();
+    return true;
+}
+
+template<typename I_RCFMessageHandler>
+bool RCFPublisherImpl<I_RCFMessageHandler>::isPublisherExists(const std::string& topicName)
+{
+    RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
+    if (iter != m_rcfPublisherMap.end())
+    {
+        return true;
+    }
+
+    return false;
 }
 
 #endif

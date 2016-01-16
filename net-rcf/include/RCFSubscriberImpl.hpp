@@ -19,13 +19,24 @@
 #include <iostream>
 #include <unordered_map>
 #include <boost/smart_ptr.hpp>
+#include <boost/thread.hpp>
 
 typedef boost::shared_ptr<RCF::RcfInitDeinit>                   RcfInitDeinitPtr;
 typedef boost::shared_ptr<RCF::RcfServer>                       RcfServerPtr;
 
+/**
+* @brief 订阅者参数
+*/
 class SubscriberParam
 {
 public:
+    /**
+    * @brief SubscriberParam 构造函数
+    *
+    * @param ip 发布者的IP地址
+    * @param port 发布者的端口号
+    * @param topicName 订阅的主题
+    */
     SubscriberParam(const std::string& ip, unsigned int port, const std::string& topicName)
         : m_ip(ip),
         m_port(port),
@@ -34,35 +45,59 @@ public:
         // Do nothing
     }
 
-    std::string         m_ip;
-    unsigned int        m_port;
-    std::string         m_topicName;
+    std::string         m_ip;               ///< 发布者的IP地址
+    unsigned int        m_port;             ///< 发布者的端口号
+    std::string         m_topicName;        ///< 订阅的主题 
 };
 
+/**
+* @brief 订阅者实现类
+*
+* @tparam I_RCFMessageHandler 类类型
+*/
 template<typename I_RCFMessageHandler>
 class RCFSubscriberImpl
 {
 public:
+    /**
+    * @brief RCFSubscriberImpl 构造函数
+    */
     RCFSubscriberImpl();
 
+    /**
+    * @brief ~RCFSubscriberImpl 析构函数
+    */
     ~RCFSubscriberImpl();
 
+    /**
+    * @brief start 开启服务器
+    *
+    * @note 开启服务器之后，才能调用createSubscriber函数
+    *
+    * @return 成功返回true，否则返回false
+    */
     bool start();
 
+    /**
+    * @brief createSubscriber 创建订阅
+    *
+    * @tparam RCFMessageHandler 类类型
+    * @param rcfMessageHandler 消息处理对象
+    * @param param 订阅者参数
+    *
+    * @note 调用该函数之前，请先调用start函数开启服务器
+    *
+    * @return 成功返回true，否则返回false
+    */
     template<typename RCFMessageHandler>
     bool createSubscriber(RCFMessageHandler& rcfMessageHandler, const SubscriberParam& param);
 
-    bool stop();
-
-private:
     /**
-    * @brief isSubscriberExists 判断订阅者是否存在
+    * @brief stop 停止订阅者服务器
     *
-    * @param topicName 主题名称
-    *
-    * @return 存在返回true，否则返回false
+    * @return 成功返回true，否则返回false
     */
-    bool isSubscriberExists(const std::string& topicName);
+    bool stop();
 
     /**
     * @brief closeSubscriber 通过主题来停止订阅者
@@ -81,11 +116,23 @@ private:
     bool closeAllSubscriber();
 
 private:
+    /**
+    * @brief isSubscriberExists 判断订阅者是否存在
+    *
+    * @param topicName 主题名称
+    *
+    * @return 存在返回true，否则返回false
+    */
+    bool isSubscriberExists(const std::string& topicName);
+
+private:
     RcfInitDeinitPtr        m_rcfInit;                  ///< RCF服务器初始化对象
     RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
 
     typedef std::unordered_map<std::string, RCF::SubscriptionPtr> RcfSubscriberMap;
     RcfSubscriberMap        m_rcfSubsriberMap;          ///< 订阅者map，key：主题名，value：订阅者
+
+    boost::mutex            m_mutex;                    ///< 订阅者map互斥锁
 };
 
 template<typename I_RCFMessageHandler>
@@ -155,6 +202,8 @@ template<typename RCFMessageHandler>
 bool RCFSubscriberImpl<I_RCFMessageHandler>::createSubscriber(RCFMessageHandler& rcfMessageHandler,
                                                               const SubscriberParam& param)
 {
+    boost::lock_guard<boost::mutex> locker(m_mutex);
+
     if (isSubscriberExists(topicName))
     {
         return false;
@@ -180,20 +229,10 @@ bool RCFSubscriberImpl<I_RCFMessageHandler>::createSubscriber(RCFMessageHandler&
 }
 
 template<typename I_RCFMessageHandler>
-bool RCFSubscriberImpl<I_RCFMessageHandler>::isSubscriberExists(const std::string& topicName)
-{
-    RcfSubscriberMap::const_iterator iter = m_rcfSubsriberMap.find(topicName);
-    if (iter != m_rcfPublisherMap.end())
-    {
-        return true;
-    }
-
-    return false;
-}
-
-template<typename I_RCFMessageHandler>
 bool RCFSubscriberImpl::<I_RCFMessageHandler>::closeSubscriber(const std::string& topicName)
 {
+    boost::lock_guard<boost::mutex> locker(m_mutex);
+
     RcfSubscriberMap::const_iterator iter = m_rcfSubsriberMap.find(topicName);
     if (iter != m_rcfSubsriberMap.end())
     {
@@ -218,6 +257,8 @@ bool RCFSubscriberImpl::<I_RCFMessageHandler>::closeSubscriber(const std::string
 template<typename I_RCFMessageHandler>
 bool RCFSubscriberImpl<I_RCFMessageHandler>::closeAllSubscriber()
 {
+    boost::lock_guard<boost::mutex> locker(m_mutex);
+
     RcfSubscriberMap::const_iterator begin = m_rcfSubsriberMap.begin();
     RcfSubscriberMap::const_iterator end = m_rcfSubsriberMap.end();
 
@@ -237,6 +278,18 @@ bool RCFSubscriberImpl<I_RCFMessageHandler>::closeAllSubscriber()
     }
 
     m_rcfSubsriberMap.clear();
+}
+
+template<typename I_RCFMessageHandler>
+bool RCFSubscriberImpl<I_RCFMessageHandler>::isSubscriberExists(const std::string& topicName)
+{
+    RcfSubscriberMap::const_iterator iter = m_rcfSubsriberMap.find(topicName);
+    if (iter != m_rcfPublisherMap.end())
+    {
+        return true;
+    }
+
+    return false;
 }
 
 #endif
