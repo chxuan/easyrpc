@@ -74,7 +74,7 @@ public:
 
 private:
     /**
-    * @brief isPublisherExists 判断主题是否存在
+    * @brief isPublisherExists 判断发布者是否存在
     *
     * @param topicName 主题名称
     *
