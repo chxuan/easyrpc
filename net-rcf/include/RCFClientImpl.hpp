@@ -41,58 +41,28 @@ public:
     * @param ip 服务器ip地址
     * @param port 端口号
     */
-    RCFClientImpl(const std::string& ip, unsigned int port)
-        : m_ip(ip),
-        m_port(port)
-    {
-        m_rcfInit.reset();
-        m_rcfClient.reset();
-        bool ok = init();
-        assert(ok);
-
-        setConnectTimeoutMs(MAX_CONNECT_TIMEOUTMS);
-        setRemoteCallTimeoutMs(MAX_REMOTE_CALL_TIMEOUTMS);
-    }
-
-    /**
-    * @brief ~RCFClientImpl 析构函数
-    */
-    ~RCFClientImpl()
-    {
-        // Do nothing
-    }
+    RCFClientImpl(const std::string& ip, unsigned int port);
 
     /**
     * @brief rcfClientObject 得到RCF客户端对象
     *
     * @return 成功返回RCF客户端对象，失败返回NULL
     */
-    RcfClientPtr rcfClientObject() const
-    {
-        return m_rcfClient;
-    }
+    RcfClientPtr rcfClientObject() const;
 
     /**
     * @brief setConnectTimeoutMs 设置连接超时
     *
     * @param time 超时时间，单位为毫秒
     */
-    void setConnectTimeoutMs(long long time)
-    {
-        assert(m_rcfClient != NULL);
-        m_rcfClient->getClientStub().setConnectTimeoutMs(time);
-    }
+    void setConnectTimeoutMs(long long time);
 
     /**
     * @brief setRemoteCallTimeoutMs 设置远程调用超时
     *
     * @param time 超时时间，单位为毫秒
     */
-    void setRemoteCallTimeoutMs(long long time)
-    {
-        assert(m_rcfClient != NULL);
-        m_rcfClient->getClientStub().setRemoteCallTimeoutMs(time);
-    }
+    void setRemoteCallTimeoutMs(long long time);
 
 private:
     /**
@@ -100,28 +70,7 @@ private:
     *
     * @return 成功返回true，否则返回false
     */
-    bool init()
-    {
-        try
-        {
-            if (m_rcfInit == NULL)
-            {
-                m_rcfInit = boost::make_shared<RCF::RcfInitDeinit>();
-            }
-
-            if (m_rcfClient == NULL)
-            {
-                m_rcfClient = boost::make_shared<RcfClient<I_RCFMessageHandler> >(RCF::TcpEndpoint(m_ip, m_port));
-            }
-        }
-        catch (const RCF::Exception& e)
-        {
-            std::cout << "Error: " << e.getErrorString() << std::endl;
-            return false;
-        }
-
-        return true;
-    }
+    bool init();
 
 private:
     RcfInitDeinitPtr        m_rcfInit;                  ///< RCF客户端服务初始化对象
@@ -129,5 +78,63 @@ private:
     std::string             m_ip;                       ///< 服务器ip地址
     unsigned int            m_port;                     ///< 服务器端口号
 };
+
+template<typename I_RCFMessageHandler>
+RCFClientImpl<I_RCFMessageHandler>::RCFClientImpl(const std::string& ip, unsigned int port)
+    : m_ip(ip),
+    m_port(port)
+{
+    m_rcfInit.reset();
+    m_rcfClient.reset();
+    bool ok = init();
+    assert(ok);
+
+    setConnectTimeoutMs(MAX_CONNECT_TIMEOUTMS);
+    setRemoteCallTimeoutMs(MAX_REMOTE_CALL_TIMEOUTMS);
+}
+
+template<typename I_RCFMessageHandler>
+RcfClientPtr RCFClientImpl<I_RCFMessageHandler>::rcfClientObject() const
+{
+    return m_rcfClient;
+}
+
+template<typename I_RCFMessageHandler>
+void RCFClientImpl<I_RCFMessageHandler>::setConnectTimeoutMs(long long time)
+{
+    assert(m_rcfClient != NULL);
+    m_rcfClient->getClientStub().setConnectTimeoutMs(time);
+}
+
+template<typename I_RCFMessageHandler>
+void RCFClientImpl<I_RCFMessageHandler>::setRemoteCallTimeoutMs(long long time)
+{
+    assert(m_rcfClient != NULL);
+    m_rcfClient->getClientStub().setRemoteCallTimeoutMs(time);
+}
+
+template<typename I_RCFMessageHandler>
+bool RCFClientImpl<I_RCFMessageHandler>::init()
+{
+    try
+    {
+        if (m_rcfInit == NULL)
+        {
+            m_rcfInit = boost::make_shared<RCF::RcfInitDeinit>();
+        }
+
+        if (m_rcfClient == NULL)
+        {
+            m_rcfClient = boost::make_shared<RcfClient<I_RCFMessageHandler> >(RCF::TcpEndpoint(m_ip, m_port));
+        }
+    }
+    catch (const RCF::Exception& e)
+    {
+        std::cout << "Error: " << e.getErrorString() << std::endl;
+        return false;
+    }
+
+    return true;
+}
 
 #endif

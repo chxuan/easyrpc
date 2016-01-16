@@ -11,6 +11,9 @@
 * @date 2016-01-12
 */
 
+#ifndef _RCFPUBLISHERWRAPPER_H
+#define _RCFPUBLISHERWRAPPER_H
+
 #include "RCFPublisherImpl.hpp"
 
 /**
@@ -27,22 +30,7 @@ public:
     *
     * @param port 发布的端口号
     */
-    RCFPublisherWrapper(unsigned int port)
-    {
-        m_impl.reset();
-        if (m_impl == NULL)
-        {
-            m_impl = boost::make_shared<RCFPublisherImpl<I_RCFMessageHandler> >(port);
-        }
-    }
-
-    /**
-    * @brief ~RCFPublisherWrapper 析构函数
-    */
-    ~RCFPublisherWrapper()
-    {
-        // Do nothing
-    }
+    RCFPublisherWrapper(unsigned int port);
 
     /**
     * @brief start 开启服务器
@@ -51,11 +39,7 @@ public:
     *
     * @return 成功返回true，否则返回false
     */
-    bool start()
-    {
-        assert(m_impl != NULL);
-        return m_impl->start();
-    }
+    bool start();
 
     /**
     * @brief createPublisher 通过主题来创建发布者
@@ -66,24 +50,49 @@ public:
     *
     * @return 成功返回true，否则返回false
     */
-    bool createPublisher(const std::string& topicName)
-    {
-        assert(m_impl != NULL);
-        return m_impl->createPublisher(topicName);
-    }
+    bool createPublisher(const std::string& topicName);
 
     /**
     * @brief stop 停止发布者服务器
     *
     * @return 成功返回true，否则返回false
     */
-    bool stop()
-    {
-        assert(m_impl != NULL);
-        return m_impl->stop();
-    }
+    bool stop();
 
 private:
     typedef boost::shared_ptr<RCFPublisherImpl<I_RCFMessageHandler> > RCFPublisherImplPtr;
     RCFPublisherImplPtr             m_impl;             ///< RCF发布者实现对象
 };
+
+template<typename I_RCFMessageHandler>
+RCFPublisherWrapper<I_RCFMessageHandler>::RCFPublisherWrapper(unsigned int port)
+{
+    m_impl.reset();
+    if (m_impl == NULL)
+    {
+        m_impl = boost::make_shared<RCFPublisherImpl<I_RCFMessageHandler> >(port);
+    }
+}
+
+template<typename I_RCFMessageHandler>
+bool RCFPublisherWrapper<I_RCFMessageHandler>::start()
+{
+    assert(m_impl != NULL);
+    return m_impl->start();
+}
+
+template<typename I_RCFMessageHandler>
+bool RCFPublisherWrapper<I_RCFMessageHandler>::createPublisher(const std::string& topicName)
+{
+    assert(m_impl != NULL);
+    return m_impl->createPublisher(topicName);
+}
+
+template<typename I_RCFMessageHandler>
+bool RCFPublisherWrapper<I_RCFMessageHandler>::stop()
+{
+    assert(m_impl != NULL);
+    return m_impl->stop();
+}
+
+#endif
