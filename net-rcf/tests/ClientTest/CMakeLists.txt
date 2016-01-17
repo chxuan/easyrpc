@@ -1,5 +1,5 @@
 set(OUTPUTNAME RCFClientTest)
-set(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/bin")
+set(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/bin/ServerClient")
 
 aux_source_directory(. DIR_SRCS)
 

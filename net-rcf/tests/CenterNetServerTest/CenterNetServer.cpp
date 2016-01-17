@@ -55,7 +55,7 @@ bool CenterNetServer::start()
 {
     if (m_rcfServerWrapper == NULL)
     {
-        m_rcfServerWrapper = boost::make_shared<RCFServerWrapper<I_RCFMessageHandler> >(50001);
+        m_rcfServerWrapper = boost::make_shared<RCFServerWrapper<I_RPCMessageHandler> >(50001);
 
         if (m_rcfMessageHandler == NULL)
         {
@@ -70,7 +70,7 @@ bool CenterNetServer::start()
 
     if (m_rcfDBServerClientWrapper == NULL)
     {
-        m_rcfDBServerClientWrapper = boost::make_shared<RCFClientWrapper<I_RCFMessageHandler> >("127.0.0.1", 50002);
+        m_rcfDBServerClientWrapper = boost::make_shared<RCFClientWrapper<I_RPCMessageHandler> >("127.0.0.1", 50002);
     }
 
     return true;

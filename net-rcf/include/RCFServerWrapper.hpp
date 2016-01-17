@@ -28,7 +28,14 @@ public:
     /**
     * @brief RCFServerWrapper 构造函数
     */
-    RCFServerWrapper(unsigned int port);
+    RCFServerWrapper(unsigned int port)
+    {
+        m_impl.reset();
+        if (m_impl == NULL)
+        {
+            m_impl = boost::make_shared<RCFServerImpl<I_RCFMessageHander> >(port);
+        }
+    }
 
     /**
     * @brief start 开启服务器
@@ -39,57 +46,37 @@ public:
     * @return 成功返回true，否则返回false
     */
     template<typename RCFMessageHandler>
-    bool start(RCFMessageHandler& rcfMessageHandler);
+    bool start(RCFMessageHandler& rcfMessageHandler)
+    {
+        assert(m_impl != NULL);
+        return m_impl->start(rcfMessageHandler);
+    }
 
     /**
     * @brief stop 停止服务器
     *
     * @return 成功返回true，否则返回false
     */
-    bool stop();
+    bool stop()
+    {
+        assert(m_impl != NULL);
+        return m_impl->stop();
+    }
 
     /**
     * @brief clientAddress 获取客户端的ip地址和端口号
     *
     * @return 返回客户端的ip地址和端口号
     */
-    std::string clientAddress() const;
+    std::string clientAddress() const
+    {
+        assert(m_impl != NULL);
+        return m_impl->clientAddress();
+    }
 
 private:
     typedef boost::shared_ptr<RCFServerImpl<I_RCFMessageHander> > RCFServerImplPtr;
     RCFServerImplPtr           m_impl;     ///< RCF服务器实现类指针
 };
-
-template<typename I_RCFMessageHander>
-RCFServerWrapper<I_RCFMessageHander>::RCFServerWrapper(unsigned int port)
-{
-    m_impl.reset();
-    if (m_impl == NULL)
-    {
-        m_impl = boost::make_shared<RCFServerImpl<I_RCFMessageHander> >(port);
-    }
-}
-
-template<typename I_RCFMessageHander>
-template<typename RCFMessageHandler>
-bool RCFServerWrapper<I_RCFMessageHander>::start(RCFMessageHandler& rcfMessageHandler)
-{
-    assert(m_impl != NULL);
-    return m_impl->start(rcfMessageHandler);
-}
-
-template<typename I_RCFMessageHander>
-bool RCFServerWrapper<I_RCFMessageHander>::stop()
-{
-    assert(m_impl != NULL);
-    return m_impl->stop();
-}
-
-template<typename I_RCFMessageHander>
-std::string RCFServerWrapper<I_RCFMessageHander>::clientAddress() const
-{
-    assert(m_impl != NULL);
-    return m_impl->clientAddress();
-}
 
 #endif

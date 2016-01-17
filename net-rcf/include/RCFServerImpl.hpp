@@ -35,12 +35,20 @@ public:
     *
     * @param port 端口号
     */
-    RCFServerImpl(unsigned int port);
+    RCFServerImpl(unsigned int port)
+        : m_port(port)
+    {
+        m_rcfInit.reset();
+        m_rcfServer.reset();
+    }
 
     /**
     * @brief ~RCFServerImpl 析构函数
     */
-    ~RCFServerImpl();
+    ~RCFServerImpl()
+    {
+        stop();
+    }
 
     /**
     * @brief start 开启服务器
@@ -51,21 +59,68 @@ public:
     * @return 成功返回true，否则返回false
     */
     template<typename RCFMessageHandler>
-    bool start(RCFMessageHandler& rcfMessageHandler);
+    bool start(RCFMessageHandler& rcfMessageHandler)
+    {
+        try
+        {
+            if (m_rcfInit == NULL)
+            {
+                m_rcfInit = boost::make_shared<RCF::RcfInitDeinit>();
+            }
+
+            if (m_rcfServer == NULL)
+            {
+                m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndpoint(m_port));
+                m_rcfServer->bind<I_RCFMessageHandler>(rcfMessageHandler);
+
+                RCF::ThreadPoolPtr threadPool(new RCF::ThreadPool(1, MAX_THREAD_NUM));
+                m_rcfServer->setThreadPool(threadPool);
+
+                m_rcfServer->start();
+            }
+        }
+        catch (const RCF::Exception& e)
+        {
+            std::cout << "Error: " << e.getErrorString() << std::endl;
+            return false;
+        }
+
+        return true;
+    }
 
     /**
     * @brief stop 停止服务器
     *
     * @return 成功返回true，否则返回false
     */
-    bool stop();
+    bool stop()
+    {
+
+        try
+        {
+            assert(m_rcfServer != NULL);
+            m_rcfServer->stop();    
+        }
+        catch (const RCF::Exception& e)
+        {
+            std::cout << "Error: " << e.getErrorString() << std::endl;
+            return false;
+        }
+
+        return true;
+    }
 
     /**
     * @brief clientAddress 获取客户端的ip地址和端口号
     *
     * @return 返回客户端的ip地址和端口号
     */
-    std::string clientAddress() const;
+    std::string clientAddress() const
+    {
+        RCF::RcfSession& session = RCF::getCurrentRcfSession();
+        const RCF::RemoteAddress& address = session.getClientAddress();
+        return address.string();
+    }
 
 private:
     typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
@@ -76,75 +131,5 @@ private:
 
     unsigned int            m_port;                     ///< 监听端口
 };
-
-template<typename I_RCFMessageHandler>
-RCFServerImpl<I_RCFMessageHandler>::RCFServerImpl(unsigned int port)
-    : m_port(port)
-{
-    m_rcfInit.reset();
-    m_rcfServer.reset();
-}
-
-template<typename I_RCFMessageHandler>
-RCFServerImpl<I_RCFMessageHandler>::~RCFServerImpl()
-{
-    stop();
-}
-
-template<typename I_RCFMessageHandler>
-template<typename RCFMessageHandler>
-bool RCFServerImpl<I_RCFMessageHandler>::start(RCFMessageHandler& rcfMessageHandler)
-{
-    try
-    {
-        if (m_rcfInit == NULL)
-        {
-            m_rcfInit = boost::make_shared<RCF::RcfInitDeinit>();
-        }
-
-        if (m_rcfServer == NULL)
-        {
-            m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndpoint(m_port));
-            m_rcfServer->bind<I_RCFMessageHandler>(rcfMessageHandler);
-
-            RCF::ThreadPoolPtr threadPool(new RCF::ThreadPool(1, MAX_THREAD_NUM));
-            m_rcfServer->setThreadPool(threadPool);
-
-            m_rcfServer->start();
-        }
-    }
-    catch (const RCF::Exception& e)
-    {
-        std::cout << "Error: " << e.getErrorString() << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFServerImpl<I_RCFMessageHandler>::stop()
-{
-    try
-    {
-        assert(m_rcfServer != NULL);
-        m_rcfServer->stop();    
-    }
-    catch (const RCF::Exception& e)
-    {
-        std::cout << "Error: " << e.getErrorString() << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-template<typename I_RCFMessageHandler>
-std::string RCFServerImpl<I_RCFMessageHandler>::clientAddress() const
-{
-    RCF::RcfSession& session = RCF::getCurrentRcfSession();
-    const RCF::RemoteAddress& address = session.getClientAddress();
-    return address.string();
-}
 
 #endif

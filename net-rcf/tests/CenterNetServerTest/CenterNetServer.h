@@ -8,7 +8,7 @@
 #ifndef _CENTERNETSERVER_H
 #define _CENTERNETSERVER_H
 
-#include "ProtolDef.h"
+#include "RPCProtocolDefine.h"
 #include "RCFServerWrapper.hpp"
 #include "RCFClientWrapper.hpp"
 
@@ -38,10 +38,10 @@ public:
     bool stop();
 
 public:
-    typedef boost::shared_ptr<RCFServerWrapper<I_RCFMessageHandler> > RCFServerWrapperPtr;
+    typedef boost::shared_ptr<RCFServerWrapper<I_RPCMessageHandler> > RCFServerWrapperPtr;
     RCFServerWrapperPtr         m_rcfServerWrapper;
 
-    typedef boost::shared_ptr<RCFClientWrapper<I_RCFMessageHandler> > RCFClientWrapperPtr;
+    typedef boost::shared_ptr<RCFClientWrapper<I_RPCMessageHandler> > RCFClientWrapperPtr;
     RCFClientWrapperPtr         m_rcfDBServerClientWrapper;
 
 private:

@@ -6,17 +6,18 @@
  ************************************************************************/
 
 #include <iostream>
-#include "ProtolDef.h"
+#include "RPCProtocolDefine.h"
 #include "RCFClientWrapper.hpp"
 
 int main()
 {
-    RCFClientWrapper<I_RCFMessageHandler> client("127.0.0.1", 50001);
+    RCFClientWrapper<I_RPCMessageHandler> client("127.0.0.1", 50001);
 
     try
     {
         PeopleInfoMessage peopleInfo;
         int id = 1000;
+
         bool ok = client.rcfClientObject()->queryPeopleInfoByID(id, peopleInfo);
         if (ok)
         {

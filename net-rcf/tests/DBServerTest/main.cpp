@@ -6,7 +6,7 @@
  ************************************************************************/
 
 #include <iostream>
-#include "ProtolDef.h"
+#include "RPCProtocolDefine.h"
 #include "RCFServerWrapper.hpp"
 
 class RCFMessageHandler
@@ -29,7 +29,7 @@ public:
 int main()
 {
     RCFMessageHandler rcfMessageHandler;
-    RCFServerWrapper<I_RCFMessageHandler> server(50002);
+    RCFServerWrapper<I_RPCMessageHandler> server(50002);
 
     bool ok = server.start(rcfMessageHandler);
     if (ok)
