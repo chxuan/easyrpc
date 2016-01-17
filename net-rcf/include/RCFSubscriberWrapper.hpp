@@ -28,7 +28,14 @@ public:
     /**
     * @brief RCFSubscriberWrapper 构造函数
     */
-    RCFSubscriberWrapper();
+    RCFSubscriberWrapper()
+    {
+        m_impl.reset();
+        if (m_impl == NULL)
+        {
+            m_impl = boost::make_shared<RCFSubscriberImpl<I_RCFMessageHandler> >();
+        }
+    }
 
     /**
     * @brief start 开启服务器
@@ -37,7 +44,11 @@ public:
     *
     * @return 成功返回true，否则返回false
     */
-    bool start();
+    bool start()
+    {
+        assert(m_impl != NULL);
+        return m_impl->start();
+    }
 
     /**
     * @brief createSubscriber 创建订阅
@@ -51,14 +62,22 @@ public:
     * @return 成功返回true，否则返回false
     */
     template<typename RCFMessageHandler>
-    bool createSubscriber(RCFMessageHandler& rcfMessageHandler, const SubscriberParam& param);
+    bool createSubscriber(RCFMessageHandler& rcfMessageHandler, const SubscriberParam& param)
+    {
+        assert(m_impl != NULL);
+        return m_impl->createSubscriber(rcfMessageHandler, param);
+    }
 
     /**
     * @brief stop 停止订阅者服务器
     *
     * @return 成功返回true，否则返回false
     */
-    bool stop();
+    bool stop()
+    {
+        assert(m_impl != NULL);
+        return m_impl->stop();
+    }
 
     /**
     * @brief closeSubscriber 通过主题来停止订阅者
@@ -67,65 +86,26 @@ public:
     *
     * @return 成功返回true，否则返回false
     */
-    bool closeSubscriber(const std::string& topicName);
+    bool closeSubscriber(const std::string& topicName)
+    {
+        assert(m_impl != NULL);
+        return m_impl->closeSubscriber(topicName);
+    }
 
     /**
     * @brief closeAllSubscriber 停止所有的订阅者
     *
     * @return 成功返回true，否则返回false
     */
-    bool closeAllSubscriber();
+    bool closeAllSubscriber()
+    {
+        assert(m_impl != NULL);
+        return m_impl->closeAllSubscriber();
+    }
 
 private:
     typedef boost::shared_ptr<RCFSubscriberImpl<I_RCFMessageHandler> > RCFSubscriberImplPtr;
     RCFSubscriberImplPtr             m_impl;             ///< RCF订阅者实现对象
 };
-
-template<typename I_RCFMessageHandler>
-RCFSubscriberWrapper<I_RCFMessageHandler>::RCFSubscriberWrapper()
-{
-    m_impl.reset();
-    if (m_impl == NULL)
-    {
-        m_impl = boost::make_shared<RCFSubscriberImpl<I_RCFMessageHandler> >();
-    }
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFSubscriberWrapper<I_RCFMessageHandler>::start()
-{
-    assert(m_impl != NULL);
-    return m_impl->start();
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFSubscriberWrapper<I_RCFMessageHandler>::stop()
-{
-    assert(m_impl != NULL);
-    return m_impl->stop();
-}
-
-template<typename I_RCFMessageHandler>
-template<typename RCFMessageHandler>
-bool RCFSubscriberWrapper<I_RCFMessageHandler>::createSubscriber(RCFMessageHandler& rcfMessageHandler,
-                                                                 const SubscriberParam& param)
-{
-    assert(m_impl != NULL);
-    return m_impl->createSubscriber(rcfMessageHandler, param);
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFSubscriberWrapper::<I_RCFMessageHandler>::closeSubscriber(const std::string& topicName)
-{
-    assert(m_impl != NULL);
-    return m_impl->closeSubscriber(topicName);
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFSubscriberWrapper<I_RCFMessageHandler>::closeAllSubscriber()
-{
-    assert(m_impl != NULL);
-    return m_impl->closeAllSubscriber();
-}
 
 #endif

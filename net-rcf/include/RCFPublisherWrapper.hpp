@@ -30,7 +30,14 @@ public:
     *
     * @param port 发布的端口号
     */
-    RCFPublisherWrapper(unsigned int port);
+    RCFPublisherWrapper(unsigned int port)
+    {
+        m_impl.reset();
+        if (m_impl == NULL)
+        {
+            m_impl = boost::make_shared<RCFPublisherImpl<I_RCFMessageHandler> >(port);
+        }
+    }
 
     /**
     * @brief start 开启服务器
@@ -39,7 +46,11 @@ public:
     *
     * @return 成功返回true，否则返回false
     */
-    bool start();
+    bool start()
+    {
+        assert(m_impl != NULL);
+        return m_impl->start();
+    }
 
     /**
     * @brief createPublisher 通过主题来创建发布者
@@ -50,14 +61,22 @@ public:
     *
     * @return 成功返回true，否则返回false
     */
-    bool createPublisher(const std::string& topicName);
+    bool createPublisher(const std::string& topicName)
+    {
+        assert(m_impl != NULL);
+        return m_impl->createPublisher(topicName);
+    }
 
     /**
     * @brief stop 停止发布者服务器
     *
     * @return 成功返回true，否则返回false
     */
-    bool stop();
+    bool stop()
+    {
+        assert(m_impl != NULL);
+        return m_impl->stop();
+    }
 
     /**
     * @brief closePublisher 通过主题来停止发布者
@@ -67,62 +86,25 @@ public:
     * @return 成功返回true，否则返回false
     */
     bool closePublisher(const std::string& topicName);
+    {
+        assert(m_impl != NULL);
+        return m_impl->closePublisher(topicName);
+    }
 
     /**
     * @brief closeAllPublisher 停止所有的发布者
     *
     * @return 成功返回true，否则返回false
     */
-    bool closeAllPublisher();
+    bool closeAllPublisher()
+    {
+        assert(m_impl != NULL);
+        return m_impl->closeAllPublisher();
+    }
 
 private:
     typedef boost::shared_ptr<RCFPublisherImpl<I_RCFMessageHandler> > RCFPublisherImplPtr;
     RCFPublisherImplPtr             m_impl;             ///< RCF发布者实现对象
 };
-
-template<typename I_RCFMessageHandler>
-RCFPublisherWrapper<I_RCFMessageHandler>::RCFPublisherWrapper(unsigned int port)
-{
-    m_impl.reset();
-    if (m_impl == NULL)
-    {
-        m_impl = boost::make_shared<RCFPublisherImpl<I_RCFMessageHandler> >(port);
-    }
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherWrapper<I_RCFMessageHandler>::start()
-{
-    assert(m_impl != NULL);
-    return m_impl->start();
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherWrapper<I_RCFMessageHandler>::createPublisher(const std::string& topicName)
-{
-    assert(m_impl != NULL);
-    return m_impl->createPublisher(topicName);
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherWrapper<I_RCFMessageHandler>::stop()
-{
-    assert(m_impl != NULL);
-    return m_impl->stop();
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherWrapper::<I_RCFMessageHandler>::closePublisher(const std::string& topicName)
-{
-    assert(m_impl != NULL);
-    return m_impl->closePublisher(topicName);
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherWrapper<I_RCFMessageHandler>::closeAllPublisher()
-{
-    assert(m_impl != NULL);
-    return m_impl->closeAllPublisher();
-}
 
 #endif

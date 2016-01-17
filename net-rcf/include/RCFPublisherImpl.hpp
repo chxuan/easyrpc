@@ -39,12 +39,19 @@ public:
     *
     * @param port 发布的端口号
     */
-    RCFPublisherImpl(unsigned int port);
+    RCFPublisherImpl(unsigned int port)
+    {
+        m_rcfInit.reset();
+        m_rcfServer.reset();
+    }
 
     /**
     * @brief ~RCFPublisherImpl 析构函数
     */
-    ~RCFPublisherImpl();
+    ~RCFPublisherImpl()
+    {
+        stop();
+    }
 
     /**
     * @brief start 开启服务器
@@ -53,7 +60,29 @@ public:
     *
     * @return 成功返回true，否则返回false
     */
-    bool start();
+    bool start()
+    {
+        try
+        {
+            if (m_rcfInit == NULL)
+            {
+                m_rcfInit = boost::make_shared<RCF::RcfInitDeinit>();
+            }
+
+            if (m_rcfServer == NULL)
+            {
+                m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndpoint(m_port));
+                m_rcfServer->start();
+            }
+        }
+        catch (const RCF::Exception& e)
+        {
+            std::cout << "Error: " << e.getErrorString() << std::endl;
+            return false;
+        }
+
+        return true;
+    }
 
     /**
     * @brief createPublisher 通过主题来创建发布者
@@ -64,14 +93,59 @@ public:
     *
     * @return 成功返回true，否则返回false
     */
-    bool createPublisher(const std::string& topicName);
+    bool createPublisher(const std::string& topicName)
+    {
+        boost::lock_guard<boost::mutex> locker(m_mutex);
+
+        if (isPublisherExists(topicName))
+        {
+            return false;
+        }
+
+        try
+        {
+            assert(m_rcfServer != NULL);
+            RCF::PublisherParms pubParms;
+            pubParms.setTopicName(topicName);
+            RcfPublisherPtr rcfPublisher = m_rcfServer->createPublisher<I_RCFMessageHandler>(pubParms);
+        }
+        catch (const RCF::Exception& e)
+        {
+            std::cout << "Error: " << e.getErrorString() << std::endl;
+            return false;
+        }
+
+        m_rcfPublisherMap.insert(std::make_part(topicName, rcfPublisher));
+
+        return true;
+    }
 
     /**
     * @brief stop 停止发布者服务器
     *
     * @return 成功返回true，否则返回false
     */
-    bool stop();
+    bool stop()
+    {
+        bool ok = closeAllPublisher();
+        if (!ok)
+        {
+            return false;
+        }
+
+        try
+        {
+            assert(m_rcfServer != NULL);
+            m_rcfServer->stop();    
+        }
+        catch (const RCF::Exception& e)
+        {
+            std::cout << "Error: " << e.getErrorString() << std::endl;
+            return false;
+        }
+
+        return true;
+    }
 
     /**
     * @brief closePublisher 通过主题来停止发布者
@@ -80,14 +154,62 @@ public:
     *
     * @return 成功返回true，否则返回false
     */
-    bool closePublisher(const std::string& topicName);
+    bool closePublisher(const std::string& topicName)
+    {
+        boost::lock_guard<boost::mutex> locker(m_mutex);
+
+        RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
+        if (iter != m_rcfPublisherMap.end())
+        {
+            try
+            {
+                iter->second->close();
+            }
+            catch (const RCF::Exception& e)
+            {
+                std::cout << "Error: " << e.getErrorString() << std::endl;
+                return false;
+            }
+
+            m_rcfPublisherMap.erase(iter);
+
+            return true;
+        }
+
+        return false;
+    }
 
     /**
     * @brief closeAllPublisher 停止所有的发布者
     *
     * @return 成功返回true，否则返回false
     */
-    bool closeAllPublisher();
+    bool closeAllPublisher()
+    {
+        boost::lock_guard<boost::mutex> locker(m_mutex);
+
+        RcfPublisherMap::const_iterator begin = m_rcfPublisherMap.begin();
+        RcfPublisherMap::const_iterator end = m_rcfPublisherMap.end();
+
+        while (begin != end)
+        {
+            try
+            {
+                begin->second->close();
+            }
+            catch (const RCF::Exception& e)
+            {
+                std::cout << "Error: " << e.getErrorString() << std::endl;
+                return false;
+            }
+
+            ++begin;
+        }
+
+        m_rcfPublisherMap.clear();
+
+        return true;
+    }
 
 private:
     /**
@@ -97,7 +219,16 @@ private:
     *
     * @return 存在返回true，否则返回false
     */
-    bool isPublisherExists(const std::string& topicName);
+    bool isPublisherExists(const std::string& topicName)
+    {
+        RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
+        if (iter != m_rcfPublisherMap.end())
+        {
+            return true;
+        }
+
+        return false;
+    }
 
 private:
     RcfInitDeinitPtr        m_rcfInit;                  ///< RCF服务器初始化对象
@@ -109,159 +240,5 @@ private:
 
     boost::mutex            m_mutex;                    ///< 发布者map互斥锁
 };
-
-template<typename I_RCFMessageHandler>
-RCFPublisherImpl<I_RCFMessageHandler>::RCFPublisherImpl(unsigned int port)
-{
-    m_rcfInit.reset();
-    m_rcfServer.reset();
-}
-
-template<typename I_RCFMessageHandler>
-RCFPublisherImpl<I_RCFMessageHandler>::~RCFPublisherImpl()
-{
-    stop();
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherImpl<I_RCFMessageHandler>::start()
-{
-    try
-    {
-        if (m_rcfInit == NULL)
-        {
-            m_rcfInit = boost::make_shared<RCF::RcfInitDeinit>();
-        }
-
-        if (m_rcfServer == NULL)
-        {
-            m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndpoint(m_port));
-            m_rcfServer->start();
-        }
-    }
-    catch (const RCF::Exception& e)
-    {
-        std::cout << "Error: " << e.getErrorString() << std::endl;
-        return false;
-    }
-    
-    return true;
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherImpl<I_RCFMessageHandler>::createPublisher(const std::string& topicName)
-{
-    boost::lock_guard<boost::mutex> locker(m_mutex);
-
-    if (isPublisherExists(topicName))
-    {
-        return false;
-    }
-
-    try
-    {
-        assert(m_rcfServer != NULL);
-        RCF::PublisherParms pubParms;
-        pubParms.setTopicName(topicName);
-        RcfPublisherPtr rcfPublisher = m_rcfServer->createPublisher<I_RCFMessageHandler>(pubParms);
-    }
-    catch (const RCF::Exception& e)
-    {
-        std::cout << "Error: " << e.getErrorString() << std::endl;
-        return false;
-    }
-
-    m_rcfPublisherMap.insert(std::make_part(topicName, rcfPublisher));
-
-    return true;
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherImpl<I_RCFMessageHandler>::stop()
-{
-    bool ok = closeAllPublisher();
-    if (!ok)
-    {
-        return false;
-    }
-
-    try
-    {
-        assert(m_rcfServer != NULL);
-        m_rcfServer->stop();    
-    }
-    catch (const RCF::Exception& e)
-    {
-        std::cout << "Error: " << e.getErrorString() << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherImpl::<I_RCFMessageHandler>::closePublisher(const std::string& topicName)
-{
-    boost::lock_guard<boost::mutex> locker(m_mutex);
-
-    RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
-    if (iter != m_rcfPublisherMap.end())
-    {
-        try
-        {
-            iter->second->close();
-        }
-        catch (const RCF::Exception& e)
-        {
-            std::cout << "Error: " << e.getErrorString() << std::endl;
-            return false;
-        }
-
-        m_rcfPublisherMap.erase(iter);
-
-        return true;
-    }
-
-    return false;
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherImpl<I_RCFMessageHandler>::closeAllPublisher()
-{
-    boost::lock_guard<boost::mutex> locker(m_mutex);
-
-    RcfPublisherMap::const_iterator begin = m_rcfPublisherMap.begin();
-    RcfPublisherMap::const_iterator end = m_rcfPublisherMap.end();
-
-    while (begin != end)
-    {
-        try
-        {
-            begin->second->close();
-        }
-        catch (const RCF::Exception& e)
-        {
-            std::cout << "Error: " << e.getErrorString() << std::endl;
-            return false;
-        }
-
-        ++begin;
-    }
-
-    m_rcfPublisherMap.clear();
-    return true;
-}
-
-template<typename I_RCFMessageHandler>
-bool RCFPublisherImpl<I_RCFMessageHandler>::isPublisherExists(const std::string& topicName)
-{
-    RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
-    if (iter != m_rcfPublisherMap.end())
-    {
-        return true;
-    }
-
-    return false;
-}
 
 #endif
