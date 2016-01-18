@@ -91,7 +91,7 @@ public:
 
             if (m_rcfServer == NULL)
             {
-                unsigned int port = -1;
+                int port = -1;
                 m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndpoint(port));
                 m_rcfServer->start();
             }
