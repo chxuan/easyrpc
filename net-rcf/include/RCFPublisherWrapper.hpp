@@ -25,6 +25,8 @@ template<typename I_RCFMessageHandler>
 class RCFPublisherWrapper
 {
 public:
+    typedef boost::shared_ptr<RCF::Publisher<I_RCFMessageHandler> > RcfPublisherPtr;
+
     /**
     * @brief RCFPublisherWrapper 构造函数
     *
@@ -59,9 +61,9 @@ public:
     *
     * @note 调用该函数之前，请先调用start函数开启服务器
     *
-    * @return 成功返回true，否则返回false
+    * @return 成功返回发布者对象，否则返回NULL
     */
-    bool createPublisher(const std::string& topicName)
+    RcfPublisherPtr createPublisher(const std::string& topicName)
     {
         assert(m_impl != NULL);
         return m_impl->createPublisher(topicName);
@@ -85,7 +87,7 @@ public:
     *
     * @return 成功返回true，否则返回false
     */
-    bool closePublisher(const std::string& topicName);
+    bool closePublisher(const std::string& topicName)
     {
         assert(m_impl != NULL);
         return m_impl->closePublisher(topicName);

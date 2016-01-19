@@ -35,8 +35,6 @@ bool RCFMessageHandler::queryPeopleInfoByID(int id, PeopleInfoMessage& peopleInf
         std::cout << "Error: " << e.getErrorString() << std::endl;
         return false;
     }
-
-    return false;
 }
 
 CenterNetServer::CenterNetServer()

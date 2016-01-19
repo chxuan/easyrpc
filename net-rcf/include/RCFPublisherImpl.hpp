@@ -21,10 +21,6 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 
-typedef boost::shared_ptr<RCF::RcfInitDeinit>                   RcfInitDeinitPtr;
-typedef boost::shared_ptr<RCF::RcfServer>                       RcfServerPtr;
-typedef boost::shared_ptr<RCF::Publisher<I_RCFMessageHandler> > RcfPublisherPtr;
-
 /**
 * @brief 发布者实现类
 *
@@ -34,6 +30,9 @@ template<typename I_RCFMessageHandler>
 class RCFPublisherImpl
 {
 public:
+    typedef boost::shared_ptr<RCF::Publisher<I_RCFMessageHandler> >  RcfPublisherPtr;
+    typedef std::unordered_map<std::string, RcfPublisherPtr>         RcfPublisherMap;
+
     /**
     * @brief RCFPublisherImpl 构造函数
     *
@@ -91,15 +90,15 @@ public:
     *
     * @note 调用该函数之前，请先调用start函数开启服务器
     *
-    * @return 成功返回true，否则返回false
+    * @return 成功返回发布者对象，否则返回NULL
     */
-    bool createPublisher(const std::string& topicName)
+    RcfPublisherPtr createPublisher(const std::string& topicName)
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
         if (isPublisherExists(topicName))
         {
-            return false;
+            return publishObject(topicName);
         }
 
         try
@@ -108,16 +107,15 @@ public:
             RCF::PublisherParms pubParms;
             pubParms.setTopicName(topicName);
             RcfPublisherPtr rcfPublisher = m_rcfServer->createPublisher<I_RCFMessageHandler>(pubParms);
+            m_rcfPublisherMap.insert(std::make_part(topicName, rcfPublisher));
+            
+            return rcfPublisher;
         }
         catch (const RCF::Exception& e)
         {
             std::cout << "Error: " << e.getErrorString() << std::endl;
-            return false;
+            return NULL;
         }
-
-        m_rcfPublisherMap.insert(std::make_part(topicName, rcfPublisher));
-
-        return true;
     }
 
     /**
@@ -230,14 +228,33 @@ private:
         return false;
     }
 
+    /**
+    * @brief publishObject 通过主题名词得到发布者对象
+    *
+    * @param topicName 主题名称
+    *
+    * @return 成功返回发布和对象，失败返回NULL
+    */
+    RcfPublisherPtr publishObject(const std::string& topicName)
+    {
+        RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
+        if (iter != m_rcfPublisherMap.end())
+        {
+            return iter->second;
+        }
+
+        return NULL;
+    }
+
 private:
+    typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
     RcfInitDeinitPtr        m_rcfInit;                  ///< RCF服务器初始化对象
+
+    typedef boost::shared_ptr<RCF::RcfServer> RcfServerPtr;
     RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
+
     unsigned int            m_port;                     ///< 发布的端口号
-
-    typedef std::unordered_map<std::string, RcfPublisherPtr> RcfPublisherMap;
     RcfPublisherMap         m_rcfPublisherMap;          ///< 发布者map，key：主题名，value：发布者
-
     boost::mutex            m_mutex;                    ///< 发布者map互斥锁
 };
 
