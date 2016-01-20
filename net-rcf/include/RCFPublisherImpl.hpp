@@ -147,7 +147,7 @@ public:
     }
 
     /**
-    * @brief publishObject 通过主题名词得到发布者对象
+    * @brief publishObject 通过主题名称得到发布者对象
     *
     * @param topicName 主题名称
     *
@@ -161,7 +161,7 @@ public:
             return iter->second;
         }
 
-        return NULL;
+        return RcfPublisherPtr();
     }
 
     /**
