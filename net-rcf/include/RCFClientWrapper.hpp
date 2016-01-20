@@ -25,7 +25,7 @@ template<typename I_RCFMessageHandler>
 class RCFClientWrapper
 {
 public:
-    typedef boost::shared_ptr<RcfClient<I_RCFMessageHandler> >  RcfClientPtr;
+    typedef typename boost::shared_ptr<RcfClient<I_RCFMessageHandler> > RcfClientPtr;
 
     /**
     * @brief RCFClientWrapper 构造函数
@@ -76,7 +76,7 @@ public:
     }
 
 private:
-    typedef boost::shared_ptr<RCFClientImpl<I_RCFMessageHandler> > RCFClientImplPtr;
+    typedef typename boost::shared_ptr<RCFClientImpl<I_RCFMessageHandler> > RCFClientImplPtr;
     RCFClientImplPtr        m_impl;		///< RCF客户端实现类指针
 };
 

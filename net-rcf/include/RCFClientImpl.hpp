@@ -33,7 +33,7 @@ template<typename I_RCFMessageHandler>
 class RCFClientImpl
 {
 public:
-    typedef boost::shared_ptr<RcfClient<I_RCFMessageHandler> > RcfClientPtr;
+    typedef typename boost::shared_ptr<RcfClient<I_RCFMessageHandler> > RcfClientPtr;
 
     /**
     * @brief RCFClientImpl 构造函数
@@ -61,6 +61,7 @@ public:
     */
     RcfClientPtr rcfClientObject() const
     {
+        assert(m_rcfClient != NULL);
         return m_rcfClient;
     }
 

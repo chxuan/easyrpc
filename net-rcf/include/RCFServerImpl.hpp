@@ -95,7 +95,6 @@ public:
     */
     bool stop()
     {
-
         try
         {
             assert(m_rcfServer != NULL);
