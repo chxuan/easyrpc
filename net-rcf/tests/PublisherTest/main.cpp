@@ -13,19 +13,28 @@
 int main()
 {
     RCFPublisherWrapper<I_PubSubMessageHandler> server(50003);
-    server.start();
-
-    std::cout << "Publish server start..." << std::endl;
-
-    std::string topicName = "weather";
-    bool ok = server.createPublisher(topicName);
+    bool ok = server.start();
     if (ok)
     {
-        std::cout << "Create publisher success, topicName: " << topicName << std::endl;
+        std::cout << "Publish server start..." << std::endl;
     }
     else
     {
-        std::cout << "Create publisher failed, topicName: " << topicName << std::endl;
+        std::cout << "Publish server start failed" << std::endl;
+        return -1;
+    }
+
+
+    std::string topicName = "weather";
+    ok = server.createPublisher(topicName);
+    if (ok)
+    {
+        std::cout << "Create publisher success, topic name: " << topicName << std::endl;
+    }
+    else
+    {
+        std::cout << "Create publisher failed, topic name: " << topicName << std::endl;
+        return -1;
     }
 
     std::string weatherDescription = "It is going to be a fine day";

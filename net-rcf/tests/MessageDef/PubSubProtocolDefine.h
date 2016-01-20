@@ -5,7 +5,7 @@
 #include "WeatherInfoMessage.h"
 
 RCF_BEGIN(I_PubSubMessageHandler, "I_PubSubMessageHandler")
-    RCF_METHOD_V1(void, pushWeather, WeatherInfoMessage&)
+    RCF_METHOD_V1(void, pushWeather, const WeatherInfoMessage&)
 RCF_END(I_PubSubMessageHandler)
 
 #endif

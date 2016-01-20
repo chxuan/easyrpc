@@ -17,7 +17,7 @@
 #include <RCF/RCF.hpp>
 #include <assert.h>
 #include <iostream>
-#include <unordered_map>
+#include <map>
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 
@@ -56,6 +56,8 @@ template<typename I_RCFMessageHandler>
 class RCFSubscriberImpl
 {
 public:
+    typedef std::map<std::string, RCF::SubscriptionPtr> RcfSubscriberMap;
+
     /**
     * @brief RCFSubscriberImpl 构造函数
     */
@@ -132,7 +134,9 @@ public:
             RCF::SubscriptionParms subParms;
             subParms.setPublisherEndpoint(RCF::TcpEndpoint(param.m_ip, param.m_port))
             subParms.setTopicName(param.m_topicName);
-            RCF::SubscriptionPtr rcfSubscriber = m_rcfServer->createSubscription<I_RCFMessageHandler>(rcfMessageHandler, subParms);
+            RCF::SubscriptionPtr rcfSubscriber 
+                                = m_rcfServer->createSubscription<I_RCFMessageHandler>(rcfMessageHandler, subParms);
+            m_rcfSubscriberMap.insert(std::make_pair(topicName, rcfPublisher));
         }
         catch (const RCF::Exception& e)
         {
@@ -140,7 +144,6 @@ public:
             return false;
         }
 
-        m_rcfPublisherMap.insert(std::make_part(topicName, rcfPublisher));
 
         return true;
     }
@@ -183,8 +186,8 @@ public:
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        RcfSubscriberMap::const_iterator iter = m_rcfSubsriberMap.find(topicName);
-        if (iter != m_rcfSubsriberMap.end())
+        typename RcfSubscriberMap::const_iterator iter = m_rcfSubscriberMap.find(topicName);
+        if (iter != m_rcfSubscriberMap.end())
         {
             try
             {
@@ -196,7 +199,7 @@ public:
                 return false;
             }
 
-            m_rcfSubsriberMap.erase(iter);
+            m_rcfSubscriberMap.erase(iter);
 
             return true;
         }
@@ -213,8 +216,8 @@ public:
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        RcfSubscriberMap::const_iterator begin = m_rcfSubsriberMap.begin();
-        RcfSubscriberMap::const_iterator end = m_rcfSubsriberMap.end();
+        typename RcfSubscriberMap::const_iterator begin = m_rcfSubscriberMap.begin();
+        typename RcfSubscriberMap::const_iterator end = m_rcfSubscriberMap.end();
 
         while (begin != end)
         {
@@ -231,7 +234,7 @@ public:
             ++begin;
         }
 
-        m_rcfSubsriberMap.clear();
+        m_rcfSubscriberMap.clear();
     }
 
 private:
@@ -244,8 +247,8 @@ private:
     */
     bool isSubscriberExists(const std::string& topicName)
     {
-        RcfSubscriberMap::const_iterator iter = m_rcfSubsriberMap.find(topicName);
-        if (iter != m_rcfPublisherMap.end())
+        typename RcfSubscriberMap::const_iterator iter = m_rcfSubscriberMap.find(topicName);
+        if (iter != m_rcfSubscriberMap.end())
         {
             return true;
         }
@@ -260,9 +263,7 @@ private:
     typedef boost::shared_ptr<RCF::RcfServer> RcfServerPtr;
     RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
 
-    typedef std::unordered_map<std::string, RCF::SubscriptionPtr> RcfSubscriberMap;
-    RcfSubscriberMap        m_rcfSubsriberMap;          ///< 订阅者map，key：主题名，value：订阅者
-
+    RcfSubscriberMap        m_rcfSubscriberMap;          ///< 订阅者map，key：主题名，value：订阅者
     boost::mutex            m_mutex;                    ///< 订阅者map互斥锁
 };
 
