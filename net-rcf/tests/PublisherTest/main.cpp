@@ -6,6 +6,7 @@
  ************************************************************************/
 
 #include <iostream>
+#include <string>
 #include "PubSubProtocolDefine.h"
 #include "RCFPublisherWrapper.hpp"
 
@@ -14,8 +15,16 @@ int main()
     RCFPublisherWrapper<I_PubSubMessageHandler> server(50003);
     server.start();
 
-    RcfPublisherPtr publisher = server.createPublisher("weather");
-    assert(publisher != NULL);
+    std::string topicName = "weather";
+    bool ok = server.createPublisher(topicName);
+    if (ok)
+    {
+        std::cout << "Create publisher success, topicName: " << topicName << std::endl;
+    }
+    else
+    {
+        std::cout << "Create publisher failed, topicName: " << topicName << std::endl;
+    }
 
     return 0;
 }

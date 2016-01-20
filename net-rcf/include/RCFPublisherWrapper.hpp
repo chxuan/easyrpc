@@ -61,9 +61,9 @@ public:
     *
     * @note 调用该函数之前，请先调用start函数开启服务器
     *
-    * @return 成功返回发布者对象，否则返回NULL
+    * @return 成功返回true，否则返回false
     */
-    RcfPublisherPtr createPublisher(const std::string& topicName)
+    bool createPublisher(const std::string& topicName)
     {
         assert(m_impl != NULL);
         return m_impl->createPublisher(topicName);
@@ -78,6 +78,21 @@ public:
     {
         assert(m_impl != NULL);
         return m_impl->stop();
+    }
+
+    /**
+    * @brief publishObject 通过主题名词得到发布者对象
+    *
+    * @param topicName 主题名称
+    *
+    * @return 成功返回发布和对象，失败返回NULL
+    */
+    RcfPublisherPtr rcfPublishObject(const std::string& topicName)
+    {
+        assert(m_impl != NULL);
+        RcfPublisherPtr publisher = m_impl->rcfPublishObject(topicName);
+        assert(publisher != NULL);
+        return publisher;
     }
 
     /**

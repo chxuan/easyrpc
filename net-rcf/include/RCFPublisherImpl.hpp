@@ -17,7 +17,7 @@
 #include <RCF/RCF.hpp>
 #include <assert.h>
 #include <iostream>
-#include <unordered_map>
+#include <map>
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 
@@ -30,8 +30,8 @@ template<typename I_RCFMessageHandler>
 class RCFPublisherImpl
 {
 public:
-    typedef boost::shared_ptr<RCF::Publisher<I_RCFMessageHandler> >  RcfPublisherPtr;
-    typedef std::unordered_map<std::string, RcfPublisherPtr>         RcfPublisherMap;
+    typedef typename boost::shared_ptr<RCF::Publisher<I_RCFMessageHandler> >  RcfPublisherPtr;
+    typedef typename std::map<std::string, RcfPublisherPtr >                  RcfPublisherMap;
 
     /**
     * @brief RCFPublisherImpl 构造函数
@@ -39,6 +39,7 @@ public:
     * @param port 发布的端口号
     */
     RCFPublisherImpl(unsigned int port)
+        : m_port(port)
     {
         m_rcfInit.reset();
         m_rcfServer.reset();
@@ -90,15 +91,15 @@ public:
     *
     * @note 调用该函数之前，请先调用start函数开启服务器
     *
-    * @return 成功返回发布者对象，否则返回NULL
+    * @return 成功返回true，否则返回false
     */
-    RcfPublisherPtr createPublisher(const std::string& topicName)
+    bool createPublisher(const std::string& topicName)
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
         if (isPublisherExists(topicName))
         {
-            return publishObject(topicName);
+            return false;
         }
 
         try
@@ -107,15 +108,15 @@ public:
             RCF::PublisherParms pubParms;
             pubParms.setTopicName(topicName);
             RcfPublisherPtr rcfPublisher = m_rcfServer->createPublisher<I_RCFMessageHandler>(pubParms);
-            m_rcfPublisherMap.insert(std::make_part(topicName, rcfPublisher));
-            
-            return rcfPublisher;
+            m_rcfPublisherMap.insert(std::make_pair(topicName, rcfPublisher));
         }
         catch (const RCF::Exception& e)
         {
             std::cout << "Error: " << e.getErrorString() << std::endl;
-            return NULL;
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -146,6 +147,24 @@ public:
     }
 
     /**
+    * @brief publishObject 通过主题名词得到发布者对象
+    *
+    * @param topicName 主题名称
+    *
+    * @return 成功返回发布和对象，失败返回NULL
+    */
+    RcfPublisherPtr rcfPublishObject(const std::string& topicName)
+    {
+        typename RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
+        if (iter != m_rcfPublisherMap.end())
+        {
+            return iter->second;
+        }
+
+        return NULL;
+    }
+
+    /**
     * @brief closePublisher 通过主题来停止发布者
     *
     * @param topicName 主题名称
@@ -156,7 +175,7 @@ public:
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
+        typename RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
         if (iter != m_rcfPublisherMap.end())
         {
             try
@@ -186,8 +205,8 @@ public:
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        RcfPublisherMap::const_iterator begin = m_rcfPublisherMap.begin();
-        RcfPublisherMap::const_iterator end = m_rcfPublisherMap.end();
+        typename RcfPublisherMap::const_iterator begin = m_rcfPublisherMap.begin();
+        typename RcfPublisherMap::const_iterator end = m_rcfPublisherMap.end();
 
         while (begin != end)
         {
@@ -219,31 +238,13 @@ private:
     */
     bool isPublisherExists(const std::string& topicName)
     {
-        RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
+        typename RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
         if (iter != m_rcfPublisherMap.end())
         {
             return true;
         }
 
         return false;
-    }
-
-    /**
-    * @brief publishObject 通过主题名词得到发布者对象
-    *
-    * @param topicName 主题名称
-    *
-    * @return 成功返回发布和对象，失败返回NULL
-    */
-    RcfPublisherPtr publishObject(const std::string& topicName)
-    {
-        RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
-        if (iter != m_rcfPublisherMap.end())
-        {
-            return iter->second;
-        }
-
-        return NULL;
     }
 
 private:
