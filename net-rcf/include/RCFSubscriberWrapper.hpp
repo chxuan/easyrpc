@@ -51,7 +51,7 @@ public:
     }
 
     /**
-    * @brief createSubscriber 创建订阅
+    * @brief createSubscription 创建订阅
     *
     * @tparam RCFMessageHandler 类类型
     * @param rcfMessageHandler 消息处理对象
@@ -62,10 +62,10 @@ public:
     * @return 成功返回true，否则返回false
     */
     template<typename RCFMessageHandler>
-    bool createSubscriber(RCFMessageHandler& rcfMessageHandler, const SubscriberParam& param)
+    bool createSubscription(RCFMessageHandler& rcfMessageHandler, const SubscriptionParam& param)
     {
         assert(m_impl != NULL);
-        return m_impl->createSubscriber(rcfMessageHandler, param);
+        return m_impl->createSubscription(rcfMessageHandler, param);
     }
 
     /**
@@ -80,27 +80,27 @@ public:
     }
 
     /**
-    * @brief closeSubscriber 通过主题来停止订阅者
+    * @brief closeSubscription 通过主题来停止订阅
     *
     * @param topicName 主题名称
     *
     * @return 成功返回true，否则返回false
     */
-    bool closeSubscriber(const std::string& topicName)
+    bool closeSubscription(const std::string& topicName)
     {
         assert(m_impl != NULL);
-        return m_impl->closeSubscriber(topicName);
+        return m_impl->closeSubscription(topicName);
     }
 
     /**
-    * @brief closeAllSubscriber 停止所有的订阅者
+    * @brief closeAllSubscription 停止所有的订阅
     *
     * @return 成功返回true，否则返回false
     */
-    bool closeAllSubscriber()
+    bool closeAllSubscription()
     {
         assert(m_impl != NULL);
-        return m_impl->closeAllSubscriber();
+        return m_impl->closeAllSubscription();
     }
 
 private:

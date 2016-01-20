@@ -37,7 +37,7 @@ int main()
     std::string ip = "127.0.0.1";
     unsigned int port = 50003;
     std::string topicName = "weather";
-    ok = server.createSubscriber(rcfMessageHandler, SubscriberParam(ip, port, topicName));
+    ok = server.createSubscription(rcfMessageHandler, SubscriptionParam(ip, port, topicName));
     if (ok)
     {
         std::cout << "Subscription topic success, topic name: " << topicName << std::endl;

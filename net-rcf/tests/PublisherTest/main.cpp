@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <boost/thread.hpp>
 #include "PubSubProtocolDefine.h"
 #include "RCFPublisherWrapper.hpp"
 
@@ -40,7 +41,13 @@ int main()
     std::string weatherDescription = "It is going to be a fine day";
     WeatherInfoMessage weatherInfo;
     weatherInfo.m_weatherDescription = weatherDescription;
-    server.rcfPublishObject(topicName)->publish().pushWeather(weatherInfo);
+
+    while (true)
+    {
+        server.rcfPublishObject(topicName)->publish().pushWeather(weatherInfo);
+        std::cout << "push weather: " << weatherInfo.m_weatherDescription << std::endl;
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(2000));
+    }
 
     std::cin.get();
 

@@ -175,7 +175,7 @@ public:
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        typename RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
+        typename RcfPublisherMap::iterator iter = m_rcfPublisherMap.find(topicName);
         if (iter != m_rcfPublisherMap.end())
         {
             try

@@ -22,19 +22,19 @@
 #include <boost/thread.hpp>
 
 /**
-* @brief 订阅者参数
+* @brief 订阅参数
 */
-class SubscriberParam
+class SubscriptionParam
 {
 public:
     /**
-    * @brief SubscriberParam 构造函数
+    * @brief SubscriptionParam 构造函数
     *
     * @param ip 发布者的IP地址
     * @param port 发布者的端口号
     * @param topicName 订阅的主题
     */
-    SubscriberParam(const std::string& ip, unsigned int port, const std::string& topicName)
+    SubscriptionParam(const std::string& ip, unsigned int port, const std::string& topicName)
         : m_ip(ip),
         m_port(port),
         m_topicName(topicName)
@@ -56,7 +56,7 @@ template<typename I_RCFMessageHandler>
 class RCFSubscriberImpl
 {
 public:
-    typedef std::map<std::string, RCF::SubscriptionPtr> RcfSubscriberMap;
+    typedef std::map<std::string, RCF::SubscriptionPtr> RcfSubscriptionMap;
 
     /**
     * @brief RCFSubscriberImpl 构造函数
@@ -108,7 +108,7 @@ public:
     }
 
     /**
-    * @brief createSubscriber 创建订阅
+    * @brief createSubscription 创建订阅
     *
     * @tparam RCFMessageHandler 类类型
     * @param rcfMessageHandler 消息处理对象
@@ -119,11 +119,11 @@ public:
     * @return 成功返回true，否则返回false
     */
     template<typename RCFMessageHandler>
-    bool createSubscriber(RCFMessageHandler& rcfMessageHandler, const SubscriberParam& param)
+    bool createSubscription(RCFMessageHandler& rcfMessageHandler, const SubscriptionParam& param)
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        if (isSubscriberExists(topicName))
+        if (isSubscriptionExists(param.m_topicName))
         {
             return false;
         }
@@ -132,18 +132,17 @@ public:
         {
             assert(m_rcfServer != NULL);
             RCF::SubscriptionParms subParms;
-            subParms.setPublisherEndpoint(RCF::TcpEndpoint(param.m_ip, param.m_port))
+            subParms.setPublisherEndpoint(RCF::TcpEndpoint(param.m_ip, param.m_port));
             subParms.setTopicName(param.m_topicName);
-            RCF::SubscriptionPtr rcfSubscriber 
+            RCF::SubscriptionPtr rcfSubscription
                                 = m_rcfServer->createSubscription<I_RCFMessageHandler>(rcfMessageHandler, subParms);
-            m_rcfSubscriberMap.insert(std::make_pair(topicName, rcfPublisher));
+            m_rcfSubscriptionMap.insert(std::make_pair(param.m_topicName, rcfSubscription));
         }
         catch (const RCF::Exception& e)
         {
             std::cout << "Error: " << e.getErrorString() << std::endl;
             return false;
         }
-
 
         return true;
     }
@@ -155,7 +154,7 @@ public:
     */
     bool stop()
     {
-        bool ok = closeAllSubscriber();
+        bool ok = closeAllSubscription();
         if (!ok)
         {
             return false;
@@ -176,18 +175,18 @@ public:
     }
 
     /**
-    * @brief closeSubscriber 通过主题来停止订阅者
+    * @brief closeSubscription 通过主题来停止订阅
     *
     * @param topicName 主题名称
     *
     * @return 成功返回true，否则返回false
     */
-    bool closeSubscriber(const std::string& topicName)
+    bool closeSubscription(const std::string& topicName)
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        typename RcfSubscriberMap::const_iterator iter = m_rcfSubscriberMap.find(topicName);
-        if (iter != m_rcfSubscriberMap.end())
+        RcfSubscriptionMap::iterator iter = m_rcfSubscriptionMap.find(topicName);
+        if (iter != m_rcfSubscriptionMap.end())
         {
             try
             {
@@ -199,7 +198,7 @@ public:
                 return false;
             }
 
-            m_rcfSubscriberMap.erase(iter);
+            m_rcfSubscriptionMap.erase(iter);
 
             return true;
         }
@@ -208,16 +207,16 @@ public:
     }
 
     /**
-    * @brief closeAllSubscriber 停止所有的订阅者
+    * @brief closeAllSubscription 停止所有的订阅
     *
     * @return 成功返回true，否则返回false
     */
-    bool closeAllSubscriber()
+    bool closeAllSubscription()
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        typename RcfSubscriberMap::const_iterator begin = m_rcfSubscriberMap.begin();
-        typename RcfSubscriberMap::const_iterator end = m_rcfSubscriberMap.end();
+        RcfSubscriptionMap::const_iterator begin = m_rcfSubscriptionMap.begin();
+        RcfSubscriptionMap::const_iterator end = m_rcfSubscriptionMap.end();
 
         while (begin != end)
         {
@@ -234,21 +233,23 @@ public:
             ++begin;
         }
 
-        m_rcfSubscriberMap.clear();
+        m_rcfSubscriptionMap.clear();
+
+        return true;
     }
 
 private:
     /**
-    * @brief isSubscriberExists 判断订阅者是否存在
+    * @brief isSubscriptionExists 判断订阅是否存在
     *
     * @param topicName 主题名称
     *
     * @return 存在返回true，否则返回false
     */
-    bool isSubscriberExists(const std::string& topicName)
+    bool isSubscriptionExists(const std::string& topicName)
     {
-        typename RcfSubscriberMap::const_iterator iter = m_rcfSubscriberMap.find(topicName);
-        if (iter != m_rcfSubscriberMap.end())
+        RcfSubscriptionMap::const_iterator iter = m_rcfSubscriptionMap.find(topicName);
+        if (iter != m_rcfSubscriptionMap.end())
         {
             return true;
         }
@@ -263,7 +264,7 @@ private:
     typedef boost::shared_ptr<RCF::RcfServer> RcfServerPtr;
     RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
 
-    RcfSubscriberMap        m_rcfSubscriberMap;          ///< 订阅者map，key：主题名，value：订阅者
+    RcfSubscriptionMap      m_rcfSubscriptionMap;       ///< 订阅者map，key：主题名，value：订阅者
     boost::mutex            m_mutex;                    ///< 订阅者map互斥锁
 };
 
