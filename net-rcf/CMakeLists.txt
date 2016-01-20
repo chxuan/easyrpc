@@ -12,4 +12,9 @@ install(FILES ${PROJECT_SOURCE_DIR}/include/RCFServerImpl.hpp DESTINATION /usr/l
 install(FILES ${PROJECT_SOURCE_DIR}/include/RCFClientWrapper.hpp DESTINATION /usr/local/framework/net-rcf/include/net-rcf)
 install(FILES ${PROJECT_SOURCE_DIR}/include/RCFClientImpl.hpp DESTINATION /usr/local/framework/net-rcf/include/net-rcf)
 
+install(FILES ${PROJECT_SOURCE_DIR}/include/RCFPublisherWrapper.hpp DESTINATION /usr/local/framework/net-rcf/include/net-rcf)
+install(FILES ${PROJECT_SOURCE_DIR}/include/RCFPublisherImpl.hpp DESTINATION /usr/local/framework/net-rcf/include/net-rcf)
+install(FILES ${PROJECT_SOURCE_DIR}/include/RCFSubscriberWrapper.hpp DESTINATION /usr/local/framework/net-rcf/include/net-rcf)
+install(FILES ${PROJECT_SOURCE_DIR}/include/RCFSubscriberImpl.hpp DESTINATION /usr/local/framework/net-rcf/include/net-rcf)
+
 
