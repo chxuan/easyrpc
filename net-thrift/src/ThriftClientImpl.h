@@ -32,14 +32,7 @@ class Message;
 class ThriftClientImpl
 {
 public:
-    /**
-    * @brief ThriftClientImpl 构造函数
-    */
     ThriftClientImpl();
-
-    /**
-    * @brief ~ThriftClientImpl 析构函数
-    */
     ~ThriftClientImpl();
 
     /**

@@ -38,14 +38,7 @@ using boost::shared_ptr;
 class ThriftServerImpl
 {
 public:
-    /**
-    * @brief ThriftServerImpl 构造函数
-    */
     ThriftServerImpl();
-
-    /**
-    * @brief ~ThriftServerImpl 析构函数
-    */
     ~ThriftServerImpl();
 
     /**

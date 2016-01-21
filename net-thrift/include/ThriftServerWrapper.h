@@ -30,14 +30,7 @@ typedef void (*MESSAGE_CALLBACK) (Message* message, Message* retMessage);
 class ThriftServerWrapper
 {
 public:
-    /**
-    * @brief ThriftServerWrapper 构造函数
-    */
     ThriftServerWrapper();
-
-    /**
-    * @brief ~ThriftServerWrapper 析构函数
-    */
     ~ThriftServerWrapper();
 
     /**

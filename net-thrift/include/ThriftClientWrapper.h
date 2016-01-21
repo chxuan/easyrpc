@@ -26,14 +26,7 @@ class ThriftClientImpl;
 class ThriftClientWrapper
 {
 public:
-    /**
-    * @brief ThriftClientWrapper 构造函数
-    */
     ThriftClientWrapper();
-
-    /**
-    * @brief ~ThriftClientWrapper 析构函数
-    */
     ~ThriftClientWrapper();
 
     /**
