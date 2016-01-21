@@ -72,10 +72,8 @@ public:
             {
                 m_rcfServer = boost::make_shared<RCF::RcfServer>(RCF::TcpEndpoint(m_port));
                 m_rcfServer->bind<I_RCFMessageHandler>(rcfMessageHandler);
-
                 RCF::ThreadPoolPtr threadPool(new RCF::ThreadPool(1, MAX_THREAD_NUM));
                 m_rcfServer->setThreadPool(threadPool);
-
                 m_rcfServer->start();
             }
         }

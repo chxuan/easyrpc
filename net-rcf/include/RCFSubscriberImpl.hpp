@@ -199,7 +199,6 @@ public:
             }
 
             m_rcfSubscriptionMap.erase(iter);
-
             return true;
         }
 
@@ -217,7 +216,6 @@ public:
 
         RcfSubscriptionMap::const_iterator begin = m_rcfSubscriptionMap.begin();
         RcfSubscriptionMap::const_iterator end = m_rcfSubscriptionMap.end();
-
         while (begin != end)
         {
             try
@@ -234,7 +232,6 @@ public:
         }
 
         m_rcfSubscriptionMap.clear();
-
         return true;
     }
 

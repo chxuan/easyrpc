@@ -189,7 +189,6 @@ public:
             }
 
             m_rcfPublisherMap.erase(iter);
-
             return true;
         }
 
@@ -207,7 +206,6 @@ public:
 
         typename RcfPublisherMap::const_iterator begin = m_rcfPublisherMap.begin();
         typename RcfPublisherMap::const_iterator end = m_rcfPublisherMap.end();
-
         while (begin != end)
         {
             try
@@ -224,7 +222,6 @@ public:
         }
 
         m_rcfPublisherMap.clear();
-
         return true;
     }
 
