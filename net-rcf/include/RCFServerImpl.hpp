@@ -47,7 +47,8 @@ public:
     */
     ~RCFServerImpl()
     {
-        stop();
+        bool ok = stop();
+        assert(ok);
     }
 
     /**

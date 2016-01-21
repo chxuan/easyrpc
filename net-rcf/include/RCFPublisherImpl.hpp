@@ -50,7 +50,8 @@ public:
     */
     ~RCFPublisherImpl()
     {
-        stop();
+        bool ok = stop();
+        assert(ok);
     }
 
     /**

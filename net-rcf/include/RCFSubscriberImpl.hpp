@@ -72,7 +72,8 @@ public:
     */
     ~RCFSubscriberImpl()
     {
-        stop();
+        bool ok = stop();
+        assert(ok);
     }
 
     /**
