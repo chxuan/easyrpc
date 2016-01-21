@@ -27,6 +27,12 @@
 class SubscriptionParam
 {
 public:
+    SubscriptionParam()
+        : m_port(0)
+    {
+        // Do nothing
+    }
+
     std::string         m_ip;               ///< 发布者的IP地址
     unsigned int        m_port;             ///< 发布者的端口号
     std::string         m_topicName;        ///< 订阅的主题 
@@ -43,18 +49,12 @@ class RCFSubscriberImpl
 public:
     typedef std::map<std::string, RCF::SubscriptionPtr> RcfSubscriptionMap;
 
-    /**
-    * @brief RCFSubscriberImpl 构造函数
-    */
     RCFSubscriberImpl()
     {
         m_rcfInit.reset();
         m_rcfServer.reset();
     }
 
-    /**
-    * @brief ~RCFSubscriberImpl 析构函数
-    */
     ~RCFSubscriberImpl()
     {
         bool ok = stop();

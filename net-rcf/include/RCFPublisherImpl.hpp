@@ -27,6 +27,13 @@
 class PublisherParam
 {
 public:
+    PublisherParam()
+        : m_onSubscriberConnect(NULL),
+        m_onSubscriberDisconnect(NULL)
+    {
+        // Do nothing
+    }
+
     std::string                  m_topicName;                ///< 发布的主题
     RCF::OnSubscriberConnect     m_onSubscriberConnect;      ///< 响应订阅者连接的函数
     RCF::OnSubscriberDisconnect  m_onSubscriberDisconnect;   ///< 响应订阅者断开连接的函数
@@ -56,9 +63,6 @@ public:
         m_rcfServer.reset();
     }
 
-    /**
-    * @brief ~RCFPublisherImpl 析构函数
-    */
     ~RCFPublisherImpl()
     {
         bool ok = stop();

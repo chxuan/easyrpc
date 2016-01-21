@@ -42,9 +42,6 @@ public:
         m_rcfServer.reset();
     }
 
-    /**
-    * @brief ~RCFServerImpl 析构函数
-    */
     ~RCFServerImpl()
     {
         bool ok = stop();

@@ -25,9 +25,6 @@ template<typename I_RCFMessageHandler>
 class RCFSubscriberWrapper
 {
 public:
-    /**
-    * @brief RCFSubscriberWrapper 构造函数
-    */
     RCFSubscriberWrapper()
     {
         m_impl.reset();

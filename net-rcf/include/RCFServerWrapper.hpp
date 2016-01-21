@@ -27,6 +27,8 @@ class RCFServerWrapper
 public:
     /**
     * @brief RCFServerWrapper 构造函数
+    *
+    * @param port 端口号 
     */
     RCFServerWrapper(unsigned int port)
     {
