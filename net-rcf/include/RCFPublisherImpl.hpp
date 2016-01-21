@@ -22,6 +22,17 @@
 #include <boost/thread.hpp>
 
 /**
+* @brief 发布者参数
+*/
+class PublisherParam
+{
+public:
+    std::string                  m_topicName;                ///< 发布的主题
+    RCF::OnSubscriberConnect     m_onSubscriberConnect;      ///< 响应订阅者连接的函数
+    RCF::OnSubscriberDisconnect  m_onSubscriberDisconnect;   ///< 响应订阅者断开连接的函数
+};
+
+/**
 * @brief 发布者实现类
 *
 * @tparam I_RCFMessageHandler 类类型

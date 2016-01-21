@@ -27,21 +27,6 @@
 class SubscriptionParam
 {
 public:
-    /**
-    * @brief SubscriptionParam 构造函数
-    *
-    * @param ip 发布者的IP地址
-    * @param port 发布者的端口号
-    * @param topicName 订阅的主题
-    */
-    SubscriptionParam(const std::string& ip, unsigned int port, const std::string& topicName)
-        : m_ip(ip),
-        m_port(port),
-        m_topicName(topicName)
-    {
-        // Do nothing
-    }
-
     std::string         m_ip;               ///< 发布者的IP地址
     unsigned int        m_port;             ///< 发布者的端口号
     std::string         m_topicName;        ///< 订阅的主题 

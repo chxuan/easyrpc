@@ -38,9 +38,8 @@ int main()
         return -1;
     }
 
-    std::string weatherDescription = "It is going to be a fine day";
     WeatherInfoMessage weatherInfo;
-    weatherInfo.m_weatherDescription = weatherDescription;
+    weatherInfo.m_weatherDescription = "It is going to be a fine day";
 
     while (true)
     {

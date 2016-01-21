@@ -34,17 +34,18 @@ int main()
         return -1;
     }
 
-    std::string ip = "127.0.0.1";
-    unsigned int port = 50003;
-    std::string topicName = "weather";
-    ok = server.createSubscription(rcfMessageHandler, SubscriptionParam(ip, port, topicName));
+    SubscriptionParam param;
+    param.m_ip = "127.0.0.1";
+    param.m_port = 50003;
+    param.m_topicName = "weather";
+    ok = server.createSubscription(rcfMessageHandler, param);
     if (ok)
     {
-        std::cout << "Subscription topic success, topic name: " << topicName << std::endl;
+        std::cout << "Subscription topic success, topic name: " << param.m_topicName << std::endl;
     }
     else
     {
-        std::cout << "Subscription topic failed, topic name: " << topicName << std::endl;
+        std::cout << "Subscription topic failed, topic name: " << param.m_topicName << std::endl;
         return -1;
     }
 
