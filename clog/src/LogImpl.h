@@ -81,8 +81,8 @@ private:
     LogImpl& operator = (const LogImpl& var);
 
 private:
-    log4cpp::Category*      m_root;             /// 日志类别指针
-    bool                    m_isInitSuccess;    /// 日志框架是否初始化成功
+    log4cpp::Category*      m_root;             ///< 日志类别指针
+    bool                    m_isInitSuccess;    ///< 日志框架是否初始化成功
 };
 
 #endif
