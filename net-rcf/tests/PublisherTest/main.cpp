@@ -11,6 +11,19 @@
 #include "PubSubProtocolDefine.h"
 #include "RCFPublisherWrapper.hpp"
 
+bool handleSubscriberConnect(RCF::RcfSession& session, const std::string& topicName)
+{
+    (void)session;
+    (void)topicName;
+    return true;
+}
+
+void handleSubscriberDisconnect(RCF::RcfSession& session, const std::string& topicName)
+{
+    (void)session;
+    (void)topicName;
+}
+
 int main()
 {
     RCFPublisherWrapper<I_PubSubMessageHandler> server(50003);
@@ -25,16 +38,18 @@ int main()
         return -1;
     }
 
-
-    std::string topicName = "weather";
-    ok = server.createPublisher(topicName);
+    PublisherParam param;
+    param.m_topicName = "weather";
+    param.m_onSubscriberConnect = handleSubscriberConnect;
+    param.m_onSubscriberDisconnect = handleSubscriberDisconnect;
+    ok = server.createPublisher(param);
     if (ok)
     {
-        std::cout << "Create publisher success, topic name: " << topicName << std::endl;
+        std::cout << "Create publisher success, topic name: " << param.m_topicName << std::endl;
     }
     else
     {
-        std::cout << "Create publisher failed, topic name: " << topicName << std::endl;
+        std::cout << "Create publisher failed, topic name: " << param.m_topicName << std::endl;
         return -1;
     }
 
@@ -43,7 +58,7 @@ int main()
 
     while (true)
     {
-        server.rcfPublishObject(topicName)->publish().pushWeather(weatherInfo);
+        server.rcfPublishObject(param.m_topicName)->publish().pushWeather(weatherInfo);
         std::cout << "push weather: " << weatherInfo.m_weatherDescription << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(2000));
     }

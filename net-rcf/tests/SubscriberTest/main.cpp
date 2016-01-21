@@ -6,6 +6,7 @@
  ************************************************************************/
 
 #include <iostream>
+#include <string>
 #include "PubSubProtocolDefine.h"
 #include "RCFSubscriberWrapper.hpp"
 

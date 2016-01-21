@@ -103,17 +103,17 @@ public:
     /**
     * @brief createPublisher 通过主题来创建发布者
     *
-    * @param topicName 主题名称
+    * @param param 发布者参数
     *
     * @note 调用该函数之前，请先调用start函数开启服务器
     *
     * @return 成功返回true，否则返回false
     */
-    bool createPublisher(const std::string& topicName)
+    bool createPublisher(const PublisherParam& param)
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        if (isPublisherExists(topicName))
+        if (isPublisherExists(param.m_topicName))
         {
             return false;
         }
@@ -121,10 +121,15 @@ public:
         try
         {
             assert(m_rcfServer != NULL);
+            assert(param.m_onSubscriberConnect != NULL);
+            assert(param.m_onSubscriberDisconnect != NULL);
+
             RCF::PublisherParms pubParms;
-            pubParms.setTopicName(topicName);
+            pubParms.setTopicName(param.m_topicName);
+            pubParms.setOnSubscriberConnect(param.m_onSubscriberConnect);
+            pubParms.setOnSubscriberDisconnect(param.m_onSubscriberDisconnect);
             RcfPublisherPtr rcfPublisher = m_rcfServer->createPublisher<I_RCFMessageHandler>(pubParms);
-            m_rcfPublisherMap.insert(std::make_pair(topicName, rcfPublisher));
+            m_rcfPublisherMap.insert(std::make_pair(param.m_topicName, rcfPublisher));
         }
         catch (const RCF::Exception& e)
         {

@@ -57,16 +57,16 @@ public:
     /**
     * @brief createPublisher 通过主题来创建发布者
     *
-    * @param topicName 主题名称
+    * @param param 发布者参数
     *
     * @note 调用该函数之前，请先调用start函数开启服务器
     *
     * @return 成功返回true，否则返回false
     */
-    bool createPublisher(const std::string& topicName)
+    bool createPublisher(const PublisherParam& param)
     {
         assert(m_impl != NULL);
-        return m_impl->createPublisher(topicName);
+        return m_impl->createPublisher(param);
     }
 
     /**
