@@ -17,6 +17,11 @@ public:
     {
         std::cout << weatherInfo.m_weatherDescription << std::endl;
     }
+
+    void pushNews(const std::string& newsInfo)
+    {
+        std::cout << newsInfo << std::endl;
+    }
 };
 
 int main()
@@ -47,6 +52,21 @@ int main()
     else
     {
         std::cout << "Subscription topic failed, topic name: " << param.m_topicName << std::endl;
+        return -1;
+    }
+
+    SubscriptionParam param2;
+    param2.m_ip = "127.0.0.1";
+    param2.m_port = 50003;
+    param2.m_topicName = "news";
+    ok = server.createSubscription(rcfMessageHandler, param2);
+    if (ok)
+    {
+        std::cout << "Subscription topic success, topic name: " << param2.m_topicName << std::endl;
+    }
+    else
+    {
+        std::cout << "Subscription topic failed, topic name: " << param2.m_topicName << std::endl;
         return -1;
     }
 

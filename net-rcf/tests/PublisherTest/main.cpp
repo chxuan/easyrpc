@@ -53,13 +53,31 @@ int main()
         return -1;
     }
 
+    PublisherParam param2;
+    param2.m_topicName = "news";
+    param2.m_onSubscriberConnect = handleSubscriberConnect;
+    param2.m_onSubscriberDisconnect = handleSubscriberDisconnect;
+    ok = server.createPublisher(param2);
+    if (ok)
+    {
+        std::cout << "Create publisher success, topic name: " << param2.m_topicName << std::endl;
+    }
+    else
+    {
+        std::cout << "Create publisher failed, topic name: " << param2.m_topicName << std::endl;
+        return -1;
+    }
+
     WeatherInfoMessage weatherInfo;
     weatherInfo.m_weatherDescription = "It is going to be a fine day";
+    std::string newsDescription = "Good news";
 
     while (true)
     {
         server.rcfPublishObject(param.m_topicName)->publish().pushWeather(weatherInfo);
+        server.rcfPublishObject(param2.m_topicName)->publish().pushNews(newsDescription);
         std::cout << "push weather: " << weatherInfo.m_weatherDescription << std::endl;
+        std::cout << "push news: " << newsDescription << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(2000));
     }
 
