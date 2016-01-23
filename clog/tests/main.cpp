@@ -11,6 +11,7 @@
 
 int main(int argc, char* argv[])
 {
+    // C语言风格
     LOG_FATAL("Fatal log");
     LOG_ALERT("Alert log");
     LOG_CRIT("Crit log");
@@ -23,5 +24,15 @@ int main(int argc, char* argv[])
 
     std::string str = "Debug log";
     LOG_DEBUG("message: %s", str.c_str());
+
+    // C++风格
+    LOG_FATAL_STREAM() << "Hello world";
+    LOG_ALERT_STREAM() << "Hello world";
+    LOG_CRIT_STREAM() << "Hello world";
+    LOG_ERROR_STREAM() << "Hello world";
+    LOG_NOTICE_STREAM() << "Hello world";
+    LOG_INFO_STREAM() << "a + b = " << sum;
+    LOG_DEBUG_STREAM() << "message: " << str;
+
     return 0;
 }

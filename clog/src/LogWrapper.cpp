@@ -37,7 +37,6 @@ static std::string createLogContent(const char* filePath,
                                     const char* content)
 {
     std::string strLine = utils::String::uint64ToString(line);
-
     std::string strFilePath(filePath);
     int pos = strFilePath.find_last_of("/");
     std::string logContent = strFilePath.substr(pos + 1) + " " + function + "(" + strLine + ") " + content;
@@ -55,17 +54,16 @@ static std::string createLogContent(const char* filePath,
 * @param content 日志输入文本
 */
 static void logPrintImpl(const char* filePath,
-                    const char* function,
-                    unsigned long line,
-                    unsigned int priorityLevel,
-                    const char* content)
+                         const char* function,
+                         unsigned long line,
+                         unsigned int priorityLevel,
+                         const char* content)
 {
     std::string logContent = createLogContent(filePath, function, line, priorityLevel, content);
-
     bool ok = LogImpl::getInstance()->logPrint(priorityLevel, logContent);
     if (!ok)
     {
-        std::cout << "Print log to file failed, log: " << logContent << std::endl;
+        std::cout << "Print log failed, log content: " << logContent << std::endl;
     }
 }
 
@@ -83,3 +81,12 @@ void logPrint(const char* filePath,
 
     logPrintImpl(filePath, function, line, priorityLevel, buf);
 }
+
+LogStream logPrintStream(const char* filePath,
+                         const char* function,
+                         unsigned long line,
+                         unsigned int priorityLevel)
+{
+    return LogStream(filePath, function, line, priorityLevel);
+}
+

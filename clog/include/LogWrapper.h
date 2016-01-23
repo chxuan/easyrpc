@@ -14,6 +14,8 @@
 #ifndef _LOGWRAPPER_H
 #define _LOGWRAPPER_H
 
+#include "LogStream.h"
+
 /// 日志优先级，值越低优先级越高
 /// LogWrapper的优先级的值和log4cpp的优先级的值一样，方便映射
 enum LogWrapperPriorityLevel
@@ -29,12 +31,12 @@ enum LogWrapperPriorityLevel
 };
 
 /**
-* @brief logPrint 日志打印函数接口
+* @brief logPrint C语言风格日志打印函数接口
 *
 * @param filePath 文件路径
 * @param function 函数名
 * @param line 代码行数
-* @param priorityLevel 优先级
+* @param priorityLevel 日志优先级
 * @param format 可变参数的format
 * @param ... 可变参数
 */
@@ -43,6 +45,21 @@ void logPrint(const char* filePath,
               unsigned long line,
               unsigned int priorityLevel,
               const char* format, ...);
+
+/**
+ * @brief logPrintStream C++风格日志打印函数接口
+ *
+ * @param filePath 文件路径
+ * @param function 函数名
+ * @param line 代码行数
+ * @param priorityLevel 日志优先级
+ *
+ * @return 日志流对象
+ */
+LogStream logPrintStream(const char* filePath,
+                         const char* function,
+                         unsigned long line,
+                         unsigned int priorityLevel);
 
 /// 代码定位宏
 #define LOCATION_INFO          __FILE__, __FUNCTION__, __LINE__
@@ -55,5 +72,14 @@ void logPrint(const char* filePath,
 #define LOG_NOTICE(format, ...)  logPrint(LOCATION_INFO, LogWrapperNoticeLevel,format, ##__VA_ARGS__)
 #define LOG_INFO(format, ...)    logPrint(LOCATION_INFO, LogWrapperInfoLevel,  format, ##__VA_ARGS__)
 #define LOG_DEBUG(format, ...)   logPrint(LOCATION_INFO, LogWrapperDebugLevel, format, ##__VA_ARGS__)
+
+#define LOG_FATAL_STREAM()       logPrintStream(LOCATION_INFO, LogWrapperFatalLevel)
+#define LOG_ALERT_STREAM()       logPrintStream(LOCATION_INFO, LogWrapperAlertLevel)
+#define LOG_CRIT_STREAM()        logPrintStream(LOCATION_INFO, LogWrapperCritLevel)
+#define LOG_ERROR_STREAM()       logPrintStream(LOCATION_INFO, LogWrapperErrorLevel)
+#define LOG_WARN_STREAM()        logPrintStream(LOCATION_INFO, LogWrapperWarnLevel)
+#define LOG_NOTICE_STREAM()      logPrintStream(LOCATION_INFO, LogWrapperNoticeLevel)
+#define LOG_INFO_STREAM()        logPrintStream(LOCATION_INFO, LogWrapperInfoLevel)
+#define LOG_DEBUG_STREAM()       logPrintStream(LOCATION_INFO, LogWrapperDebugLevel)
 
 #endif
