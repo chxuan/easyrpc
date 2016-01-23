@@ -21,4 +21,5 @@ target_link_libraries(${SHAREDLIBNAME} -Wl,--whole-archive -llog4cpp -Wl,--no-wh
 install(TARGETS ${STATICLIBNAME} ARCHIVE DESTINATION /usr/local/framework/clog/lib)
 install(TARGETS ${SHAREDLIBNAME} LIBRARY DESTINATION /usr/local/framework/clog/lib)
 install(FILES ${PROJECT_SOURCE_DIR}/include/LogWrapper.h DESTINATION /usr/local/framework/clog/include/clog)
+install(FILES ${PROJECT_SOURCE_DIR}/include/LogMessage.h DESTINATION /usr/local/framework/clog/include/clog)
 install(FILES ${PROJECT_SOURCE_DIR}/include/LogStream.h DESTINATION /usr/local/framework/clog/include/clog)

@@ -14,8 +14,8 @@
 #include "LogStream.h"
 #include "LogImpl.h"
 
-LogStream::LogStream(const char* filePath,
-                     const char* function,
+LogStream::LogStream(const std::string& filePath,
+                     const std::string& function,
                      unsigned long line,
                      unsigned int priorityLevel)
     : m_priorityLevel(priorityLevel)
@@ -27,7 +27,7 @@ LogStream::LogStream(const char* filePath,
     }
 
     assert(m_buffer != NULL);
-    std::string strFilePath(filePath);
+    std::string strFilePath = filePath;
     int pos = strFilePath.find_last_of("/");
     (*m_buffer) << strFilePath.substr(pos + 1) << " " << function << "(" << line << ") ";
 }

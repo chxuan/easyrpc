@@ -33,8 +33,8 @@ public:
     * @param line 代码行数
     * @param priorityLevel 日志优先级
     */
-    LogStream(const char* filePath,
-              const char* function,
+    LogStream(const std::string& filePath,
+              const std::string& function,
               unsigned long line,
               unsigned int priorityLevel);
     ~LogStream();
