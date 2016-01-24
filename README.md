@@ -86,7 +86,7 @@ int main()
     return 0;
 }
 ```
-正如你所看到的，使用clog提供的API很简单，有C风格和C++风格格式化输出，clog会同时将日志输出到屏幕和日志文件(logs/exename.log)，下面是输出日志。
+正如你所看到的，使用clog提供的API很简单，有C风格和C++风格格式化输出方式，clog会同时将日志输出到屏幕和日志文件(logs/exename.log)，下面是输出日志。
 ```
 2016-01-24 14:35:27,181: [ERROR] : main.cpp main(19) Error log
 2016-01-24 14:35:27,181: [WARN ] : main.cpp main(20) Warn log
@@ -95,6 +95,95 @@ int main()
 2016-01-24 14:35:27,182: [WARN ] : main.cpp main(25) Hello world
 2016-01-24 14:35:27,182: [DEBUG] : main.cpp main(26) message: Hello world
 ```
+
+###2.使用net-rcf
+net-rcf是基于RCF（Remote Call Framework by Delta V Software）的库，其中net-rcf提供RPC（远程过程调用）和发布/订阅模式的通信方式，下面是RPC和发布/订阅模式的使用方式。
+
+####使用RPC
+要使用RPC,首先要定义客户端和服务器端的通信协议。
+```
+//RPCProtocolDefine.h
+#include <RCF/RCF.hpp>
+#include "PeopleInfoMessage.h"
+
+RCF_BEGIN(I_RPCMessageHandler, "I_RPCMessageHandler")
+    RCF_METHOD_R2(bool, queryPeopleInfoByID, int, PeopleInfoMessage&)
+RCF_END(I_RPCMessageHandler)
+```
+其中queryPeopleInfoByID函数就是客户端向服务器发起请求用户信息的函数，下面是服务器端的代码。
+```
+//Server.cpp
+#include <assert.h>
+#include <iostream>
+#include "RPCProtocolDefine.h"
+#include "RCFServerWrapper.hpp"
+
+class RCFMessageHandler
+{
+public:
+    bool queryPeopleInfoByID(int id, PeopleInfoMessage& peopleInfo)
+    {
+        if (id == 1000)
+        {
+            peopleInfo.m_name = "Jack";
+            peopleInfo.m_age = 24;
+            
+            return true;
+        }
+
+        return false;
+    }
+};
+
+int main()
+{
+    RCFMessageHandler rcfMessageHandler;
+    RCFServerWrapper<I_RPCMessageHandler> server(50002);
+
+    bool ok = server.start(rcfMessageHandler);
+    assert(ok);
+    
+    std::cin.get();
+    
+    ok = server.stop();
+    assert(ok);
+
+    return 0;
+}
+```
+其中RCFMessageHandler类是服务器端进行消息处理的类，接下来是客户端的代码。
+```
+//Client.cpp
+#include <iostream>
+#include "RPCProtocolDefine.h"
+#include "RCFClientWrapper.hpp"
+
+int main()
+{
+    RCFClientWrapper<I_RPCMessageHandler> client("127.0.0.1", 50002);
+
+    try
+    {
+        PeopleInfoMessage peopleInfo;
+        int id = 1000;
+
+        bool ok = client.rcfClientObject()->queryPeopleInfoByID(id, peopleInfo);
+        if (ok)
+        {
+            std::cout << "name: " << peopleInfo.m_name << std::endl;
+            std::cout << "age: " << peopleInfo.m_age << std::endl;
+        }
+    }
+    catch (const RCF::Exception& e)
+    {
+        std::cout << "Error: " << e.getErrorString() << std::endl;
+    }
+
+    return 0;
+}
+```
+
+
 
 
 
