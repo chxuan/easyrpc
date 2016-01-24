@@ -99,8 +99,8 @@ int main()
 ###2.使用net-rcf
 net-rcf是基于RCF（Remote Call Framework by Delta V Software）的库，其中net-rcf提供RPC（远程过程调用）和发布/订阅模式的通信方式，下面是RPC和发布/订阅模式的使用方式。
 
-####使用RPC
-要使用RPC,首先要定义客户端和服务器端的通信协议。
+####使用RPC通信方式
+要使用RPC，首先要定义客户端和服务器端的通信协议。
 ```
 //RPCProtocolDefine.h
 #include <RCF/RCF.hpp>
@@ -182,6 +182,103 @@ int main()
     return 0;
 }
 ```
+####使用发布/订阅通信方式
+要使用发布/订阅通信方式，首先也要定义发布端和订阅端的通信协议。
+```
+//PubSubProtocolDefine.h
+#include <RCF/RCF.hpp>
+#include <string>
+
+RCF_BEGIN(I_PubSubMessageHandler, "I_PubSubMessageHandler")
+    RCF_METHOD_V1(void, pushNews, const std::string&)
+RCF_END(I_PubSubMessageHandler)
+```
+发布端调用pushNews将news发送到订阅端，下面是发布端的代码。
+```
+//Publisher.cpp
+#include <assert.h>
+#include <iostream>
+#include <string>
+#include <boost/thread.hpp>
+#include "PubSubProtocolDefine.h"
+#include "RCFPublisherWrapper.hpp"
+
+bool handleSubscriberConnect(RCF::RcfSession& session, const std::string& topicName)
+{
+    (void)session;
+    (void)topicName;
+    return true;
+}
+
+void handleSubscriberDisconnect(RCF::RcfSession& session, const std::string& topicName)
+{
+    (void)session;
+    (void)topicName;
+}
+
+int main()
+{
+    RCFPublisherWrapper<I_PubSubMessageHandler> server(50003);
+    bool ok = server.start();
+    assert(ok);
+
+    PublisherParam param;
+    param.m_topicName = "news";
+    param.m_onSubscriberConnect = handleSubscriberConnect;
+    param.m_onSubscriberDisconnect = handleSubscriberDisconnect;
+    ok = server.createPublisher(param);
+    assert(ok);
+
+    std::string newsDescription = "Good news";
+    while (true)
+    {
+        server.rcfPublishObject(param.m_topicName)->publish().pushNews(newsDescription);
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(2000));
+    }
+
+    return 0;
+}
+```
+发布端创建了“news“主题，订阅端也将订阅该主题，接下来是订阅端的代码。
+```
+//Subscriber.cpp
+#include <assert.h>
+#include <iostream>
+#include <string>
+#include "PubSubProtocolDefine.h"
+#include "RCFSubscriberWrapper.hpp"
+
+class RCFMessageHandler
+{
+public:
+    void pushNews(const std::string& newsInfo)
+    {
+        std::cout << newsInfo << std::endl;
+    }
+};
+
+int main()
+{
+    RCFSubscriberWrapper<I_PubSubMessageHandler> server;
+    RCFMessageHandler rcfMessageHandler;
+
+    bool ok = server.start();
+    assert(ok);
+
+    SubscriptionParam param;
+    param.m_ip = "127.0.0.1";
+    param.m_port = 50003;
+    param.m_topicName = "news";
+    ok = server.createSubscription(rcfMessageHandler, param);
+    assert(ok);
+
+    std::cin.get();
+
+    return 0;
+}
+```
+
+
 
 
 
