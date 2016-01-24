@@ -11,27 +11,18 @@
 
 int main()
 {
+    int a = 1;
+    int b = 2;
+    std::string str = "Hello world";
+
     // C风格
-    logFatal("Fatal log");
-    logAlert("Alert log");
-    logCrit("Crit log");
     logError("Error log");
     logWarn("Warn log");
-    logNotice("Notice log");
-
-    int sum = 10;
-    logInfo("a + b = %d", sum);
-
-    std::string str = "Debug log";
-    logDebug("message: %s", str.c_str());
+    logInfo("a + b = %d", a + b);
 
     // C++风格
-    logFatal() << "Hello world";
-    logAlert() << "Hello world";
-    logCrit() << "Hello world";
     logError() << "Hello world";
     logWarn() << "Hello world";
-    logNotice() << "a + b = " << sum;
     logDebug() << "message: " << str;
 
     return 0;
