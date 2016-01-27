@@ -102,7 +102,7 @@ public:
 
 private:
     typedef typename boost::shared_ptr<RCFSubscriberImpl<I_RCFMessageHandler> > RCFSubscriberImplPtr;
-    RCFSubscriberImplPtr             m_impl;             ///< RCF订阅者实现对象
+    RCFSubscriberImplPtr m_impl;             ///< RCF订阅者实现对象
 };
 
 #endif

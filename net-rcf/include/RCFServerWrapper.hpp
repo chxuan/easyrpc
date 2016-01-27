@@ -78,7 +78,7 @@ public:
 
 private:
     typedef typename boost::shared_ptr<RCFServerImpl<I_RCFMessageHander> > RCFServerImplPtr;
-    RCFServerImplPtr           m_impl;     ///< RCF服务器实现类指针
+    RCFServerImplPtr m_impl;     ///< RCF服务器实现类指针
 };
 
 #endif

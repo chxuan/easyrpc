@@ -33,9 +33,9 @@ public:
         // Do nothing
     }
 
-    std::string         m_ip;               ///< 发布者的IP地址
-    unsigned int        m_port;             ///< 发布者的端口号
-    std::string         m_topicName;        ///< 订阅的主题 
+    std::string m_ip;               ///< 发布者的IP地址
+    unsigned int m_port;            ///< 发布者的端口号
+    std::string m_topicName;        ///< 订阅的主题 
 };
 
 /**
@@ -242,13 +242,13 @@ private:
 
 private:
     typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
-    RcfInitDeinitPtr        m_rcfInit;                  ///< RCF服务器初始化对象
+    RcfInitDeinitPtr m_rcfInit;              ///< RCF服务器初始化对象
 
     typedef boost::shared_ptr<RCF::RcfServer> RcfServerPtr;
-    RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
+    RcfServerPtr m_rcfServer;                ///< RCF服务器对象
 
-    RcfSubscriptionMap      m_rcfSubscriptionMap;       ///< 订阅者map，key：主题名，value：订阅者
-    boost::mutex            m_mutex;                    ///< 订阅者map互斥锁
+    RcfSubscriptionMap m_rcfSubscriptionMap; ///< 订阅者map，key：主题名，value：订阅者
+    boost::mutex m_mutex;                    ///< 订阅者map互斥锁
 };
 
 #endif

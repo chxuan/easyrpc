@@ -118,11 +118,11 @@ private:
 
 private:
     typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
-    RcfInitDeinitPtr        m_rcfInit;                  ///< RCF客户端服务初始化对象
+    RcfInitDeinitPtr m_rcfInit;                 ///< RCF客户端服务初始化对象
 
-    RcfClientPtr            m_rcfClient;                ///< RCF客户端对象
-    std::string             m_ip;                       ///< 服务器ip地址
-    unsigned int            m_port;                     ///< 服务器端口号
+    RcfClientPtr m_rcfClient;                   ///< RCF客户端对象
+    std::string m_ip;                           ///< 服务器ip地址
+    unsigned int m_port;                        ///< 服务器端口号
 };
 
 #endif

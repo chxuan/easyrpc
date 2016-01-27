@@ -34,9 +34,9 @@ public:
         // Do nothing
     }
 
-    std::string                  m_topicName;                ///< 发布的主题
-    RCF::OnSubscriberConnect     m_onSubscriberConnect;      ///< 响应订阅者连接的函数
-    RCF::OnSubscriberDisconnect  m_onSubscriberDisconnect;   ///< 响应订阅者断开连接的函数
+    std::string m_topicName;                                 ///< 发布的主题
+    RCF::OnSubscriberConnect m_onSubscriberConnect;          ///< 响应订阅者连接的函数
+    RCF::OnSubscriberDisconnect m_onSubscriberDisconnect;    ///< 响应订阅者断开连接的函数
 };
 
 /**
@@ -48,8 +48,8 @@ template<typename I_RCFMessageHandler>
 class RCFPublisherImpl
 {
 public:
-    typedef typename boost::shared_ptr<RCF::Publisher<I_RCFMessageHandler> >  RcfPublisherPtr;
-    typedef typename std::map<std::string, RcfPublisherPtr >                  RcfPublisherMap;
+    typedef typename boost::shared_ptr<RCF::Publisher<I_RCFMessageHandler> > RcfPublisherPtr;
+    typedef typename std::map<std::string, RcfPublisherPtr > RcfPublisherMap;
 
     /**
     * @brief RCFPublisherImpl 构造函数
@@ -267,14 +267,14 @@ private:
 
 private:
     typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
-    RcfInitDeinitPtr        m_rcfInit;                  ///< RCF服务器初始化对象
+    RcfInitDeinitPtr m_rcfInit;              ///< RCF服务器初始化对象
 
     typedef boost::shared_ptr<RCF::RcfServer> RcfServerPtr;
-    RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
+    RcfServerPtr m_rcfServer;                ///< RCF服务器对象
 
-    unsigned int            m_port;                     ///< 发布的端口号
-    RcfPublisherMap         m_rcfPublisherMap;          ///< 发布者map，key：主题名，value：发布者
-    boost::mutex            m_mutex;                    ///< 发布者map互斥锁
+    unsigned int m_port;                     ///< 发布的端口号
+    RcfPublisherMap m_rcfPublisherMap;       ///< 发布者map，key：主题名，value：发布者
+    boost::mutex m_mutex;                    ///< 发布者map互斥锁
 };
 
 #endif

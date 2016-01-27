@@ -119,12 +119,12 @@ public:
 
 private:
     typedef boost::shared_ptr<RCF::RcfInitDeinit> RcfInitDeinitPtr;
-    RcfInitDeinitPtr        m_rcfInit;                  ///< RCF服务器初始化对象
+    RcfInitDeinitPtr m_rcfInit;              ///< RCF服务器初始化对象
 
     typedef boost::shared_ptr<RCF::RcfServer> RcfServerPtr;
-    RcfServerPtr            m_rcfServer;                ///< RCF服务器对象
+    RcfServerPtr m_rcfServer;                ///< RCF服务器对象
 
-    unsigned int            m_port;                     ///< 监听端口
+    unsigned int m_port;                     ///< 监听端口
 };
 
 #endif

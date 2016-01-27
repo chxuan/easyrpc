@@ -77,7 +77,7 @@ public:
 
 private:
     typedef typename boost::shared_ptr<RCFClientImpl<I_RCFMessageHandler> > RCFClientImplPtr;
-    RCFClientImplPtr        m_impl;		///< RCF客户端实现类指针
+    RCFClientImplPtr m_impl;		///< RCF客户端实现类指针
 };
 
 #endif
