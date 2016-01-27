@@ -80,11 +80,11 @@ public:
     void setRecivedMsecTimeoutOnce(unsigned int recivedMsecTimeout);
 
 private:
-    std::string         m_ip;                       ///< 服务器ip地址
-    unsigned int        m_port;                     ///< 服务器端口号
-    unsigned int        m_connectMsecTimeout;       ///< 连接超时
-    unsigned int        m_sendMsecTimeout;          ///< 发送超时
-    unsigned int        m_recivedMsecTimeout;       ///< 接收超时
+    std::string m_ip;                        ///< 服务器ip地址
+    unsigned int m_port;                     ///< 服务器端口号
+    unsigned int m_connectMsecTimeout;       ///< 连接超时
+    unsigned int m_sendMsecTimeout;          ///< 发送超时
+    unsigned int m_recivedMsecTimeout;       ///< 接收超时
 };
 
 #endif

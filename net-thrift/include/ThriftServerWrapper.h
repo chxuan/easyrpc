@@ -68,7 +68,7 @@ public:
 
 private:
     typedef std::shared_ptr<ThriftServerImpl> ThriftServerImplPtr;
-    ThriftServerImplPtr           m_impl;     ///< thrift服务器实现类指针
+    ThriftServerImplPtr m_impl;     ///< thrift服务器实现类指针
 };
 
 #endif

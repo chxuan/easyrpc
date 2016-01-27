@@ -75,7 +75,7 @@ public:
 
 private:
     typedef std::shared_ptr<ThriftClientImpl> ThriftClientImplPtr;
-    ThriftClientImplPtr       m_impl;     ///< thrift客户端实现类指针
+    ThriftClientImplPtr m_impl;     ///< thrift客户端实现类指针
 };
 
 #endif

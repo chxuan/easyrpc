@@ -83,15 +83,15 @@ private:
     static void serverStart(ThriftServerImpl* server);
 
 public:
-    MESSAGE_CALLBACK         m_messageCallback;         ///< 消息回调函数
+    MESSAGE_CALLBACK m_messageCallback;     ///< 消息回调函数
 
 private:
     typedef std::shared_ptr<TThreadedServer> TThreadedServerPtr;
-    TThreadedServerPtr         m_threadedServer;          ///< thrift服务
+    TThreadedServerPtr m_threadedServer;    ///< thrift服务
 
     typedef std::shared_ptr<std::thread> ThreadPtr;
-    ThreadPtr                  m_thread;                  ///< 启动服务的线程
-    unsigned int               m_port;                    ///< 监听端口
+    ThreadPtr m_thread;                     ///< 启动服务的线程
+    unsigned int m_port;                    ///< 监听端口
 };
 
 #endif
