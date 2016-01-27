@@ -85,10 +85,10 @@ private:
                                  const std::string& content);
 
 private:
-    std::string     m_filePath;         ///< 文件路径
-    std::string     m_function;         ///< 函数名
-    unsigned long   m_line;             ///< 代码行数
-    unsigned int    m_priorityLevel;    ///< 日志优先级
+    std::string m_filePath;         ///< 文件路径
+    std::string m_function;         ///< 函数名
+    unsigned long m_line;           ///< 代码行数
+    unsigned int m_priorityLevel;   ///< 日志优先级
 };
 
 #endif
