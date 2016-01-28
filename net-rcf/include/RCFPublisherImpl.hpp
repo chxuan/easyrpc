@@ -176,7 +176,7 @@ public:
     */
     RcfPublisherPtr rcfPublishObject(const std::string& topicName)
     {
-        typename RcfPublisherMap::const_iterator iter = m_rcfPublisherMap.find(topicName);
+        typename RcfPublisherMap::iterator iter = m_rcfPublisherMap.find(topicName);
         if (iter != m_rcfPublisherMap.end())
         {
             return iter->second;
@@ -225,8 +225,8 @@ public:
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        typename RcfPublisherMap::const_iterator begin = m_rcfPublisherMap.begin();
-        typename RcfPublisherMap::const_iterator end = m_rcfPublisherMap.end();
+        typename RcfPublisherMap::iterator begin = m_rcfPublisherMap.begin();
+        typename RcfPublisherMap::iterator end = m_rcfPublisherMap.end();
         while (begin != end)
         {
             try

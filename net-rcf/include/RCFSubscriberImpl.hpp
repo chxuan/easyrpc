@@ -200,8 +200,8 @@ public:
     {
         boost::lock_guard<boost::mutex> locker(m_mutex);
 
-        RcfSubscriptionMap::const_iterator begin = m_rcfSubscriptionMap.begin();
-        RcfSubscriptionMap::const_iterator end = m_rcfSubscriptionMap.end();
+        RcfSubscriptionMap::iterator begin = m_rcfSubscriptionMap.begin();
+        RcfSubscriptionMap::iterator end = m_rcfSubscriptionMap.end();
         while (begin != end)
         {
             try
@@ -231,7 +231,7 @@ private:
     */
     bool isSubscriptionExists(const std::string& topicName)
     {
-        RcfSubscriptionMap::const_iterator iter = m_rcfSubscriptionMap.find(topicName);
+        RcfSubscriptionMap::iterator iter = m_rcfSubscriptionMap.find(topicName);
         if (iter != m_rcfSubscriptionMap.end())
         {
             return true;
