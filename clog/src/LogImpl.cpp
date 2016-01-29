@@ -85,7 +85,7 @@ std::string LogImpl::createLogFile()
     if (exePath.empty())
     {
         std::cout << "Get current exe path failed" << std::endl;
-        return std::string();
+        return "";
     }
 
     // 创建日志路径
@@ -94,7 +94,7 @@ std::string LogImpl::createLogFile()
     if (!ok)
     {
         std::cout << "Create log path failed, log path: " << logPath << std::endl;
-        return std::string();
+        return "";
     }
 
     // 获取当前可执行文件名
@@ -102,12 +102,11 @@ std::string LogImpl::createLogFile()
     if (exeName.empty())
     {
         std::cout << "Get current exe name failed" << std::endl;
-        return std::string();
+        return "";
     }
 
     // 日志文件名
     std::string logFileName = logPath + "/" + exeName + ".log";
-
     return logFileName;
 }
 
