@@ -30,7 +30,6 @@ enum LogWrapperPriorityLevel
     LogWrapperDebugLevel  = 700
 };
 
-/// 代码定位宏
 #define LOCATION_INFO          __FILE__, __FUNCTION__, __LINE__
 
 #define logFatal       LogMessage(LOCATION_INFO, LogWrapperFatalLevel).log
