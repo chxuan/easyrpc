@@ -7,4 +7,5 @@
 *.log
 *.bundle
 *.cmake
+*.user
 
