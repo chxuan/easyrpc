@@ -14,9 +14,7 @@
 #include "TcpServerImpl.h"
 #include <iostream>
 
-typedef boost::shared_ptr<TcpSession> chat_session_ptr;
-
-TcpServerImpl::TcpServerImpl(const string &ip, unsigned int port)
+TcpServerImpl::TcpServerImpl(const std::string& ip, unsigned int port)
     : m_acceptor(m_ioService,
         boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
 {
@@ -50,5 +48,23 @@ bool TcpServerImpl::stop()
 
 void TcpServerImpl::accept()
 {
+    TcpSessionPtr tcpSession(new TcpSession(m_ioService));
+    m_acceptor.async_accept(tcpSession->socket(),
+        boost::bind(&TcpServerImpl::handleAccept, this, tcpSession,
+                    boost::asio::placeholders::error));
+}
 
+void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
+                                 const boost::system::error_code &error)
+{
+    if (!error)
+    {
+        //tcpSession->asyncRead();
+    }
+    else
+    {
+        std::cout << "Tcp server accept failed: " << error.message() << std::endl;
+    }
+
+    accept();
 }

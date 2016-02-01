@@ -14,19 +14,9 @@
 #ifndef _TCPSERVER_H
 #define _TCPSERVER_H
 
-#include <iomanip>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <boost/asio.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/thread.hpp>
-
 #include "TcpSession.h"
+
+typedef boost::shared_ptr<TcpSession> TcpSessionPtr;
 
 class TcpServerImpl
 {
@@ -39,6 +29,9 @@ public:
 
 private:
     void accept();
+
+    void handleAccept(TcpSessionPtr tcpSession,
+                      const boost::system::error_code& error);
 
 private:
     boost::asio::io_service m_ioService;
