@@ -14,7 +14,7 @@
 #ifndef _TCPSERVER_H
 #define _TCPSERVER_H
 
-#include "TcpSession.h"
+#include "TcpSession.hpp"
 
 typedef boost::shared_ptr<TcpSession> TcpSessionPtr;
 
