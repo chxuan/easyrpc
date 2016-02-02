@@ -16,8 +16,6 @@
 
 #include "TcpSession.hpp"
 
-typedef boost::shared_ptr<TcpSession> TcpSessionPtr;
-
 class TcpServerImpl
 {
 public:

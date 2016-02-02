@@ -43,7 +43,7 @@ bool TcpServerImpl::start()
 
 bool TcpServerImpl::stop()
 {
-
+    return true;
 }
 
 void TcpServerImpl::accept()

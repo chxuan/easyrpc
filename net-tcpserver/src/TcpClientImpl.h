@@ -14,6 +14,8 @@
 #ifndef _TCPCLIENT_H
 #define _TCPCLIENT_H
 
+#include "TcpSession.hpp"
+
 class TcpClientImpl
 {
 public:

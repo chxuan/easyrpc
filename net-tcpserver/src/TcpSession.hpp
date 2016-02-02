@@ -54,10 +54,18 @@ public:
     void asyncWrite(const T& t)
     {
         // 序列化数据
-        std::ostringstream archiveStream;
-        boost::archive::binary_oarchive archive(archiveStream);
-        archive << t;
-        m_outboundData = archiveStream.str();
+        try
+        {
+            std::ostringstream archiveStream;
+            boost::archive::binary_oarchive archive(archiveStream);
+            archive << t;
+            m_outboundData = archiveStream.str();
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "Serialize data failed: " << e.what() << std::endl;
+            return;
+        }
 
         // 格式化header
         std::ostringstream headerStream;
@@ -116,13 +124,12 @@ private:
         {
             std::string archiveData(&m_inboundData[0], m_inboundData.size());
             std::istringstream archiveStream(archiveData);
-            boost::archive::binary_oarchive archive(archiveStream);
+            boost::archive::binary_iarchive archive(archiveStream);
             archive >> t;
         }
         catch (std::exception& e)
         {
-            (void)e;
-            std::cout << "Unable to decode data" << std::endl;
+            std::cout << "Deserialize data failed: " << e.what() << std::endl;
             return;
         }
     }
@@ -149,5 +156,7 @@ private:
     char m_inboundHeader[HeaderLength];
     std::vector<char> m_inboundData;
 };
+
+typedef boost::shared_ptr<TcpSession> TcpSessionPtr;
 
 #endif
