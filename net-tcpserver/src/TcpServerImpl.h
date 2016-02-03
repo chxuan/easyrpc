@@ -15,15 +15,27 @@
 #define _TCPSERVER_H
 
 #include "TcpSession.hpp"
+#include <assert.h>
+#include <unordered_map>
 
 class TcpServerImpl
 {
 public:
-    TcpServerImpl(const std::string& ip, unsigned int port);
+    TcpServerImpl(unsigned short port);
     ~TcpServerImpl();
 
     bool start();
     bool stop();
+
+    template<typename T>
+    void asyncWrite(const T* t, const std::string& remoteAddress)
+    {
+        TcpSessionPtr session = tcpSession(remoteAddress);
+        if (session != NULL)
+        {
+            session->asyncWrite(t);
+        }
+    }
 
 private:
     void accept();
@@ -31,9 +43,26 @@ private:
     void handleAccept(TcpSessionPtr tcpSession,
                       const boost::system::error_code& error);
 
+    void ioServiceThread();
+
+    void closeAllTcpSession();
+
+    void joinIOServiceThread();
+
+    bool isTcpSessionExists(const std::string& remoteAddress);
+
+    TcpSessionPtr tcpSession(const std::string& remoteAddress);
+
 private:
     boost::asio::io_service m_ioService;
     boost::asio::ip::tcp::acceptor m_acceptor;
+
+    typedef boost::shared_ptr<boost::thread> ThreadPtr;
+    ThreadPtr m_ioServiceThread;
+
+    // key: ip:port(127.0.0.1:8888)
+    typedef std::unordered_map<std::string, TcpSessionPtr> TcpSessionMap;
+    TcpSessionMap m_tcpSessionMap;
 };
 
 #endif

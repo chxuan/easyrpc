@@ -22,6 +22,7 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/smart_ptr.hpp>
+#include <boost/thread.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
@@ -32,33 +33,43 @@
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/serialization/unordered_set.hpp>
+#include "Message.h"
 
 class TcpSession
 {
 public:
     TcpSession(boost::asio::io_service& ioService) : m_socket(ioService)
     {
+        // Do nothing
     }
 
     boost::asio::ip::tcp::socket &socket() { return m_socket; }
+    std::string remoteIp() { return m_socket.remote_endpoint().address().to_string(); }
+    unsigned short remotePort() { return m_socket.remote_endpoint().port(); }
 
-    template<typename T>
-    void asyncRead(T& t)
+    std::string remoteAddress()
+    {
+        std::ostringstream os;
+        os << remoteIp() << ":" << remotePort();
+        return os.str();
+    }
+
+    void asyncRead(Message* message)
     {
         boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundHeader),
                                 boost::bind(&TcpSession::handleReadHeader, this,
-                                            t, boost::asio::placeholders::error));
+                                            message, boost::asio::placeholders::error));
     }
 
     template<typename T>
-    void asyncWrite(const T& t)
+    void asyncWrite(const T* t)
     {
         // 序列化数据
         try
         {
             std::ostringstream archiveStream;
             boost::archive::binary_oarchive archive(archiveStream);
-            archive << t;
+            archive << *t;
             m_outboundData = archiveStream.str();
         }
         catch (std::exception& e)
@@ -76,19 +87,29 @@ public:
             std::cout << "Format the header failed" << std::endl;
             return;
         }
-
         m_outboundHeader = headerStream.str();
+
+        // 格式化MessageType
+        std::ostringstream messageTypeStream;
+        messageTypeStream << std::setw(MesageTypeLength)
+          << std::hex << t->m_messageType;
+        if (!messageTypeStream || messageTypeStream.str().size() != MesageTypeLength)
+        {
+            std::cout << "Format the message type failed" << std::endl;
+            return;
+        }
+        m_outboundMessageType = messageTypeStream.str();
 
         std::vector<boost::asio::const_buffer> buffers;
         buffers.push_back(boost::asio::buffer(m_outboundHeader));
+        buffers.push_back(boost::asio::buffer(m_outboundMessageType));
         buffers.push_back(boost::asio::buffer(m_outboundData));
         boost::asio::async_write(m_socket, buffers, boost::bind(&TcpSession::handleWrite, this,
                                                                 boost::asio::placeholders::error));
     }
 
 private:
-    template<typename T>
-    void handleReadHeader(T& t, const boost::system::error_code& error)
+    void handleReadHeader(Message* message, const boost::system::error_code& error)
     {
         if (error)
         {
@@ -105,13 +126,36 @@ private:
             return;
         }
 
+        m_inboundData.clear();
+        m_inboundData.resize(inboundDataSize);
         boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundData),
-                                boost::bind(&TcpSession::handleReadData, this,
-                                            t, boost::asio::placeholders::error));
+                                boost::bind(&TcpSession::handleReadMessageType, this,
+                                            message, boost::asio::placeholders::error));
     }
 
-    template<typename T>
-    void handleReadData(T& t, const boost::system::error_code& error)
+    void handleReadMessageType(Message* message, const boost::system::error_code& error)
+    {
+        if (error)
+        {
+            std::cout << "Read message type failed: " << error.message() << std::endl;
+            return;
+        }
+
+        // 解析message type
+        std::istringstream is(std::string(m_inboundMessageType, MesageTypeLength));
+        message->m_messageType = 0;
+        if (!(is >> std::hex >> message->m_messageType))
+        {
+            std::cout << "Mesage type doesn't seem to be valid" << std::endl;
+            return;
+        }
+
+        boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundData),
+                                boost::bind(&TcpSession::handleReadData, this,
+                                            message, boost::asio::placeholders::error));
+    }
+
+    void handleReadData(Message* message, const boost::system::error_code& error)
     {
         if (error)
         {
@@ -119,19 +163,7 @@ private:
             return;
         }
 
-        // 反序列化数据
-        try
-        {
-            std::string archiveData(&m_inboundData[0], m_inboundData.size());
-            std::istringstream archiveStream(archiveData);
-            boost::archive::binary_iarchive archive(archiveStream);
-            archive >> t;
-        }
-        catch (std::exception& e)
-        {
-            std::cout << "Deserialize data failed: " << e.what() << std::endl;
-            return;
-        }
+        message->m_data = std::string(&m_inboundData[0], m_inboundData.size());
     }
 
     void handleWrite(const boost::system::error_code& error)
@@ -148,12 +180,18 @@ private:
 private:
     boost::asio::ip::tcp::socket m_socket;
 
-    enum { HeaderLength = 8 };
+    enum
+    {
+        HeaderLength = 8,
+        MesageTypeLength = 8
+    };
 
     std::string m_outboundHeader;
+    std::string m_outboundMessageType;
     std::string m_outboundData;
 
     char m_inboundHeader[HeaderLength];
+    char m_inboundMessageType[MesageTypeLength];
     std::vector<char> m_inboundData;
 };
 
