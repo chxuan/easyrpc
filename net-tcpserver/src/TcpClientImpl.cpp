@@ -1,7 +1,7 @@
 /* Copyright(C)
 * For free
 * All right reserved
-* 
+*
 */
 /**
 * @file TcpClientImpl.cpp
@@ -12,7 +12,6 @@
 */
 
 #include "TcpClientImpl.h"
-#include "Message.h"
 
 TcpClientImpl::TcpClientImpl(const std::string &ip, unsigned short port)
     : m_endpoint(boost::asio::ip::address::from_string(ip), port),
@@ -54,24 +53,29 @@ bool TcpClientImpl::stop()
     return true;
 }
 
+void TcpClientImpl::setMessageCallback(OnMessageFunc func)
+{
+    assert(func != NULL);
+    m_tcpSession.setMessageCallback(func);
+}
+
 void TcpClientImpl::connect()
 {
-    m_tcpSession.socket().async_connect(m_endpoint, boost::bind(&TcpClientImpl::handleConnect, this,
-                                                                boost::asio::placeholders::error));
+    m_tcpSession.socket().async_connect(m_endpoint,
+                                        boost::bind(&TcpClientImpl::handleConnect, this,
+                                                    boost::asio::placeholders::error));
 }
 
 void TcpClientImpl::handleConnect(const boost::system::error_code &error)
 {
-    if (!error)
-    {
-        Message* message = new Message;
-        m_tcpSession.asyncRead(message);
-    }
-    else
+    if (error)
     {
         std::cout << error.message() << std::endl;
         std::cout << __FUNCTION__ << " " << __LINE__ << std::endl;
+        return;
     }
+
+    m_tcpSession.asyncRead();
 }
 
 void TcpClientImpl::joinIOServiceThread()

@@ -1,7 +1,7 @@
 /* Copyright(C)
 * For free
 * All right reserved
-* 
+*
 */
 /**
 * @file Message.h
@@ -15,6 +15,7 @@
 #define _MESSAGE_H
 
 #include <string>
+#include <boost/smart_ptr.hpp>
 
 #define TCP_MESSAGE_HEADER unsigned int m_messageType;
 
@@ -25,5 +26,7 @@ public:
 
     std::string m_data;
 };
+
+typedef boost::shared_ptr<Message> MessagePtr;
 
 #endif

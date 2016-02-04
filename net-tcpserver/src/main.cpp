@@ -22,12 +22,19 @@ int main()
 
     for (auto& iter : server.allRemoteAddress())
     {
-        //PeopleInfoMessage *peopleInfoMessage = new PeopleInfoMessage;
         boost::shared_ptr<PeopleInfoMessage> peopleInfoMessage(new PeopleInfoMessage);
         peopleInfoMessage->m_messageType = 1000;
         peopleInfoMessage->m_name = "Jack";
         peopleInfoMessage->m_age = 20;
         server.asyncWrite(peopleInfoMessage, iter);
+
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(10));
+
+        boost::shared_ptr<PeopleInfoMessage> peopleInfoMessage2(new PeopleInfoMessage);
+        peopleInfoMessage2->m_messageType = 2000;
+        peopleInfoMessage2->m_name = "Tom";
+        peopleInfoMessage2->m_age = 22;
+        server.asyncWrite(peopleInfoMessage2, iter);
     }
 
     boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));

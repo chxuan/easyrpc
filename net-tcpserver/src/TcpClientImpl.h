@@ -1,7 +1,7 @@
 /* Copyright(C)
 * For free
 * All right reserved
-* 
+*
 */
 /**
 * @file TcpClientImpl.h
@@ -24,6 +24,8 @@ public:
 
     bool start();
     bool stop();
+
+    void setMessageCallback(OnMessageFunc func);
 
 private:
     void connect();

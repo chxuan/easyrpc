@@ -1,7 +1,7 @@
 /* Copyright(C)
 * For free
 * All right reserved
-* 
+*
 */
 /**
 * @file TcpSession.h
@@ -14,6 +14,7 @@
 #ifndef _TCPSESSION_H
 #define _TCPSESSION_H
 
+#include <assert.h>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -36,11 +37,14 @@
 #include "Message.h"
 #include "PeopleInfoMessage.h"
 
+typedef boost::function2<void, MessagePtr, const boost::system::error_code&> OnMessageFunc;
+
 class TcpSession
 {
 public:
     TcpSession(boost::asio::io_service& ioService)
-        : m_socket(ioService)
+        : m_socket(ioService),
+          m_onMessageFunc(NULL)
     {
         // Do nothing
     }
@@ -56,11 +60,17 @@ public:
         return os.str();
     }
 
-    void asyncRead(Message* message)
+    void setMessageCallback(OnMessageFunc func)
+    {
+        assert(func != NULL);
+        m_onMessageFunc = func;
+    }
+
+    void asyncRead()
     {
         boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundHeader),
                                 boost::bind(&TcpSession::handleReadHeader, this,
-                                            message, boost::asio::placeholders::error));
+                                            boost::asio::placeholders::error));
     }
 
     template<typename T>
@@ -79,7 +89,7 @@ public:
             std::cout << "Serialize data failed: " << e.what() << std::endl;
             return;
         }
-std::cout << "m_outboundData.size(): " << m_outboundData.size() << std::endl;
+
         // 格式化header
         std::ostringstream headerStream;
         headerStream << std::setw(HeaderLength)
@@ -90,7 +100,7 @@ std::cout << "m_outboundData.size(): " << m_outboundData.size() << std::endl;
             return;
         }
         m_outboundHeader = headerStream.str();
-std::cout << "t->m_messageType: " << t->m_messageType << std::endl;
+
         // 格式化MessageType
         std::ostringstream messageTypeStream;
         messageTypeStream << std::setw(MesageTypeLength)
@@ -111,11 +121,15 @@ std::cout << "t->m_messageType: " << t->m_messageType << std::endl;
     }
 
 private:
-    void handleReadHeader(Message* message, const boost::system::error_code& error)
+    void handleReadHeader(const boost::system::error_code& error)
     {
         if (error)
         {
             std::cout << "Read header failed: " << error.message() << std::endl;
+            if (m_onMessageFunc != NULL)
+            {
+                m_onMessageFunc(MessagePtr(), error);
+            }
             return;
         }
 
@@ -125,25 +139,34 @@ private:
         if (!(is >> std::hex >> inboundDataSize))
         {
             std::cout << "Header doesn't seem to be valid" << std::endl;
+            boost::system::error_code error(boost::asio::error::invalid_argument);
+            if (m_onMessageFunc != NULL)
+            {
+                m_onMessageFunc(MessagePtr(), error);
+            }
             return;
         }
-
-std::cout << "inboundDataSize: " << inboundDataSize << std::endl;
 
         m_inboundData.clear();
         m_inboundData.resize(inboundDataSize);
         boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundMessageType),
                                 boost::bind(&TcpSession::handleReadMessageType, this,
-                                            message, boost::asio::placeholders::error));
+                                            boost::asio::placeholders::error));
     }
 
-    void handleReadMessageType(Message* message, const boost::system::error_code& error)
+    void handleReadMessageType(const boost::system::error_code& error)
     {
         if (error)
         {
             std::cout << "Read message type failed: " << error.message() << std::endl;
+            if (m_onMessageFunc != NULL)
+            {
+                m_onMessageFunc(MessagePtr(), error);
+            }
             return;
         }
+
+        MessagePtr message(new Message);
 
         // 解析message type
         std::istringstream is(std::string(m_inboundMessageType, MesageTypeLength));
@@ -151,36 +174,31 @@ std::cout << "inboundDataSize: " << inboundDataSize << std::endl;
         if (!(is >> std::hex >> message->m_messageType))
         {
             std::cout << "Mesage type doesn't seem to be valid" << std::endl;
+            boost::system::error_code error(boost::asio::error::invalid_argument);
+            if (m_onMessageFunc != NULL)
+            {
+                m_onMessageFunc(message, error);
+            }
             return;
         }
-std::cout << "m_messageType: " << message->m_messageType << std::endl;
+
         boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundData),
                                 boost::bind(&TcpSession::handleReadData, this,
                                             message, boost::asio::placeholders::error));
     }
 
-    void handleReadData(Message* message, const boost::system::error_code& error)
+    void handleReadData(MessagePtr message, const boost::system::error_code& error)
     {
-        if (error)
+        asyncRead();
+
+        if (!error)
         {
-            std::cout << "Read data failed: " << error.message() << std::endl;
-            return;
+            message->m_data = std::string(&m_inboundData[0], m_inboundData.size());
         }
-
-        message->m_data = std::string(&m_inboundData[0], m_inboundData.size());
-#if 1
-        PeopleInfoMessage peopleInfoMessage;
-        std::istringstream archive_stream(message->m_data);
-        boost::archive::binary_iarchive archive(archive_stream);
-        archive >> peopleInfoMessage;
-        peopleInfoMessage.m_messageType = message->m_messageType;
-
-        std::cout << "#################" << std::endl;
-        std::cout << "m_messageType: " << peopleInfoMessage.m_messageType << std::endl;
-        std::cout << "m_name: " << peopleInfoMessage.m_name << std::endl;
-        std::cout << "m_age: " << peopleInfoMessage.m_age << std::endl;
-        std::cout << "#################" << std::endl;
-#endif
+        if (m_onMessageFunc != NULL)
+        {
+            m_onMessageFunc(message, error);
+        }
     }
 
     void handleWrite(const boost::system::error_code& error)
@@ -210,6 +228,8 @@ private:
     char m_inboundHeader[HeaderLength];
     char m_inboundMessageType[MesageTypeLength];
     std::vector<char> m_inboundData;
+
+    OnMessageFunc m_onMessageFunc;
 };
 
 typedef boost::shared_ptr<TcpSession> TcpSessionPtr;

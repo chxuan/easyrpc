@@ -15,8 +15,6 @@
 #define _TCPSERVER_H
 
 #include "TcpSession.hpp"
-#include <assert.h>
-#include <unordered_map>
 
 class TcpServerImpl
 {
