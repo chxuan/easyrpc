@@ -19,8 +19,27 @@
 class TcpClientImpl
 {
 public:
-    TcpClientImpl();
+    TcpClientImpl(const std::string& ip, unsigned short port);
     ~TcpClientImpl();
+
+    bool start();
+    bool stop();
+
+private:
+    void connect();
+
+    void handleConnect(const boost::system::error_code& error);
+
+    void joinIOServiceThread();
+
+private:
+    boost::asio::io_service m_ioService;
+    boost::asio::ip::tcp::endpoint m_endpoint;
+
+    typedef boost::shared_ptr<boost::thread> ThreadPtr;
+    ThreadPtr m_ioServiceThread;
+
+    TcpSession m_tcpSession;
 };
 
 #endif

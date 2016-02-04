@@ -6,8 +6,8 @@
  ************************************************************************/
 
 #include <iostream>
-#include "PeopleInfoMessage.h"
 #include "TcpServerImpl.h"
+#include "PeopleInfoMessage.h"
 
 int main()
 {
@@ -18,6 +18,18 @@ int main()
     std::cout << "###############################" << std::endl;
 
     //std::cin.get();
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));
+
+    for (auto& iter : server.allRemoteAddress())
+    {
+        //PeopleInfoMessage *peopleInfoMessage = new PeopleInfoMessage;
+        boost::shared_ptr<PeopleInfoMessage> peopleInfoMessage(new PeopleInfoMessage);
+        peopleInfoMessage->m_messageType = 1000;
+        peopleInfoMessage->m_name = "Jack";
+        peopleInfoMessage->m_age = 20;
+        server.asyncWrite(peopleInfoMessage, iter);
+    }
+
     boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));
 
     std::cout << "Server stoped..." << std::endl;

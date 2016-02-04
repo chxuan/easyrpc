@@ -34,11 +34,13 @@
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/serialization/unordered_set.hpp>
 #include "Message.h"
+#include "PeopleInfoMessage.h"
 
 class TcpSession
 {
 public:
-    TcpSession(boost::asio::io_service& ioService) : m_socket(ioService)
+    TcpSession(boost::asio::io_service& ioService)
+        : m_socket(ioService)
     {
         // Do nothing
     }
@@ -62,7 +64,7 @@ public:
     }
 
     template<typename T>
-    void asyncWrite(const T* t)
+    void asyncWrite(const T t)
     {
         // 序列化数据
         try
@@ -77,7 +79,7 @@ public:
             std::cout << "Serialize data failed: " << e.what() << std::endl;
             return;
         }
-
+std::cout << "m_outboundData.size(): " << m_outboundData.size() << std::endl;
         // 格式化header
         std::ostringstream headerStream;
         headerStream << std::setw(HeaderLength)
@@ -88,7 +90,7 @@ public:
             return;
         }
         m_outboundHeader = headerStream.str();
-
+std::cout << "t->m_messageType: " << t->m_messageType << std::endl;
         // 格式化MessageType
         std::ostringstream messageTypeStream;
         messageTypeStream << std::setw(MesageTypeLength)
@@ -126,9 +128,11 @@ private:
             return;
         }
 
+std::cout << "inboundDataSize: " << inboundDataSize << std::endl;
+
         m_inboundData.clear();
         m_inboundData.resize(inboundDataSize);
-        boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundData),
+        boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundMessageType),
                                 boost::bind(&TcpSession::handleReadMessageType, this,
                                             message, boost::asio::placeholders::error));
     }
@@ -149,7 +153,7 @@ private:
             std::cout << "Mesage type doesn't seem to be valid" << std::endl;
             return;
         }
-
+std::cout << "m_messageType: " << message->m_messageType << std::endl;
         boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundData),
                                 boost::bind(&TcpSession::handleReadData, this,
                                             message, boost::asio::placeholders::error));
@@ -164,6 +168,19 @@ private:
         }
 
         message->m_data = std::string(&m_inboundData[0], m_inboundData.size());
+#if 1
+        PeopleInfoMessage peopleInfoMessage;
+        std::istringstream archive_stream(message->m_data);
+        boost::archive::binary_iarchive archive(archive_stream);
+        archive >> peopleInfoMessage;
+        peopleInfoMessage.m_messageType = message->m_messageType;
+
+        std::cout << "#################" << std::endl;
+        std::cout << "m_messageType: " << peopleInfoMessage.m_messageType << std::endl;
+        std::cout << "m_name: " << peopleInfoMessage.m_name << std::endl;
+        std::cout << "m_age: " << peopleInfoMessage.m_age << std::endl;
+        std::cout << "#################" << std::endl;
+#endif
     }
 
     void handleWrite(const boost::system::error_code& error)

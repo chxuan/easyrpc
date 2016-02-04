@@ -28,7 +28,7 @@ public:
     bool stop();
 
     template<typename T>
-    void asyncWrite(const T* t, const std::string& remoteAddress)
+    void asyncWrite(const T t, const std::string& remoteAddress)
     {
         TcpSessionPtr session = tcpSession(remoteAddress);
         if (session != NULL)
@@ -37,13 +37,13 @@ public:
         }
     }
 
+    std::vector<std::string> allRemoteAddress();
+
 private:
     void accept();
 
     void handleAccept(TcpSessionPtr tcpSession,
                       const boost::system::error_code& error);
-
-    void ioServiceThread();
 
     void closeAllTcpSession();
 

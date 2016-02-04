@@ -12,6 +12,8 @@
 */
 
 #include "TcpServerImpl.h"
+#include "Message.h"
+#include "PeopleInfoMessage.h"
 #include <iostream>
 
 TcpServerImpl::TcpServerImpl(unsigned short port)
@@ -31,8 +33,16 @@ bool TcpServerImpl::start()
 {
     if (m_ioServiceThread == NULL)
     {
-        m_ioServiceThread = boost::make_shared<boost::thread>
-                (boost::bind(&TcpServerImpl::ioServiceThread, this));
+        try
+        {
+            m_ioServiceThread = boost::make_shared<boost::thread>
+                    (boost::bind(&boost::asio::io_service::run, &m_ioService));
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "Error: " << e.what() << std::endl;
+            return false;
+        }
     }
 
     return true;
@@ -45,6 +55,17 @@ bool TcpServerImpl::stop()
     joinIOServiceThread();
 
     return true;
+}
+
+std::vector<std::string> TcpServerImpl::allRemoteAddress()
+{
+    std::vector<std::string> vecAllRemoteAddress;
+    for (auto& iter : m_tcpSessionMap)
+    {
+        vecAllRemoteAddress.push_back(iter.first);
+    }
+
+    return vecAllRemoteAddress;
 }
 
 void TcpServerImpl::accept()
@@ -62,7 +83,13 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
     std::cout << __FUNCTION__ << " " << __LINE__ << std::endl;
     if (!error)
     {
-        //tcpSession->asyncRead();
+        //Message message;
+        //tcpSession->asyncRead(message);
+//        PeopleInfoMessage *peopleInfoMessage = new PeopleInfoMessage;
+//        peopleInfoMessage->m_messageType = 1000;
+//        peopleInfoMessage->m_name = "Jack";
+//        peopleInfoMessage->m_age = 20;
+//        tcpSession->asyncWrite(peopleInfoMessage);
         std::cout << "remote address: " << tcpSession->remoteAddress() << std::endl;
         m_tcpSessionMap.insert(std::make_pair(tcpSession->remoteAddress(), tcpSession));
     }
@@ -72,18 +99,6 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
     }
 
     accept();
-}
-
-void TcpServerImpl::ioServiceThread()
-{
-    try
-    {
-        m_ioService.run();
-    }
-    catch (std::exception& e)
-    {
-        std::cout << "Error: " << e.what() << std::endl;
-    }
 }
 
 void TcpServerImpl::closeAllTcpSession()
