@@ -37,7 +37,7 @@
 #include "Message.h"
 #include "PeopleInfoMessage.h"
 
-typedef boost::function2<void, MessagePtr, const boost::system::error_code&> OnMessageFunc;
+typedef boost::function2<void, MessagePtr, const boost::system::error_code&> OnReciveMessage;
 
 class TcpSession
 {
@@ -60,7 +60,7 @@ public:
         return os.str();
     }
 
-    void setMessageCallback(OnMessageFunc func)
+    void setMessageCallback(OnReciveMessage func)
     {
         assert(func != NULL);
         m_onMessageFunc = func;
@@ -103,9 +103,9 @@ public:
 
         // 格式化MessageType
         std::ostringstream messageTypeStream;
-        messageTypeStream << std::setw(MesageTypeLength)
+        messageTypeStream << std::setw(MessageTypeLength)
           << std::hex << t->m_messageType;
-        if (!messageTypeStream || messageTypeStream.str().size() != MesageTypeLength)
+        if (!messageTypeStream || messageTypeStream.str().size() != MessageTypeLength)
         {
             std::cout << "Format the message type failed" << std::endl;
             return;
@@ -169,7 +169,7 @@ private:
         MessagePtr message(new Message);
 
         // 解析message type
-        std::istringstream is(std::string(m_inboundMessageType, MesageTypeLength));
+        std::istringstream is(std::string(m_inboundMessageType, MessageTypeLength));
         message->m_messageType = 0;
         if (!(is >> std::hex >> message->m_messageType))
         {
@@ -218,7 +218,7 @@ private:
     enum
     {
         HeaderLength = 8,
-        MesageTypeLength = 8
+        MessageTypeLength = 8
     };
 
     std::string m_outboundHeader;
@@ -226,10 +226,10 @@ private:
     std::string m_outboundData;
 
     char m_inboundHeader[HeaderLength];
-    char m_inboundMessageType[MesageTypeLength];
+    char m_inboundMessageType[MessageTypeLength];
     std::vector<char> m_inboundData;
 
-    OnMessageFunc m_onMessageFunc;
+    OnReciveMessage m_onMessageFunc;
 };
 
 typedef boost::shared_ptr<TcpSession> TcpSessionPtr;

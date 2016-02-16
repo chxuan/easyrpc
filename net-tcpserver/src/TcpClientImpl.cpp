@@ -53,7 +53,7 @@ bool TcpClientImpl::stop()
     return true;
 }
 
-void TcpClientImpl::setMessageCallback(OnMessageFunc func)
+void TcpClientImpl::setMessageCallback(OnReciveMessage func)
 {
     assert(func != NULL);
     m_tcpSession.setMessageCallback(func);

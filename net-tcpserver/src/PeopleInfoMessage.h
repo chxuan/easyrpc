@@ -12,11 +12,6 @@ public:
         m_sex = 0;
     }
 
-    ~PeopleInfoMessage()
-    {
-        std::cout << "***********************************" << std::endl;
-    }
-
     TCP_MESSAGE_HEADER
 
     std::string m_name;

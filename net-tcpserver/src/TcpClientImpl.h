@@ -25,7 +25,7 @@ public:
     bool start();
     bool stop();
 
-    void setMessageCallback(OnMessageFunc func);
+    void setMessageCallback(OnReciveMessage func);
 
 private:
     void connect();
