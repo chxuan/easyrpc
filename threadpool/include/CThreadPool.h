@@ -1,9 +1,15 @@
-/*************************************************************************
-	> File Name: CThreadpool.h
-	> Author: 
-	> Mail: 
-	> Created Time: 2016年02月17日 星期三 21时42分34秒
- ************************************************************************/
+/* Copyright(C)
+* For free
+* All right reserved
+* 
+*/
+/**
+* @file CThreadPool.h
+* @brief 线程池类
+* @author highway-9, 787280310@qq.com
+* @version 1.1.0
+* @date 2016-02-17
+*/
 
 #ifndef _CTHREADPOOL_H
 #define _CTHREADPOOL_H

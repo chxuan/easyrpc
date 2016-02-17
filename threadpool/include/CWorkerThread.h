@@ -1,9 +1,15 @@
-/*************************************************************************
-	> File Name: CWorkerThread.h
-	> Author: 
-	> Mail: 
-	> Created Time: 2016年02月17日 星期三 21时41分41秒
- ************************************************************************/
+/* Copyright(C)
+* For free
+* All right reserved
+* 
+*/
+/**
+* @file CWorkerThread.h
+* @brief 工作线程类
+* @author highway-9, 787280310@qq.com
+* @version 1.1.0
+* @date 2016-02-17
+*/
 
 #ifndef _CWORKERTHREAD_H
 #define _CWORKERTHREAD_H

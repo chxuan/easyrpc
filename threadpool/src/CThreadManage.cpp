@@ -1,10 +1,13 @@
-/*************************************************************************
-	> File Name: CThreadManage.cpp
-	> Author: 
-	> Mail: 
-	> Created Time: 2016年02月17日 星期三 21时43分25秒
- ************************************************************************/
-
-#include <iostream>
-using namespace std;
+/* Copyright(C)
+* For free
+* All right reserved
+* 
+*/
+/**
+* @file CThreadManage.cpp
+* @brief 线程池管理类
+* @author highway-9, 787280310@qq.com
+* @version 1.1.0
+* @date 2016-02-17
+*/
 
