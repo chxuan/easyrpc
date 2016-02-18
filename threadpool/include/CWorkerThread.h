@@ -13,4 +13,16 @@
 
 #ifndef _CWORKERTHREAD_H
 #define _CWORKERTHREAD_H
+
+#include "CThread.h"
+
+class CWorkerThread : public CThread
+{
+public:
+    CWorkerThread();
+    virtual ~CWorkerThread();
+
+    virtual void run();
+};
+
 #endif

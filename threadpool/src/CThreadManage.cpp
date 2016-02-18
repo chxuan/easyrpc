@@ -11,3 +11,5 @@
 * @date 2016-02-17
 */
 
+#include "CThreadManage.h"
+

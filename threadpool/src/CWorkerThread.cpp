@@ -11,3 +11,20 @@
 * @date 2016-02-17
 */
 
+#include "CWorkerThread.h"
+
+CWorkerThread::CWorkerThread()
+    : CThread()
+{
+
+}
+
+CWorkerThread::~CWorkerThread()
+{
+
+}
+
+void CWorkerThread::run()
+{
+
+}

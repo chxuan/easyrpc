@@ -13,4 +13,13 @@
 
 #ifndef _CTHREADPOOL_H
 #define _CTHREADPOOL_H
+
+#include "CThread.h"
+
+class CThreadPool
+{
+public:
+
+};
+
 #endif

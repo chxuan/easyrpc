@@ -13,4 +13,12 @@
 
 #ifndef _CTHREADMANAGE_H
 #define _CTHREADMANAGE_H
+
+#include "CThreadPool.h"
+
+class CThreadManage
+{
+
+};
+
 #endif
