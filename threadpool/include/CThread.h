@@ -16,6 +16,7 @@
 
 #include <assert.h>
 #include <boost/thread.hpp>
+#include <boost/bind.hpp>
 #include <boost/smart_ptr.hpp>
 
 class CThread
@@ -41,6 +42,7 @@ public:
 
     virtual void run() = 0;
 
+public:
     void start()
     {
         if (m_thread == NULL)
