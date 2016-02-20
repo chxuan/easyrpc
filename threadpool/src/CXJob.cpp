@@ -27,5 +27,6 @@ CXJob::~CXJob()
 
 void CXJob::run(void* jobData)
 {
-    std::cout << "CXJob run" << std::endl;
+    std::cout << "thread id: " << boost::this_thread::get_id() << std::endl;
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(2000));
 }

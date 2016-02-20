@@ -18,8 +18,7 @@
 
 CWorkerThread::CWorkerThread()
     : CThread(),
-      m_jobData(NULL),
-      m_isEnd(false)
+      m_jobData(NULL)
 {
     m_threadPool.reset();
     m_job.reset();
@@ -27,19 +26,15 @@ CWorkerThread::CWorkerThread()
 
 CWorkerThread::~CWorkerThread()
 {
-
+    // Do nothing
 }
 
 void CWorkerThread::run()
 {
-    std::cout << "Hello###########" << std::endl;
-    std::cout << threadID() << std::endl;
-    return;
-
     while (true)
     {
         {
-            boost::unique_lock<boost::mutex> locker(m_varMutex);
+            boost::unique_lock<boost::mutex> locker(m_jobMutex);
             while (m_job == NULL)
             {
                 m_jobCond.wait(locker);
@@ -54,35 +49,41 @@ void CWorkerThread::run()
 
         m_threadPool->moveToIdleList(shared_from_this());
 
-        m_workMutex.unlock();
+        // 工作线程处理完job后，将workMutex解锁
+        // 以便等待下一个job
+        workMutex().unlock();
     }
 }
 
-CWorkerThread::CThreadPoolPtr CWorkerThread::threadPool() const
+CThreadPoolPtr CWorkerThread::threadPool() const
 {
     return m_threadPool;
 }
 
-void CWorkerThread::setThreadPool(CWorkerThread::CThreadPoolPtr threadPool)
+void CWorkerThread::setThreadPool(CThreadPoolPtr threadPool)
 {
     assert(threadPool != NULL);
-
-    boost::lock_guard<boost::mutex> locker(m_varMutex);
+    boost::lock_guard<boost::mutex> locker(m_jobMutex);
     m_threadPool = threadPool;
 }
 
-CWorkerThread::CJobPtr CWorkerThread::job() const
+CJobPtr CWorkerThread::job() const
 {
     return m_job;
 }
 
-void CWorkerThread::setJob(CWorkerThread::CJobPtr job, void *jobData)
+void CWorkerThread::setJob(CJobPtr job, void *jobData)
 {
     assert(job != NULL);
 
-    boost::lock_guard<boost::mutex> locker(m_varMutex);
+    boost::lock_guard<boost::mutex> locker(m_jobMutex);
     m_job = job;
     m_jobData = jobData;
     m_job->setWorkThread(shared_from_this());
     m_jobCond.notify_one();
+}
+
+boost::mutex &CWorkerThread::workMutex()
+{
+    return m_workMutex;
 }

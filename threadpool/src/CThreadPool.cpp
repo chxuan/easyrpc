@@ -15,16 +15,10 @@
 #include "CWorkerThread.h"
 #include "CJob.h"
 
-CThreadPool::CThreadPool(unsigned int initNum)
-{
-    assert(initNum > 0 && initNum <= 30);
-    createIdleThread(m_initNum);
-}
-
 CThreadPool::CThreadPool()
-    : m_initNum(10)
+    : m_initNum(0)
 {
-    createIdleThread(m_initNum);
+    // Do nothing
 }
 
 CThreadPool::~CThreadPool()
@@ -32,17 +26,37 @@ CThreadPool::~CThreadPool()
     terminateAll();
 }
 
-void CThreadPool::run(CThreadPool::CJobPtr job, void *jobData)
+void CThreadPool::initThreadNum(unsigned int initNum)
+{
+    assert(initNum > 0 && initNum <= 30);
+    m_initNum = initNum;
+    createIdleThread(m_initNum);
+}
+
+void CThreadPool::run(CJobPtr job, void *jobData)
 {
     assert(job != NULL);
     CWorkerThreadPtr workThread = idleThread();
+    if (workThread != NULL)
+    {
+        // 在执行工作线程之前将workMutex上锁
+        // 防止在执行工作线程时，对工作线程setJob
+        workThread->workMutex().lock();
 
+        moveToBusyList(workThread);
+        workThread->setThreadPool(shared_from_this());
+        job->setWorkThread(workThread);
+        workThread->setJob(job, jobData);
+    }
 }
 
 void CThreadPool::terminateAll()
 {
     for (auto& iter : m_threadList)
     {
+        // 中断工作线程，即使工作线程在处理job或在等待job
+        iter->interrupt();
+
         if (iter->joinable())
         {
             iter->join();
@@ -54,7 +68,7 @@ void CThreadPool::createIdleThread(unsigned int num)
 {
     for (unsigned int i = 0; i < num; ++i)
     {
-        CThreadPool::CWorkerThreadPtr idleThread(new CWorkerThread);
+        CWorkerThreadPtr idleThread(new CWorkerThread);
         idleThread->setThreadPool(shared_from_this());
         appendToIdleList(idleThread);
         idleThread->start();
@@ -80,7 +94,7 @@ void CThreadPool::deleteIdleThread(unsigned int num)
     }
 }
 
-CThreadPool::CWorkerThreadPtr CThreadPool::idleThread()
+CWorkerThreadPtr CThreadPool::idleThread()
 {
     boost::unique_lock<boost::mutex> locker(m_idleMutex);
     while (m_idleList.size() == 0)
@@ -93,17 +107,17 @@ CThreadPool::CWorkerThreadPtr CThreadPool::idleThread()
         return m_idleList.front();
     }
 
-    return CThreadPool::CWorkerThreadPtr();
+    return CWorkerThreadPtr();
 }
 
-void CThreadPool::appendToIdleList(CThreadPool::CWorkerThreadPtr workThread)
+void CThreadPool::appendToIdleList(CWorkerThreadPtr workThread)
 {
     boost::lock_guard<boost::mutex> locker(m_idleMutex);
     m_idleList.push_back(workThread);
     m_threadList.push_back(workThread);
 }
 
-void CThreadPool::moveToBusyList(CThreadPool::CWorkerThreadPtr idleThread)
+void CThreadPool::moveToBusyList(CWorkerThreadPtr idleThread)
 {
     {
         boost::lock_guard<boost::mutex> locker(m_busyMutex);
@@ -118,7 +132,7 @@ void CThreadPool::moveToBusyList(CThreadPool::CWorkerThreadPtr idleThread)
     }
 }
 
-void CThreadPool::moveToIdleList(CThreadPool::CWorkerThreadPtr busyThread)
+void CThreadPool::moveToIdleList(CWorkerThreadPtr busyThread)
 {
     {
         boost::lock_guard<boost::mutex> locker(m_idleMutex);

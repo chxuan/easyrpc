@@ -19,21 +19,18 @@
 class CThreadPool;
 class CJob;
 
+typedef boost::shared_ptr<CThreadPool> CThreadPoolPtr;
+typedef boost::shared_ptr<CJob> CJobPtr;
+
 class CWorkerThread
         : public CThread,
           public boost::enable_shared_from_this<CWorkerThread>
 {
 public:
-    typedef boost::shared_ptr<CThreadPool> CThreadPoolPtr;
-    typedef boost::shared_ptr<CJob> CJobPtr;
-
     CWorkerThread();
     virtual ~CWorkerThread();
 
     virtual void run();
-
-    boost::mutex m_workMutex;
-    boost::condition_variable_any m_jobCond;
 
 public:
     CThreadPoolPtr threadPool() const;
@@ -42,13 +39,16 @@ public:
     CJobPtr job() const;
     void setJob(CJobPtr job, void* jobData);
 
+    boost::mutex& workMutex();
+
 private:
     CThreadPoolPtr m_threadPool;
     CJobPtr m_job;
     void* m_jobData;
 
-    boost::mutex m_varMutex;
-    bool m_isEnd;
+    boost::mutex m_workMutex;
+    boost::mutex m_jobMutex;
+    boost::condition_variable_any m_jobCond;
 };
 
 typedef boost::shared_ptr<CWorkerThread> CWorkerThreadPtr;

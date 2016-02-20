@@ -14,11 +14,29 @@
 #ifndef _CTHREADMANAGE_H
 #define _CTHREADMANAGE_H
 
-#include "CThreadPool.h"
+#include <boost/shared_ptr.hpp>
+
+class CThreadPool;
+class CJob;
 
 class CThreadManage
 {
+public:
+    typedef boost::shared_ptr<CThreadPool> CThreadPoolPtr;
+    typedef boost::shared_ptr<CJob> CJobPtr;
 
+    CThreadManage();
+    ~CThreadManage();
+
+public:
+    void initThreadNum(unsigned int initNum);
+    void run(CJobPtr job, void* jobData);
+    void terminateAll();
+
+private:
+    CThreadPoolPtr m_threadPool;
 };
+
+typedef boost::shared_ptr<CThreadManage> CThreadManagePtr;
 
 #endif

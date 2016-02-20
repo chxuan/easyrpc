@@ -6,69 +6,30 @@
  ************************************************************************/
 
 #include <iostream>
-#include "CWorkerThread.h"
-
-bool IsReady = false;
-boost::condition_variable_any TestCond;
-boost::mutex TestMutex;
-
-void test()
-{
-    //boost::unique_lock<boost::mutex> locker(TestMutex);
-//    while (!IsReady)
-//    {
-//        TestCond.wait(locker);
-//    }
-    boost::unique_lock<boost::mutex> locker(TestMutex);
-    std::cout << "test###########3" << std::endl;
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(2000));
-}
-
-class A
-{
-public:
-    A()
-    {
-
-    }
-    ~A()
-    {
-        std::cout << "##############################" << std::endl;
-    }
-};
+#include "CThreadManage.h"
+#include "CXJob.h"
 
 int main()
 {
-    typedef boost::shared_ptr<A> APtr;
-    APtr pA(new A);
-    //pA = NULL;
-    std::cout << "123" << std::endl;
-    return 0;
+    CThreadManagePtr manage(new CThreadManage);
+    manage->initThreadNum(2);
 
-    boost::thread t(test);
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
-
-
+    for (int i = 0; i < 3; ++i)
     {
-        boost::unique_lock<boost::mutex> locker(TestMutex);
-        std::cout << "!!!!!!!!!!!!!!!!!!" << std::endl;
-        //IsReady = true;
-        //TestCond.notify_one();
+        CXJobPtr job(new CXJob);
+        manage->run(job, NULL);
     }
 
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(10000));
 
-    t.join();
-
-    std::cout << "Hello world" << std::endl;
-    std::cout << "main thread id: " << boost::this_thread::get_id() << std::endl;
-
-    CWorkerThreadPtr workThread(new CWorkerThread);
-    workThread->start();
-
-    if (workThread->joinable())
+    for (int i = 0; i < 3; ++i)
     {
-        workThread->join();
+        CXJobPtr job(new CXJob);
+        manage->run(job, NULL);
     }
+
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(10000));
+    manage->terminateAll();
 
     return 0;
 }

@@ -20,17 +20,18 @@
 class CWorkerThread;
 class CJob;
 
+typedef boost::shared_ptr<CWorkerThread> CWorkerThreadPtr;
+typedef boost::shared_ptr<CJob> CJobPtr;
+
 class CThreadPool : public boost::enable_shared_from_this<CThreadPool>
 {
 public:
-    typedef boost::shared_ptr<CWorkerThread> CWorkerThreadPtr;
-    typedef boost::shared_ptr<CJob> CJobPtr;
-
     CThreadPool(unsigned int initNum);
     CThreadPool();
     ~CThreadPool();
 
 public:
+    void initThreadNum(unsigned int initNum);
     void run(CJobPtr job, void* jobData);
     void terminateAll();
 
