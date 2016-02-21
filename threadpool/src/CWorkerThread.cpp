@@ -49,6 +49,16 @@ void CWorkerThread::run()
 
         m_threadPool->moveToIdleList(shared_from_this());
 
+//        unsigned int idleNumOfThread = m_threadPool->idleNumOfThread();
+//        unsigned int avalibleHighNumOfThread = m_threadPool->avalibleHighNumOfThread();
+//        if (idleNumOfThread > avalibleHighNumOfThread)
+//        {
+//            unsigned int needDeleteNumOfThread = m_threadPool->idleNumOfThread()
+//                    - m_threadPool->initNumOfThread();
+//            //std::cout << "##########needDeleteNumOfThread: " << needDeleteNumOfThread << std::endl;
+//            m_threadPool->deleteIdleThread(needDeleteNumOfThread);
+//        }
+
         // 工作线程处理完job后，将workMutex解锁
         // 以便等待下一个job
         workMutex().unlock();
@@ -76,10 +86,13 @@ void CWorkerThread::setJob(CJobPtr job, void *jobData)
 {
     assert(job != NULL);
 
-    boost::lock_guard<boost::mutex> locker(m_jobMutex);
-    m_job = job;
-    m_jobData = jobData;
-    m_job->setWorkThread(shared_from_this());
+    {
+        boost::lock_guard<boost::mutex> locker(m_jobMutex);
+        m_job = job;
+        m_jobData = jobData;
+        m_job->setWorkThread(shared_from_this());
+    }
+
     m_jobCond.notify_one();
 }
 

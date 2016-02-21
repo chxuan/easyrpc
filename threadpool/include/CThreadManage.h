@@ -29,7 +29,7 @@ public:
     ~CThreadManage();
 
 public:
-    void initThreadNum(unsigned int initNum);
+    void initThreadNum(unsigned int initNumOfThread);
     void run(CJobPtr job, void* jobData);
     void terminateAll();
 

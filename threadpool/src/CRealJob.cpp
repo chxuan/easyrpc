@@ -27,6 +27,6 @@ CRealJob::~CRealJob()
 
 void CRealJob::run(void* jobData)
 {
-    std::cout << "thread id: " << boost::this_thread::get_id() << std::endl;
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(2000));
+    //std::cout << "thread id: " << boost::this_thread::get_id() << std::endl;
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
 }

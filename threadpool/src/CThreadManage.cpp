@@ -26,13 +26,14 @@ CThreadManage::CThreadManage()
 
 CThreadManage::~CThreadManage()
 {
+    std::cout << "********************* <<" << std::endl;
     // Do nothing
 }
 
-void CThreadManage::initThreadNum(unsigned int initNum)
+void CThreadManage::initThreadNum(unsigned int initNumOfThread)
 {
     assert(m_threadPool != NULL);
-    m_threadPool->initThreadNum(initNum);
+    m_threadPool->initThreadNum(initNumOfThread);
 }
 
 void CThreadManage::run(CJobPtr job, void *jobData)
