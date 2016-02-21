@@ -11,7 +11,6 @@
 
 int main()
 {
-    {
     CThreadManagePtr manage(new CThreadManage);
     manage->initThreadNum(10);
 
@@ -20,10 +19,18 @@ int main()
         CRealJobPtr job(new CRealJob);
         manage->run(job, NULL);
     }
-#if 0
+
     boost::this_thread::sleep_for(boost::chrono::milliseconds(10000));
 
     for (int i = 0; i < 17; ++i)
+    {
+        CRealJobPtr job(new CRealJob);
+        manage->run(job, NULL);
+    }
+
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(10000));
+
+    for (int i = 0; i < 3; ++i)
     {
         CRealJobPtr job(new CRealJob);
         manage->run(job, NULL);
@@ -36,7 +43,7 @@ int main()
         CRealJobPtr job(new CRealJob);
         manage->run(job, NULL);
     }
-
+#if 1
     boost::this_thread::sleep_for(boost::chrono::milliseconds(10000));
 
     for (int i = 0; i < 35; ++i)
@@ -45,10 +52,7 @@ int main()
         manage->run(job, NULL);
     }
 #endif
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));
-    }
-boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));
-    //manage->terminateAll();
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(10000));
 
     return 0;
 }

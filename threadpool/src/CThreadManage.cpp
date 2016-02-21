@@ -26,8 +26,8 @@ CThreadManage::CThreadManage()
 
 CThreadManage::~CThreadManage()
 {
-    std::cout << "********************* <<" << std::endl;
-    // Do nothing
+    assert(m_threadPool != NULL);
+    m_threadPool->terminateAll();
 }
 
 void CThreadManage::initThreadNum(unsigned int initNumOfThread)

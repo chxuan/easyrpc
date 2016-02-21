@@ -48,17 +48,17 @@ void CWorkerThread::run()
         m_job = NULL;
 
         m_threadPool->moveToIdleList(shared_from_this());
-
-//        unsigned int idleNumOfThread = m_threadPool->idleNumOfThread();
-//        unsigned int avalibleHighNumOfThread = m_threadPool->avalibleHighNumOfThread();
-//        if (idleNumOfThread > avalibleHighNumOfThread)
-//        {
-//            unsigned int needDeleteNumOfThread = m_threadPool->idleNumOfThread()
-//                    - m_threadPool->initNumOfThread();
-//            //std::cout << "##########needDeleteNumOfThread: " << needDeleteNumOfThread << std::endl;
-//            m_threadPool->deleteIdleThread(needDeleteNumOfThread);
-//        }
-
+#if 0
+        unsigned int idleNumOfThread = m_threadPool->idleNumOfThread();
+        unsigned int avalibleHighNumOfThread = m_threadPool->avalibleHighNumOfThread();
+        if (idleNumOfThread > avalibleHighNumOfThread)
+        {
+            unsigned int needDeleteNumOfThread = m_threadPool->idleNumOfThread()
+                    - m_threadPool->initNumOfThread();
+            std::cout << "##########needDeleteNumOfThread: " << needDeleteNumOfThread << std::endl;
+            m_threadPool->deleteIdleThread(needDeleteNumOfThread);
+        }
+#endif
         // 工作线程处理完job后，将workMutex解锁
         // 以便等待下一个job
         workMutex().unlock();

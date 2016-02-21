@@ -28,9 +28,6 @@ CThreadPool::CThreadPool()
 
 CThreadPool::~CThreadPool()
 {
-    std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-    //std::cout << "&&&&&&&&&&&&&&&&&&&&&&&: busy: " << busyNumOfThread() << std::endl;
-    //std::cout << "**********************: idle: " << idleNumOfThread() << std::endl;
     terminateAll();
 }
 
@@ -59,18 +56,29 @@ void CThreadPool::run(CJobPtr job, void *jobData)
         }
     }
 
+#if 1
+    if (idleNumOfThread() > avalibleHighNumOfThread())
+    {
+        unsigned int needDeleteNumOfThread = idleNumOfThread() - initNumOfThread();
+        std::cout << "##########needDeleteNumOfThread: " << needDeleteNumOfThread << std::endl;
+        deleteIdleThread(needDeleteNumOfThread);
+    }
+#endif
+
     std::cout << "idleNumOfThread: " << idleNumOfThread() << std::endl;
     if (idleNumOfThread() < avalibleLowNumOfThread())
     {
         if (allNumOfThread() + initNumOfThread() - idleNumOfThread() < maxNumOfThread())
         {
-            std::cout << "####Create thread num: " << initNumOfThread() - idleNumOfThread() << std::endl;
-            createIdleThread(initNumOfThread() - idleNumOfThread());
+            unsigned int needCreateNumOfThread = initNumOfThread() - idleNumOfThread();
+            std::cout << "####Create thread num: " << needCreateNumOfThread << std::endl;
+            createIdleThread(needCreateNumOfThread);
         }
         else
         {
-            std::cout << "####Create thread num: " << maxNumOfThread() - allNumOfThread() << std::endl;
-            createIdleThread(maxNumOfThread() - allNumOfThread());
+            unsigned int needCreateNumOfThread = maxNumOfThread() - allNumOfThread();
+            std::cout << "####Create thread num: " << needCreateNumOfThread << std::endl;
+            createIdleThread(needCreateNumOfThread);
         }
     }
 
@@ -94,12 +102,15 @@ void CThreadPool::terminateAll()
     {
         // 中断工作线程，即使工作线程在处理job或在等待job
         iter->interrupt();
-
         if (iter->joinable())
         {
             iter->join();
         }
     }
+
+    m_threadList.clear();
+    m_idleList.clear();
+    m_busyList.clear();
 }
 
 unsigned int CThreadPool::maxNumOfThread() const
@@ -159,10 +170,24 @@ void CThreadPool::deleteIdleThread(unsigned int num)
     for (unsigned int i = 0; i < num; ++i)
     {
         CWorkerThreadPtr idleThread = m_idleList.front();
+
+        // 中断工作线程
+        idleThread->interrupt();
+        if (idleThread->joinable())
+        {
+            idleThread->join();
+        }
+
         auto iter = std::find(m_idleList.begin(), m_idleList.end(), idleThread);
         if (iter != m_idleList.end())
         {
             m_idleList.erase(iter);
+        }
+
+        iter = std::find(m_threadList.begin(), m_threadList.end(), idleThread);
+        if (iter != m_threadList.end())
+        {
+            m_threadList.erase(iter);
         }
     }
 }
