@@ -7,16 +7,16 @@
 
 #include <iostream>
 #include "CThreadManage.h"
-#include "CXJob.h"
+#include "CRealJob.h"
 
 int main()
 {
     CThreadManagePtr manage(new CThreadManage);
-    manage->initThreadNum(2);
+    manage->initThreadNum(10);
 
     for (int i = 0; i < 3; ++i)
     {
-        CXJobPtr job(new CXJob);
+        CRealJobPtr job(new CRealJob);
         manage->run(job, NULL);
     }
 
@@ -24,7 +24,7 @@ int main()
 
     for (int i = 0; i < 3; ++i)
     {
-        CXJobPtr job(new CXJob);
+        CRealJobPtr job(new CRealJob);
         manage->run(job, NULL);
     }
 

@@ -4,28 +4,28 @@
 * 
 */
 /**
-* @file CXJob.cpp
+* @file CRealJob.cpp
 * @brief 具体的任务类
 * @author highway-9, 787280310@qq.com
 * @version 1.1.0
 * @date 2016-02-20
 */
 
-#include "CXJob.h"
+#include "CRealJob.h"
 #include <iostream>
 
-CXJob::CXJob()
+CRealJob::CRealJob()
     : CJob()
 {
     // Do nothing
 }
 
-CXJob::~CXJob()
+CRealJob::~CRealJob()
 {
     // Do nothing
 }
 
-void CXJob::run(void* jobData)
+void CRealJob::run(void* jobData)
 {
     std::cout << "thread id: " << boost::this_thread::get_id() << std::endl;
     boost::this_thread::sleep_for(boost::chrono::milliseconds(2000));
