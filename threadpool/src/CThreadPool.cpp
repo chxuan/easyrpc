@@ -16,12 +16,15 @@
 #include "CJob.h"
 
 static const unsigned int MaxNumOfThread = 30;
+static const unsigned int AvalibleLowNumOfThread = 3;
+static const unsigned int AvalibleHighNumOfThread = 20;
+static const unsigned int InitNumOfThread = 10;
 
 CThreadPool::CThreadPool()
     : m_maxNumOfThread(MaxNumOfThread),
-      m_avalibleLowNumOfThread(3),
-      m_avalibleHighNumOfThread(20),
-      m_initNumOfThread(0)
+      m_avalibleLowNumOfThread(AvalibleLowNumOfThread),
+      m_avalibleHighNumOfThread(AvalibleHighNumOfThread),
+      m_initNumOfThread(InitNumOfThread)
 {
     // Do nothing
 }
