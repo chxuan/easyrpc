@@ -43,9 +43,15 @@ public:
         }
     }
 
+    /**
+    * @brief run 继承自CThread的类都要实现run函数
+    */
     virtual void run() = 0;
 
 public:
+    /**
+    * @brief start 启动线程是调用handleThread，handleThread再调用run函数
+    */
     void start()
     {
         if (m_thread == NULL)
@@ -72,6 +78,9 @@ public:
         m_thread->detach();
     }
 
+    /**
+    * @brief interrupt 强制中断线程的执行
+    */
     void interrupt()
     {
         assert(m_thread != NULL);

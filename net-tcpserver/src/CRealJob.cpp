@@ -12,7 +12,6 @@
 */
 
 #include "CRealJob.h"
-#include <iostream>
 
 CRealJob::CRealJob()
     : CJob(),

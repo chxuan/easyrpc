@@ -25,7 +25,18 @@ public:
     CRealJob();
     virtual ~CRealJob();
 
+    /**
+    * @brief run 执行任务
+    *
+    * @param jobData 任务数据
+    */
     virtual void run(void* jobData);
+
+    /**
+    * @brief setJob 设置任务，该任务为回调函数
+    *
+    * @param func 回调函数
+    */
     virtual void setJob(OnDoTask func);
 
 private:

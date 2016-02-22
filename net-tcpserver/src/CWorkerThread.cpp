@@ -52,21 +52,11 @@ void CWorkerThread::run()
     }
 }
 
-CThreadPoolPtr CWorkerThread::threadPool() const
-{
-    return m_threadPool;
-}
-
 void CWorkerThread::setThreadPool(CThreadPoolPtr threadPool)
 {
     assert(threadPool != NULL);
     boost::lock_guard<boost::mutex> locker(m_jobMutex);
     m_threadPool = threadPool;
-}
-
-CJobPtr CWorkerThread::job() const
-{
-    return m_job;
 }
 
 void CWorkerThread::setJob(CJobPtr job, void *jobData)
