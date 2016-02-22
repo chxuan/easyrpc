@@ -16,6 +16,9 @@
 
 #include "CJob.h"
 
+/**
+* @brief 任务类，继承自CJob
+*/
 class CRealJob : public CJob
 {
 public:

@@ -19,6 +19,9 @@
 #include <boost/bind.hpp>
 #include <boost/smart_ptr.hpp>
 
+/**
+* @brief 线程类，封装了boost.thread的常用函数
+*/
 class CThread
 {
 public:

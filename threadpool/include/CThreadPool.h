@@ -23,12 +23,14 @@ class CJob;
 typedef boost::shared_ptr<CWorkerThread> CWorkerThreadPtr;
 typedef boost::shared_ptr<CJob> CJobPtr;
 
+/**
+* @brief 线程池类，管理并发线程
+*/
 class CThreadPool : public boost::enable_shared_from_this<CThreadPool>
 {
 public:
     friend class CWorkerThread;
 
-    CThreadPool(unsigned int initNum);
     CThreadPool();
     ~CThreadPool();
 
@@ -48,13 +50,10 @@ public:
 private:
     void createIdleThread(unsigned int num);
     void deleteIdleThread(unsigned int num);
-
     CWorkerThreadPtr idleThread();
-
     void appendToIdleList(CWorkerThreadPtr workThread);
     void moveToBusyList(CWorkerThreadPtr idleThread);
     void moveToIdleList(CWorkerThreadPtr busyThread);
-
     void dynamicAdjustThreadPoolSize();
 
 private:
@@ -73,10 +72,10 @@ private:
     boost::condition_variable_any m_busyCond;
     boost::condition_variable_any m_maxCond;
 
-    unsigned int m_maxNumOfThread;              //the max thread num that can create at the same time
-    unsigned int m_avalibleLowNumOfThread;      //The min num of idle thread that shoule kept
-    unsigned int m_avalibleHighNumOfThread;     //The max num of idle thread that kept at the same time
-    unsigned int m_initNumOfThread;             //Normal thread num
+    unsigned int m_maxNumOfThread;              // the max thread num that can create at the same time
+    unsigned int m_avalibleLowNumOfThread;      // The min num of idle thread that shoule kept
+    unsigned int m_avalibleHighNumOfThread;     // The max num of idle thread that kept at the same time
+    unsigned int m_initNumOfThread;             // Normal thread num
 };
 
 typedef boost::shared_ptr<CThreadPool> CThreadPoolPtr;

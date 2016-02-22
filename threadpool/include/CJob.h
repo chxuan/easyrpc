@@ -19,6 +19,9 @@
 
 typedef boost::function1<void, void*> OnDoTask;
 
+/**
+* @brief 任务类
+*/
 class CJob
 {
 public:

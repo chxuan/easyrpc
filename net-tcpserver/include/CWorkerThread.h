@@ -23,6 +23,9 @@ class CJob;
 typedef boost::shared_ptr<CThreadPool> CThreadPoolPtr;
 typedef boost::shared_ptr<CJob> CJobPtr;
 
+/**
+* @brief 工作线程类，继承自CThread，执行具体的job
+*/
 class CWorkerThread
         : public CThread,
           public boost::enable_shared_from_this<CWorkerThread>

@@ -19,6 +19,9 @@
 class CThreadPool;
 class CJob;
 
+/**
+* @brief 线程池管理类，管理CThreadPool
+*/
 class CThreadManage
 {
 public:
