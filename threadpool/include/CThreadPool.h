@@ -35,9 +35,73 @@ public:
     ~CThreadPool();
 
 public:
+    /**
+    * @brief initThreadNum 初始化线程数量
+    *
+    * @param initNumOfThread 线程数量
+    */
     void initThreadNum(unsigned int initNumOfThread);
+
+    /**
+    * @brief run 执行具体的job
+    *
+    * @param job 具体的任务
+    * @param jobData 任务数据
+    */
     void run(CJobPtr job, void* jobData);
+
+    /**
+    * @brief terminateAll 终止全部的线程，即使该线程在处理任务或等待任务
+    */
     void terminateAll();
+
+private:
+    /**
+    * @brief createIdleThread 创建空闲线程
+    *
+    * @param num 线程数量
+    */
+    void createIdleThread(unsigned int num);
+
+    /**
+    * @brief deleteIdleThread 删除空闲线程
+    *
+    * @param num 线程数量
+    */
+    void deleteIdleThread(unsigned int num);
+
+    /**
+    * @brief idleThread 获得一个空闲线程
+    *
+    * @return 空闲线程
+    */
+    CWorkerThreadPtr idleThread();
+
+    /**
+    * @brief appendToIdleList 将创建好的空闲线程放入空闲线程列表
+    *
+    * @param workThread 工作线程
+    */
+    void appendToIdleList(CWorkerThreadPtr workThread);
+
+    /**
+    * @brief moveToBusyList 将空闲线程移动到繁忙线程列表
+    *
+    * @param idleThread 空闲线程
+    */
+    void moveToBusyList(CWorkerThreadPtr idleThread);
+
+    /**
+    * @brief moveToIdleList 将繁忙线程移动到空闲线程列表
+    *
+    * @param busyThread 繁忙线程
+    */
+    void moveToIdleList(CWorkerThreadPtr busyThread);
+
+    /**
+    * @brief dynamicAdjustThreadPoolSize 通过增、减空闲线程来动态改变线程池的大小
+    */
+    void dynamicAdjustThreadPoolSize();
 
     unsigned int maxNumOfThread() const;
     unsigned int avalibleLowNumOfThread() const;
@@ -46,15 +110,6 @@ public:
     unsigned int allNumOfThread() const;
     unsigned int busyNumOfThread() const;
     unsigned int idleNumOfThread() const;
-
-private:
-    void createIdleThread(unsigned int num);
-    void deleteIdleThread(unsigned int num);
-    CWorkerThreadPtr idleThread();
-    void appendToIdleList(CWorkerThreadPtr workThread);
-    void moveToBusyList(CWorkerThreadPtr idleThread);
-    void moveToIdleList(CWorkerThreadPtr busyThread);
-    void dynamicAdjustThreadPoolSize();
 
 private:
     std::vector<CWorkerThreadPtr> m_threadList;
@@ -72,10 +127,10 @@ private:
     boost::condition_variable_any m_busyCond;
     boost::condition_variable_any m_maxCond;
 
-    unsigned int m_maxNumOfThread;              // the max thread num that can create at the same time
-    unsigned int m_avalibleLowNumOfThread;      // The min num of idle thread that shoule kept
-    unsigned int m_avalibleHighNumOfThread;     // The max num of idle thread that kept at the same time
-    unsigned int m_initNumOfThread;             // Normal thread num
+    unsigned int m_maxNumOfThread;              ///< the max thread num that can create at the same time
+    unsigned int m_avalibleLowNumOfThread;      ///< The min num of idle thread that shoule kept
+    unsigned int m_avalibleHighNumOfThread;     ///< The max num of idle thread that kept at the same time
+    unsigned int m_initNumOfThread;             ///< Normal thread num
 };
 
 typedef boost::shared_ptr<CThreadPool> CThreadPoolPtr;

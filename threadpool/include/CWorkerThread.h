@@ -34,15 +34,33 @@ public:
     CWorkerThread();
     virtual ~CWorkerThread();
 
+    /**
+    * @brief run 实现run函数，在run函数里面等待并执行job
+    */
     virtual void run();
 
 public:
-    CThreadPoolPtr threadPool() const;
+    /**
+    * @brief setThreadPool 设置工作线程的线程池
+    *
+    * @param threadPool 线程池
+    */
     void setThreadPool(CThreadPoolPtr threadPool);
 
-    CJobPtr job() const;
+    /**
+    * @brief setJob 设置工作线程的任务
+    *
+    * @param job 任务
+    * @param jobData 任务数据
+    */
     void setJob(CJobPtr job, void* jobData);
 
+    /**
+    * @brief workMutex 获得工作锁，该锁在工作线程开始执行job时上锁
+    * 在结束job时解锁
+    *
+    * @return 工作锁
+    */
     boost::mutex& workMutex();
 
 private:

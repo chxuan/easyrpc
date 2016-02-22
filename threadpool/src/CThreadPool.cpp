@@ -88,41 +88,6 @@ void CThreadPool::terminateAll()
     m_busyList.clear();
 }
 
-unsigned int CThreadPool::maxNumOfThread() const
-{
-    return m_maxNumOfThread;
-}
-
-unsigned int CThreadPool::avalibleLowNumOfThread() const
-{
-    return m_avalibleLowNumOfThread;
-}
-
-unsigned int CThreadPool::avalibleHighNumOfThread() const
-{
-    return m_avalibleHighNumOfThread;
-}
-
-unsigned int CThreadPool::initNumOfThread() const
-{
-    return m_initNumOfThread;
-}
-
-unsigned int CThreadPool::allNumOfThread() const
-{
-    return m_threadList.size();
-}
-
-unsigned int CThreadPool::busyNumOfThread() const
-{
-    return m_busyList.size();
-}
-
-unsigned int CThreadPool::idleNumOfThread() const
-{
-    return m_idleList.size();
-}
-
 void CThreadPool::createIdleThread(unsigned int num)
 {
     for (unsigned int i = 0; i < num; ++i)
@@ -246,4 +211,39 @@ void CThreadPool::dynamicAdjustThreadPoolSize()
             createIdleThread(needCreateNumOfThread);
         }
     }
+}
+
+unsigned int CThreadPool::maxNumOfThread() const
+{
+    return m_maxNumOfThread;
+}
+
+unsigned int CThreadPool::avalibleLowNumOfThread() const
+{
+    return m_avalibleLowNumOfThread;
+}
+
+unsigned int CThreadPool::avalibleHighNumOfThread() const
+{
+    return m_avalibleHighNumOfThread;
+}
+
+unsigned int CThreadPool::initNumOfThread() const
+{
+    return m_initNumOfThread;
+}
+
+unsigned int CThreadPool::allNumOfThread() const
+{
+    return m_threadList.size();
+}
+
+unsigned int CThreadPool::busyNumOfThread() const
+{
+    return m_busyList.size();
+}
+
+unsigned int CThreadPool::idleNumOfThread() const
+{
+    return m_idleList.size();
 }
