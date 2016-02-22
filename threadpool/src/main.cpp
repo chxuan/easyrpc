@@ -9,19 +9,28 @@
 #include "CThreadManage.h"
 #include "CRealJob.h"
 
+void doTask(void* jobData)
+{
+    //int* data = static_cast<int*>(jobData);
+    //std::cout << "jobData: " << *data << std::endl;
+    std::cout << "Hello world" << std::endl;
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
+}
+
 int main()
 {
     CThreadManagePtr manage(new CThreadManage);
     manage->initThreadNum(10);
 
-    for (int i = 0; i < 9; ++i)
+    for (int i = 0; i < 2; ++i)
     {
         CRealJobPtr job(new CRealJob);
+        job->setJob(boost::bind(doTask, _1));
         manage->run(job, NULL);
     }
 
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(10000));
-
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(3000));
+return 0;
     for (int i = 0; i < 17; ++i)
     {
         CRealJobPtr job(new CRealJob);

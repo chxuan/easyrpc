@@ -40,7 +40,6 @@ void CThreadPool::initThreadNum(unsigned int initNumOfThread)
     m_initNumOfThread = initNumOfThread;
     m_maxNumOfThread = MaxNumOfThread;
     m_avalibleLowNumOfThread = m_initNumOfThread - 10 > 0 ? m_initNumOfThread - 10 : 3;
-    std::cout << "m_avalibleLowNumOfThread: " << m_avalibleLowNumOfThread << std::endl;
     m_avalibleHighNumOfThread = m_initNumOfThread + 10;
     createIdleThread(m_initNumOfThread);
 }
@@ -51,39 +50,13 @@ void CThreadPool::run(CJobPtr job, void *jobData)
 
     {
         boost::unique_lock<boost::mutex> locker(m_busyMutex);
-        std::cout << "################busyNumOfThread: " << busyNumOfThread() << std::endl;
         while (busyNumOfThread() == maxNumOfThread())
         {
-            std::cout << "busy##################################busy" << std::endl;
             m_maxCond.wait(locker);
         }
     }
 
-#if 1
-    if (idleNumOfThread() > avalibleHighNumOfThread())
-    {
-        unsigned int needDeleteNumOfThread = idleNumOfThread() - initNumOfThread();
-        std::cout << "##########needDeleteNumOfThread: " << needDeleteNumOfThread << std::endl;
-        deleteIdleThread(needDeleteNumOfThread);
-    }
-#endif
-
-    std::cout << "idleNumOfThread: " << idleNumOfThread() << std::endl;
-    if (idleNumOfThread() < avalibleLowNumOfThread())
-    {
-        if (allNumOfThread() + initNumOfThread() - idleNumOfThread() < maxNumOfThread())
-        {
-            unsigned int needCreateNumOfThread = initNumOfThread() - idleNumOfThread();
-            std::cout << "####Create thread num: " << needCreateNumOfThread << std::endl;
-            createIdleThread(needCreateNumOfThread);
-        }
-        else
-        {
-            unsigned int needCreateNumOfThread = maxNumOfThread() - allNumOfThread();
-            std::cout << "####Create thread num: " << needCreateNumOfThread << std::endl;
-            createIdleThread(needCreateNumOfThread);
-        }
-    }
+    dynamicAdjustThreadPoolSize();
 
     CWorkerThreadPtr workThread = idleThread();
     if (workThread != NULL)
@@ -94,7 +67,6 @@ void CThreadPool::run(CJobPtr job, void *jobData)
 
         moveToBusyList(workThread);
         workThread->setThreadPool(shared_from_this());
-        job->setWorkThread(workThread);
         workThread->setJob(job, jobData);
     }
 }
@@ -251,4 +223,27 @@ void CThreadPool::moveToIdleList(CWorkerThreadPtr busyThread)
 
     m_idleCond.notify_one();
     m_maxCond.notify_one();
+}
+
+void CThreadPool::dynamicAdjustThreadPoolSize()
+{
+    if (idleNumOfThread() > avalibleHighNumOfThread())
+    {
+        unsigned int needDeleteNumOfThread = idleNumOfThread() - initNumOfThread();
+        deleteIdleThread(needDeleteNumOfThread);
+    }
+
+    if (idleNumOfThread() < avalibleLowNumOfThread())
+    {
+        if (allNumOfThread() + initNumOfThread() - idleNumOfThread() < maxNumOfThread())
+        {
+            unsigned int needCreateNumOfThread = initNumOfThread() - idleNumOfThread();
+            createIdleThread(needCreateNumOfThread);
+        }
+        else
+        {
+            unsigned int needCreateNumOfThread = maxNumOfThread() - allNumOfThread();
+            createIdleThread(needCreateNumOfThread);
+        }
+    }
 }

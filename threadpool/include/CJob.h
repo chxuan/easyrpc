@@ -17,6 +17,8 @@
 #include "CThread.h"
 #include <string>
 
+typedef boost::function1<void, void*> OnDoTask;
+
 class CJob
 {
 public:
@@ -32,6 +34,7 @@ public:
     }
 
     virtual void run(void* jobData) = 0;
+    virtual void setJob(OnDoTask func) = 0;
 
 public:
     int jobNo() const { return m_jobNo; }

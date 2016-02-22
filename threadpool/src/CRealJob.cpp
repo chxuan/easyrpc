@@ -15,7 +15,8 @@
 #include <iostream>
 
 CRealJob::CRealJob()
-    : CJob()
+    : CJob(),
+      m_doTask(NULL)
 {
     // Do nothing
 }
@@ -27,6 +28,14 @@ CRealJob::~CRealJob()
 
 void CRealJob::run(void* jobData)
 {
-    //std::cout << "thread id: " << boost::this_thread::get_id() << std::endl;
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
+    if (m_doTask != NULL)
+    {
+        m_doTask(jobData);
+    }
+}
+
+void CRealJob::setJob(OnDoTask func)
+{
+    assert(func != NULL);
+    m_doTask = func;
 }

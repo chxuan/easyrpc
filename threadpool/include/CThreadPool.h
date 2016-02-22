@@ -55,6 +55,8 @@ private:
     void moveToBusyList(CWorkerThreadPtr idleThread);
     void moveToIdleList(CWorkerThreadPtr busyThread);
 
+    void dynamicAdjustThreadPoolSize();
+
 private:
     std::vector<CWorkerThreadPtr> m_threadList;
     std::vector<CWorkerThreadPtr> m_idleList;

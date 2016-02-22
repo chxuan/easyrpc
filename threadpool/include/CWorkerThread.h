@@ -15,6 +15,7 @@
 #define _CWORKERTHREAD_H
 
 #include "CThread.h"
+#include <boost/atomic.hpp>
 
 class CThreadPool;
 class CJob;
@@ -49,6 +50,8 @@ private:
     boost::mutex m_workMutex;
     boost::mutex m_jobMutex;
     boost::condition_variable_any m_jobCond;
+
+    boost::atomic<bool> m_isSetJob;
 };
 
 typedef boost::shared_ptr<CWorkerThread> CWorkerThreadPtr;

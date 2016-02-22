@@ -23,6 +23,10 @@ public:
     virtual ~CRealJob();
 
     virtual void run(void* jobData);
+    virtual void setJob(OnDoTask func);
+
+private:
+    OnDoTask m_doTask;
 };
 
 typedef boost::shared_ptr<CRealJob> CRealJobPtr;
