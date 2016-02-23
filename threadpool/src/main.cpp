@@ -22,13 +22,13 @@ int main()
     CThreadManagePtr manage(new CThreadManage);
     manage->initThreadNum(10);
 
-    for (int i = 0; i < 2; ++i)
+    for (int i = 0; i < 100; ++i)
     {
         CRealJobPtr job(new CRealJob);
         job->setJob(boost::bind(doTask, _1));
         manage->run(job, NULL);
     }
-
+std::cout << "#################" << std::endl;
     boost::this_thread::sleep_for(boost::chrono::milliseconds(3000));
 return 0;
     for (int i = 0; i < 17; ++i)

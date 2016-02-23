@@ -15,13 +15,17 @@
 #include "CWorkerThread.h"
 #include "CJob.h"
 
+static const unsigned int MaxJobQueueSize = 100000;
+
 static const unsigned int MaxNumOfThread = 30;
 static const unsigned int AvalibleLowNumOfThread = 3;
 static const unsigned int AvalibleHighNumOfThread = 20;
 static const unsigned int InitNumOfThread = 10;
 
 CThreadPool::CThreadPool()
-    : m_maxNumOfThread(MaxNumOfThread),
+    : m_jobQueue(1),
+      m_jobQueueSize(0),
+      m_maxNumOfThread(MaxNumOfThread),
       m_avalibleLowNumOfThread(AvalibleLowNumOfThread),
       m_avalibleHighNumOfThread(AvalibleHighNumOfThread),
       m_initNumOfThread(InitNumOfThread)
@@ -49,6 +53,19 @@ void CThreadPool::run(CJobPtr job, void *jobData)
     assert(job != NULL);
 
     {
+        boost::unique_lock<boost::mutex> locker(m_jobQueuePutMutex);
+        while (isJobQueueFull())
+        {
+            m_jobQueuePutCond.wait(locker);
+        }
+    }
+
+    m_jobQueue.push(job);
+    ++m_jobQueueSize;
+    m_jobQueueGetCond.notify_one();
+
+#if 0
+    {
         boost::unique_lock<boost::mutex> locker(m_busyMutex);
         while (busyNumOfThread() == maxNumOfThread())
         {
@@ -69,6 +86,9 @@ void CThreadPool::run(CJobPtr job, void *jobData)
         workThread->setThreadPool(shared_from_this());
         workThread->setJob(job, jobData);
     }
+#endif
+
+
 }
 
 void CThreadPool::terminateAll()
@@ -246,4 +266,14 @@ unsigned int CThreadPool::busyNumOfThread() const
 unsigned int CThreadPool::idleNumOfThread() const
 {
     return m_idleList.size();
+}
+
+bool CThreadPool::isJobQueueFull() const
+{
+    return m_jobQueueSize == MaxJobQueueSize;
+}
+
+bool CThreadPool::isJobQueueEmpty() const
+{
+    return m_jobQueueSize == 0;
 }
