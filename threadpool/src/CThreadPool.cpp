@@ -23,9 +23,7 @@ static const unsigned int AvalibleHighNumOfThread = 20;
 static const unsigned int InitNumOfThread = 10;
 
 CThreadPool::CThreadPool()
-    : m_jobQueue(1),
-      m_jobQueueSize(0),
-      m_maxNumOfThread(MaxNumOfThread),
+    : m_maxNumOfThread(MaxNumOfThread),
       m_avalibleLowNumOfThread(AvalibleLowNumOfThread),
       m_avalibleHighNumOfThread(AvalibleHighNumOfThread),
       m_initNumOfThread(InitNumOfThread)
@@ -60,8 +58,11 @@ void CThreadPool::run(CJobPtr job, void *jobData)
         }
     }
 
-    m_jobQueue.push(job);
-    ++m_jobQueueSize;
+    {
+        boost::lock_guard<boost::mutex> locker(m_jobQueueMutex);
+        m_jobQueue.push(job);
+    }
+
     m_jobQueueGetCond.notify_one();
 
 #if 0
@@ -270,10 +271,37 @@ unsigned int CThreadPool::idleNumOfThread() const
 
 bool CThreadPool::isJobQueueFull() const
 {
-    return m_jobQueueSize == MaxJobQueueSize;
+    return m_jobQueue.size() == MaxJobQueueSize;
 }
 
 bool CThreadPool::isJobQueueEmpty() const
 {
-    return m_jobQueueSize == 0;
+    return m_jobQueue.size() == 0;
+}
+
+boost::mutex &CThreadPool::jobQueuePutMutex()
+{
+    return m_jobQueuePutMutex;
+}
+
+boost::mutex &CThreadPool::jobQueueGetMutex()
+{
+    return m_jobQueueGetMutex;
+}
+
+boost::condition_variable_any &CThreadPool::jobQueuePutCond()
+{
+    return m_jobQueuePutCond;
+}
+
+boost::condition_variable_any &CThreadPool::jobQueueGetCond()
+{
+    return m_jobQueueGetCond;
+}
+
+void CThreadPool::getJobFromJobQueue(CJobPtr &job)
+{
+    boost::lock_guard<boost::mutex> locker(m_jobQueueMutex);
+    job = m_jobQueue.front();
+    m_jobQueue.pop();
 }

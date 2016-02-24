@@ -34,6 +34,28 @@ void CWorkerThread::run()
     while (true)
     {
         {
+            boost::unique_lock<boost::mutex> locker(m_threadPool->jobQueueGetMutex());
+            while (m_threadPool->isJobQueueEmpty())
+            {
+                m_threadPool->jobQueueGetCond().wait(locker);
+            }
+        }
+std::cout << __LINE__ << std::endl;
+        m_threadPool->moveToBusyList(shared_from_this());
+std::cout << __LINE__ << std::endl;
+        CJobPtr job;
+std::cout << __LINE__ << std::endl;
+        m_threadPool->getJobFromJobQueue(job);
+std::cout << __LINE__ << std::endl;
+        m_threadPool->jobQueuePutCond().notify_one();
+std::cout << __LINE__ << std::endl;
+        job->run(NULL);
+std::cout << __LINE__ << std::endl;
+        job.reset();
+std::cout << __LINE__ << std::endl;
+        m_threadPool->moveToIdleList(shared_from_this());
+#if 0
+        {
             boost::unique_lock<boost::mutex> locker(m_jobMutex);
             while (!m_isSetJob)
             {
@@ -49,6 +71,7 @@ void CWorkerThread::run()
         // 工作线程处理完job后，将workMutex解锁
         // 以便等待下一个job
         workMutex().unlock();
+#endif
     }
 }
 

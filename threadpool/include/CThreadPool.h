@@ -16,7 +16,7 @@
 
 #include "CThread.h"
 #include <vector>
-#include <boost/lockfree/queue.hpp>
+#include <queue>
 #include <boost/atomic.hpp>
 
 class CWorkerThread;
@@ -116,6 +116,14 @@ private:
     bool isJobQueueFull() const;
     bool isJobQueueEmpty() const;
 
+    boost::mutex& jobQueuePutMutex();
+    boost::mutex& jobQueueGetMutex();
+
+    boost::condition_variable_any& jobQueuePutCond();
+    boost::condition_variable_any& jobQueueGetCond();
+
+    void getJobFromJobQueue(CJobPtr& job);
+
 private:
     std::vector<CWorkerThreadPtr> m_threadList;
     std::vector<CWorkerThreadPtr> m_idleList;
@@ -138,8 +146,8 @@ private:
     boost::condition_variable_any m_jobQueuePutCond;
     boost::condition_variable_any m_jobQueueGetCond;
 
-    boost::lockfree::queue<CJobPtr> m_jobQueue;
-    boost::atomic<unsigned int> m_jobQueueSize;
+    boost::mutex m_jobQueueMutex;
+    std::queue<CJobPtr> m_jobQueue;
 
     unsigned int m_maxNumOfThread;              ///< the max thread num that can create at the same time
     unsigned int m_avalibleLowNumOfThread;      ///< The min num of idle thread that shoule kept

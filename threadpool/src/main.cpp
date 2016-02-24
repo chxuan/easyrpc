@@ -11,8 +11,6 @@
 
 void doTask(void* jobData)
 {
-    //int* data = static_cast<int*>(jobData);
-    //std::cout << "jobData: " << *data << std::endl;
     std::cout << "Hello world" << std::endl;
     boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
 }
@@ -22,7 +20,7 @@ int main()
     CThreadManagePtr manage(new CThreadManage);
     manage->initThreadNum(10);
 
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < 3; ++i)
     {
         CRealJobPtr job(new CRealJob);
         job->setJob(boost::bind(doTask, _1));
