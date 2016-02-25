@@ -16,12 +16,9 @@
 #include "CJob.h"
 
 CWorkerThread::CWorkerThread()
-    : CThread(),
-      m_jobData(NULL),
-      m_isSetJob(false)
+    : CThread()
 {
     m_threadPool.reset();
-    m_job.reset();
 }
 
 CWorkerThread::~CWorkerThread()
@@ -34,70 +31,44 @@ void CWorkerThread::run()
     while (true)
     {
         {
-            boost::unique_lock<boost::mutex> locker(m_threadPool->jobQueueGetMutex());
-            while (m_threadPool->isJobQueueEmpty())
+            boost::unique_lock<boost::mutex> locker(m_threadPool->m_jobQueueMutex);
+            while (m_threadPool->m_jobQueue.empty())
             {
-                m_threadPool->jobQueueGetCond().wait(locker);
+                m_threadPool->m_jobQueueGetCond.wait(locker);
             }
         }
-std::cout << __LINE__ << std::endl;
-        m_threadPool->moveToBusyList(shared_from_this());
-std::cout << __LINE__ << std::endl;
+
+        //m_threadPool->moveToBusyList(shared_from_this());
+
         CJobPtr job;
-std::cout << __LINE__ << std::endl;
-        m_threadPool->getJobFromJobQueue(job);
-std::cout << __LINE__ << std::endl;
-        m_threadPool->jobQueuePutCond().notify_one();
-std::cout << __LINE__ << std::endl;
-        job->run(NULL);
-std::cout << __LINE__ << std::endl;
-        job.reset();
-std::cout << __LINE__ << std::endl;
-        m_threadPool->moveToIdleList(shared_from_this());
-#if 0
         {
-            boost::unique_lock<boost::mutex> locker(m_jobMutex);
-            while (!m_isSetJob)
+            boost::lock_guard<boost::mutex> locker(m_threadPool->m_jobQueueMutex);
+            if (!m_threadPool->m_jobQueue.empty())
             {
-                m_jobCond.wait(locker);
+                job = m_threadPool->m_jobQueue.front();
+                m_threadPool->m_jobQueue.pop();
             }
         }
 
-        m_job->run(m_jobData);
-        m_job.reset();
-        m_threadPool->moveToIdleList(shared_from_this());
-        m_isSetJob = false;
+        if (job.use_count() != 0)
+        {
+            //m_threadPool->m_jobQueuePutCond.notify_one();
+            job->run(NULL);
+            job.reset();
+        }
+        else
+        {
+            std::cout << __LINE__ << std::endl;
+        }
 
-        // 工作线程处理完job后，将workMutex解锁
-        // 以便等待下一个job
-        workMutex().unlock();
-#endif
+        //m_threadPool->moveToIdleList(shared_from_this());
+
+        //m_threadPool->dynamicAdjustThreadPoolSize();
     }
 }
 
 void CWorkerThread::setThreadPool(CThreadPoolPtr threadPool)
 {
     assert(threadPool != NULL);
-    boost::lock_guard<boost::mutex> locker(m_jobMutex);
     m_threadPool = threadPool;
-}
-
-void CWorkerThread::setJob(CJobPtr job, void *jobData)
-{
-    assert(job != NULL);
-
-    {
-        boost::lock_guard<boost::mutex> locker(m_jobMutex);
-        m_job = job;
-        m_jobData = jobData;
-        m_job->setWorkThread(shared_from_this());
-        m_isSetJob = true;
-    }
-
-    m_jobCond.notify_one();
-}
-
-boost::mutex &CWorkerThread::workMutex()
-{
-    return m_workMutex;
 }

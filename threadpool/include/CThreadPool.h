@@ -17,7 +17,6 @@
 #include "CThread.h"
 #include <vector>
 #include <queue>
-#include <boost/atomic.hpp>
 
 class CWorkerThread;
 class CJob;
@@ -73,13 +72,6 @@ private:
     void deleteIdleThread(unsigned int num);
 
     /**
-    * @brief idleThread 获得一个空闲线程
-    *
-    * @return 空闲线程
-    */
-    CWorkerThreadPtr idleThread();
-
-    /**
     * @brief appendToIdleList 将创建好的空闲线程放入空闲线程列表
     *
     * @param workThread 工作线程
@@ -105,47 +97,21 @@ private:
     */
     void dynamicAdjustThreadPoolSize();
 
-    unsigned int maxNumOfThread() const;
-    unsigned int avalibleLowNumOfThread() const;
-    unsigned int avalibleHighNumOfThread() const;
-    unsigned int initNumOfThread() const;
-    unsigned int allNumOfThread() const;
-    unsigned int busyNumOfThread() const;
-    unsigned int idleNumOfThread() const;
-
-    bool isJobQueueFull() const;
-    bool isJobQueueEmpty() const;
-
-    boost::mutex& jobQueuePutMutex();
-    boost::mutex& jobQueueGetMutex();
-
-    boost::condition_variable_any& jobQueuePutCond();
-    boost::condition_variable_any& jobQueueGetCond();
-
-    void getJobFromJobQueue(CJobPtr& job);
+    /**
+    * @brief cleanJobQueue 清除任务队列
+    */
+    void cleanJobQueue();
 
 private:
     std::vector<CWorkerThreadPtr> m_threadList;
     std::vector<CWorkerThreadPtr> m_idleList;
     std::vector<CWorkerThreadPtr> m_busyList;
 
-    boost::mutex m_idleMutex;
-    boost::mutex m_busyMutex;
-    boost::mutex m_jobMutex;
-
-    boost::mutex m_idleCondMutex;
-    boost::mutex m_busyCondMutex;
-
-    boost::condition_variable_any m_idleCond;
-    boost::condition_variable_any m_busyCond;
-    boost::condition_variable_any m_maxCond;
-
-    boost::mutex m_jobQueuePutMutex;
-    boost::mutex m_jobQueueGetMutex;
+    boost::mutex m_idleListMutex;
+    boost::mutex m_busyListMutex;
 
     boost::condition_variable_any m_jobQueuePutCond;
     boost::condition_variable_any m_jobQueueGetCond;
-
     boost::mutex m_jobQueueMutex;
     std::queue<CJobPtr> m_jobQueue;
 

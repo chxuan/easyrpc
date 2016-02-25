@@ -20,15 +20,16 @@ int main()
     CThreadManagePtr manage(new CThreadManage);
     manage->initThreadNum(10);
 
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < 13; ++i)
     {
         CRealJobPtr job(new CRealJob);
         job->setJob(boost::bind(doTask, _1));
         manage->run(job, NULL);
     }
-std::cout << "#################" << std::endl;
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(3000));
-return 0;
+
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
+
+    std::cout << "#################################" << std::endl;
     for (int i = 0; i < 17; ++i)
     {
         CRealJobPtr job(new CRealJob);
