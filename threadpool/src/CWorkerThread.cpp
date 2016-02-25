@@ -16,7 +16,8 @@
 #include "CJob.h"
 
 CWorkerThread::CWorkerThread()
-    : CThread()
+    : CThread(),
+      m_isStopWorkThread(false)
 {
     m_threadPool.reset();
 }
@@ -30,19 +31,21 @@ void CWorkerThread::run()
 {
     while (true)
     {
+        CJobPtr job;
         {
             boost::unique_lock<boost::mutex> locker(m_threadPool->m_jobQueueMutex);
-            while (m_threadPool->m_jobQueue.empty())
+            while (m_threadPool->m_jobQueue.empty() &&
+                   !m_threadPool->m_isStopThreadPool &&
+                   !m_isStopWorkThread)
             {
                 m_threadPool->m_jobQueueGetCond.wait(locker);
             }
-        }
 
-        //m_threadPool->moveToBusyList(shared_from_this());
+            if (m_threadPool->m_isStopThreadPool || m_isStopWorkThread)
+            {
+                break;
+            }
 
-        CJobPtr job;
-        {
-            boost::lock_guard<boost::mutex> locker(m_threadPool->m_jobQueueMutex);
             if (!m_threadPool->m_jobQueue.empty())
             {
                 job = m_threadPool->m_jobQueue.front();
@@ -50,20 +53,15 @@ void CWorkerThread::run()
             }
         }
 
+        m_threadPool->moveToBusyList(shared_from_this());
+
         if (job.use_count() != 0)
         {
-            //m_threadPool->m_jobQueuePutCond.notify_one();
             job->run(NULL);
             job.reset();
+            m_threadPool->m_jobQueuePutCond.notify_one();
         }
-        else
-        {
-            std::cout << __LINE__ << std::endl;
-        }
-
-        //m_threadPool->moveToIdleList(shared_from_this());
-
-        //m_threadPool->dynamicAdjustThreadPoolSize();
+        m_threadPool->moveToIdleList(shared_from_this());
     }
 }
 
@@ -71,4 +69,9 @@ void CWorkerThread::setThreadPool(CThreadPoolPtr threadPool)
 {
     assert(threadPool != NULL);
     m_threadPool = threadPool;
+}
+
+void CWorkerThread::stopWorkThread(bool isStopWorkThread)
+{
+    m_isStopWorkThread = isStopWorkThread;
 }

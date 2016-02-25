@@ -25,7 +25,8 @@ CThreadPool::CThreadPool()
     : m_maxNumOfThread(MaxNumOfThread),
       m_avalibleLowNumOfThread(AvalibleLowNumOfThread),
       m_avalibleHighNumOfThread(AvalibleHighNumOfThread),
-      m_initNumOfThread(InitNumOfThread)
+      m_initNumOfThread(InitNumOfThread),
+      m_isStopThreadPool(false)
 {
     // Do nothing
 }
@@ -49,36 +50,47 @@ void CThreadPool::run(CJobPtr job, void *jobData)
 {
     assert(job != NULL);
 
+    if (m_isStopThreadPool)
     {
-        boost::unique_lock<boost::mutex> locker(m_jobQueueMutex);
-        while (m_jobQueue.size() == MaxJobQueueSize)
-        {
-            m_jobQueuePutCond.wait(locker);
-        }
+        return;
     }
 
     {
-        boost::lock_guard<boost::mutex> locker(m_jobQueueMutex);
+        boost::unique_lock<boost::mutex> locker(m_jobQueueMutex);
+        while (m_jobQueue.size() == MaxJobQueueSize && !m_isStopThreadPool)
+        {
+            m_jobQueuePutCond.wait(locker);
+        }
+
         m_jobQueue.push(job);
     }
+
     m_jobQueueGetCond.notify_one();
 }
 
 void CThreadPool::terminateAll()
 {
+    m_isStopThreadPool = true;
+    m_jobQueueGetCond.notify_all();
+
     for (auto& iter : m_threadList)
     {
-        // 中断工作线程，即使工作线程在处理job或在等待job
-        iter->interrupt();
         if (iter->joinable())
         {
             iter->join();
         }
     }
-
     m_threadList.clear();
-    m_idleList.clear();
-    m_busyList.clear();
+
+    {
+        boost::lock_guard<boost::mutex> locker(m_idleListMutex);
+        m_idleList.clear();
+    }
+
+    {
+        boost::lock_guard<boost::mutex> locker(m_busyListMutex);
+        m_busyList.clear();
+    }
 
     cleanJobQueue();
 }
@@ -105,9 +117,7 @@ void CThreadPool::deleteIdleThread(unsigned int num)
     for (unsigned int i = 0; i < num; ++i)
     {
         CWorkerThreadPtr idleThread = m_idleList.front();
-
-        // 中断工作线程
-        idleThread->interrupt();
+        idleThread->stopWorkThread(true);
         if (idleThread->joinable())
         {
             idleThread->join();
@@ -174,17 +184,14 @@ void CThreadPool::dynamicAdjustThreadPoolSize()
 
     if (m_idleList.size() < m_avalibleLowNumOfThread)
     {
-        std::cout << "******************" << std::endl;
         if (m_threadList.size() + m_initNumOfThread - m_idleList.size() < m_maxNumOfThread)
         {
             unsigned int needCreateNumOfThread = m_initNumOfThread - m_idleList.size();
-            std::cout << "###########needCreateNumOfThread: " << needCreateNumOfThread << std::endl;
             createIdleThread(needCreateNumOfThread);
         }
         else
         {
             unsigned int needCreateNumOfThread = m_maxNumOfThread - m_threadList.size();
-            std::cout << "###########needCreateNumOfThread: " << needCreateNumOfThread << std::endl;
             createIdleThread(needCreateNumOfThread);
         }
     }

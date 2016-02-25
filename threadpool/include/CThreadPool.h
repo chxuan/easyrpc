@@ -17,6 +17,7 @@
 #include "CThread.h"
 #include <vector>
 #include <queue>
+#include <boost/atomic.hpp>
 
 class CWorkerThread;
 class CJob;
@@ -119,6 +120,8 @@ private:
     unsigned int m_avalibleLowNumOfThread;      ///< The min num of idle thread that shoule kept
     unsigned int m_avalibleHighNumOfThread;     ///< The max num of idle thread that kept at the same time
     unsigned int m_initNumOfThread;             ///< Normal thread num
+
+    boost::atomic<bool> m_isStopThreadPool;
 };
 
 typedef boost::shared_ptr<CThreadPool> CThreadPoolPtr;

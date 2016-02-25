@@ -47,9 +47,16 @@ public:
     */
     void setThreadPool(CThreadPoolPtr threadPool);
 
+    /**
+    * @brief stopWorkThread 设置是否需要停止工作线程
+    *
+    * @param isStopWorkThread 是否停止工作线程的标志变量
+    */
+    void stopWorkThread(bool isStopWorkThread);
+
 private:
     CThreadPoolPtr m_threadPool;
-    boost::condition_variable_any m_jobCond;
+    boost::atomic<bool> m_isStopWorkThread;
 };
 
 typedef boost::shared_ptr<CWorkerThread> CWorkerThreadPtr;
