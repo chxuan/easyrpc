@@ -15,7 +15,8 @@
 
 TcpClientImpl::TcpClientImpl(const std::string &ip, unsigned short port)
     : m_endpoint(boost::asio::ip::address::from_string(ip), port),
-      m_tcpSession(m_ioService)
+      m_tcpSession(m_ioService),
+      m_onHandleError(NULL)
 {
     m_ioServiceThread.reset();
     connect();
@@ -28,7 +29,7 @@ TcpClientImpl::~TcpClientImpl()
 
 bool TcpClientImpl::start()
 {
-    if (m_ioServiceThread == NULL)
+    if (m_ioServiceThread.use_count() == 0)
     {
         try
         {
@@ -53,10 +54,16 @@ bool TcpClientImpl::stop()
     return true;
 }
 
-void TcpClientImpl::setMessageCallback(OnReciveMessage func)
+void TcpClientImpl::setClientParam(const ClientParam &param)
 {
-    assert(func != NULL);
-    m_tcpSession.setMessageCallback(func);
+    assert(param.m_onRecivedMessage != NULL);
+    assert(param.m_onHandleError != NULL);
+
+    m_onHandleError = param.m_onHandleError;
+    TcpSessionParam tcpSessionParam;
+    tcpSessionParam.m_onRecivedMessage = param.m_onRecivedMessage;
+    tcpSessionParam.m_onHandleError = param.m_onHandleError;
+    m_tcpSession.setTcpSessionParam(tcpSessionParam);
 }
 
 void TcpClientImpl::connect()
@@ -80,7 +87,7 @@ void TcpClientImpl::handleConnect(const boost::system::error_code &error)
 
 void TcpClientImpl::joinIOServiceThread()
 {
-    if (m_ioServiceThread != NULL)
+    if (m_ioServiceThread.use_count() != 0)
     {
         if (m_ioServiceThread->joinable())
         {

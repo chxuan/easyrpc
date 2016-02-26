@@ -16,6 +16,27 @@
 
 #include "TcpSession.hpp"
 
+typedef boost::function1<void, const std::string&> OnClientConnect;
+typedef boost::function1<void, const std::string&> OnClientDisconnect;
+
+class ServerParam
+{
+public:
+    ServerParam()
+        : m_onRecivedMessage(NULL),
+          m_onHandleError(NULL),
+          m_onClientConnect(NULL),
+          m_onClientDisconnect(NULL)
+    {
+        // Do nothing
+    }
+
+    OnReciveMessage m_onRecivedMessage;
+    OnHandleError m_onHandleError;
+    OnClientConnect m_onClientConnect;
+    OnClientDisconnect m_onClientDisconnect;
+};
+
 class TcpServerImpl
 {
 public:
@@ -36,6 +57,8 @@ public:
     }
 
     std::vector<std::string> allRemoteAddress();
+
+    void setServerParam(const ServerParam& param);
 
 private:
     void accept();
@@ -61,6 +84,11 @@ private:
     // key: ip:port(127.0.0.1:8888)
     typedef std::unordered_map<std::string, TcpSessionPtr> TcpSessionMap;
     TcpSessionMap m_tcpSessionMap;
+
+    OnReciveMessage m_onRecivedMessage;
+    OnHandleError m_onHandleError;
+    OnClientConnect m_onClientConnect;
+    OnClientDisconnect m_onClientDisconnect;
 };
 
 #endif

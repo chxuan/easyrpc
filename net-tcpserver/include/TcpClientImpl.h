@@ -16,6 +16,20 @@
 
 #include "TcpSession.hpp"
 
+class ClientParam
+{
+public:
+    ClientParam()
+        : m_onRecivedMessage(NULL),
+          m_onHandleError(NULL)
+    {
+        // Do nothing
+    }
+
+    OnReciveMessage m_onRecivedMessage;
+    OnHandleError m_onHandleError;
+};
+
 class TcpClientImpl
 {
 public:
@@ -25,7 +39,7 @@ public:
     bool start();
     bool stop();
 
-    void setMessageCallback(OnReciveMessage func);
+    void setClientParam(const ClientParam& param);
 
 private:
     void connect();
@@ -42,6 +56,8 @@ private:
     ThreadPtr m_ioServiceThread;
 
     TcpSession m_tcpSession;
+
+    OnHandleError m_onHandleError;
 };
 
 #endif

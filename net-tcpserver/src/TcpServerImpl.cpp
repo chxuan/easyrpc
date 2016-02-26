@@ -18,7 +18,11 @@
 
 TcpServerImpl::TcpServerImpl(unsigned short port)
     : m_acceptor(m_ioService,
-        boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
+      boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
+      m_onRecivedMessage(NULL),
+      m_onHandleError(NULL),
+      m_onClientConnect(NULL),
+      m_onClientDisconnect(NULL)
 {
     m_ioServiceThread.reset();
     accept();
@@ -31,7 +35,7 @@ TcpServerImpl::~TcpServerImpl()
 
 bool TcpServerImpl::start()
 {
-    if (m_ioServiceThread == NULL)
+    if (m_ioServiceThread.use_count() == 0)
     {
         try
         {
@@ -68,6 +72,19 @@ std::vector<std::string> TcpServerImpl::allRemoteAddress()
     return vecAllRemoteAddress;
 }
 
+void TcpServerImpl::setServerParam(const ServerParam &param)
+{
+    assert(param.m_onRecivedMessage != NULL);
+    assert(param.m_onHandleError != NULL);
+    assert(param.m_onClientConnect != NULL);
+    assert(param.m_onClientDisconnect != NULL);
+
+    m_onRecivedMessage = param.m_onRecivedMessage;
+    m_onHandleError = param.m_onHandleError;
+    m_onClientConnect = param.m_onClientConnect;
+    m_onClientDisconnect = param.m_onClientDisconnect;
+}
+
 void TcpServerImpl::accept()
 {
     std::cout << __FUNCTION__ << " " << __LINE__ << std::endl;
@@ -90,6 +107,12 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
 //        peopleInfoMessage->m_name = "Jack";
 //        peopleInfoMessage->m_age = 20;
 //        tcpSession->asyncWrite(peopleInfoMessage);
+
+        TcpSessionParam tcpSessionParam;
+        tcpSessionParam.m_onRecivedMessage = m_onRecivedMessage;
+        tcpSessionParam.m_onHandleError = m_onHandleError;
+        tcpSession->setTcpSessionParam(tcpSessionParam);
+
         std::cout << "remote address: " << tcpSession->remoteAddress() << std::endl;
         m_tcpSessionMap.insert(std::make_pair(tcpSession->remoteAddress(), tcpSession));
     }
@@ -125,7 +148,7 @@ void TcpServerImpl::closeAllTcpSession()
 
 void TcpServerImpl::joinIOServiceThread()
 {
-    if (m_ioServiceThread != NULL)
+    if (m_ioServiceThread.use_count() != 0)
     {
         if (m_ioServiceThread->joinable())
         {
