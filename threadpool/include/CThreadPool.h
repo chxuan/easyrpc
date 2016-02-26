@@ -53,7 +53,8 @@ public:
     void run(CJobPtr job, void* jobData);
 
     /**
-    * @brief terminateAll 终止全部的线程，即使该线程在处理任务或等待任务
+    * @brief terminateAll 终止全部的线程
+    * 等待正在执行的线程执行完毕，等待执行的任务将不会再执行了
     */
     void terminateAll();
 
