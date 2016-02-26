@@ -2,7 +2,7 @@ framework set
 ===================
 
 
-目前该框架集合包括日志框架、网络框架、常用工具库，之后还会添加db框架、消息队列框架等。
+目前该框架集合包括日志框架、网络框架、常用工具库、线程池，之后还会添加db框架、消息队列框架等。
 
 ----------
 
@@ -14,6 +14,7 @@ framework set
 > - net-thrift框架依赖thrift、boost
 > - net-rcf框架依赖RCF、boost
 > - utils框架依赖libuuid、openssl
+> - threadpool依赖boost
 
 开发平台
 -------------
@@ -277,6 +278,38 @@ int main()
     return 0;
 }
 ```
+
+###3.使用threadpool
+```
+//main.cpp
+#include <iostream>
+#include "CThreadManage.h"
+#include "CRealJob.h"
+
+void doTask(void* jobData)
+{
+    std::cout << "Hello world" << std::endl;
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
+}
+
+int main()
+{
+    CThreadManagePtr manage(new CThreadManage);
+    manage->initThreadNum(10);
+
+    for (int i = 0; i < 100; ++i)
+    {
+        CRealJobPtr job(new CRealJob);
+        job->setJob(boost::bind(doTask, _1));
+        manage->run(job, NULL);
+    }
+
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));
+    std::cout << "##############END###################" << std::endl;
+    return 0;
+}
+```
+该线程池是一个通用的线程池框架，CThreadManage作为线程池的一个包装类，该例子创建了10个线程并且并发执行了100个任务，该任务最终体现为回调doTask函数，调用run函数时并没有真正的执行任务，而是将任务放入任务队列，然后通知空闲线程来取走任务，直到任务队列为空，main函数return时，线程池将等待正在执行的任务，直到任务执行完成并放弃执行任务队列的任务。
 
 
 
