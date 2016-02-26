@@ -17,11 +17,9 @@
 
 CWorkerThread::CWorkerThread()
     : CThread(),
-      m_jobData(NULL),
-      m_isSetJob(false)
+      m_isStopWorkThread(false)
 {
     m_threadPool.reset();
-    m_job.reset();
 }
 
 CWorkerThread::~CWorkerThread()
@@ -33,48 +31,47 @@ void CWorkerThread::run()
 {
     while (true)
     {
+        CJobPtr job;
         {
-            boost::unique_lock<boost::mutex> locker(m_jobMutex);
-            while (!m_isSetJob)
+            boost::unique_lock<boost::mutex> locker(m_threadPool->m_jobQueueMutex);
+            while (m_threadPool->m_jobQueue.empty() &&
+                   !m_threadPool->m_isStopThreadPool &&
+                   !m_isStopWorkThread)
             {
-                m_jobCond.wait(locker);
+                m_threadPool->m_jobQueueGetCond.wait(locker);
+            }
+
+            if (m_threadPool->m_isStopThreadPool || m_isStopWorkThread)
+            {
+                break;
+            }
+
+            if (!m_threadPool->m_jobQueue.empty())
+            {
+                job = m_threadPool->m_jobQueue.front();
+                m_threadPool->m_jobQueue.pop();
             }
         }
 
-        m_job->run(m_jobData);
-        m_job.reset();
-        m_threadPool->moveToIdleList(shared_from_this());
-        m_isSetJob = false;
+        m_threadPool->moveToBusyList(shared_from_this());
 
-        // 工作线程处理完job后，将workMutex解锁
-        // 以便等待下一个job
-        workMutex().unlock();
+        if (job.use_count() != 0)
+        {
+            job->run(NULL);
+            job.reset();
+            m_threadPool->m_jobQueuePutCond.notify_one();
+        }
+        m_threadPool->moveToIdleList(shared_from_this());
     }
 }
 
 void CWorkerThread::setThreadPool(CThreadPoolPtr threadPool)
 {
     assert(threadPool != NULL);
-    boost::lock_guard<boost::mutex> locker(m_jobMutex);
     m_threadPool = threadPool;
 }
 
-void CWorkerThread::setJob(CJobPtr job, void *jobData)
+void CWorkerThread::stopWorkThread(bool isStopWorkThread)
 {
-    assert(job != NULL);
-
-    {
-        boost::lock_guard<boost::mutex> locker(m_jobMutex);
-        m_job = job;
-        m_jobData = jobData;
-        m_job->setWorkThread(shared_from_this());
-        m_isSetJob = true;
-    }
-
-    m_jobCond.notify_one();
-}
-
-boost::mutex &CWorkerThread::workMutex()
-{
-    return m_workMutex;
+    m_isStopWorkThread = isStopWorkThread;
 }

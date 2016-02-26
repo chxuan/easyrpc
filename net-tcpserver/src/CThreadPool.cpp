@@ -15,6 +15,7 @@
 #include "CWorkerThread.h"
 #include "CJob.h"
 
+static const unsigned int MaxJobQueueSize = 100000;
 static const unsigned int MaxNumOfThread = 30;
 static const unsigned int AvalibleLowNumOfThread = 3;
 static const unsigned int AvalibleHighNumOfThread = 20;
@@ -24,7 +25,8 @@ CThreadPool::CThreadPool()
     : m_maxNumOfThread(MaxNumOfThread),
       m_avalibleLowNumOfThread(AvalibleLowNumOfThread),
       m_avalibleHighNumOfThread(AvalibleHighNumOfThread),
-      m_initNumOfThread(InitNumOfThread)
+      m_initNumOfThread(InitNumOfThread),
+      m_isStopThreadPool(false)
 {
     // Do nothing
 }
@@ -48,44 +50,49 @@ void CThreadPool::run(CJobPtr job, void *jobData)
 {
     assert(job != NULL);
 
+    if (m_isStopThreadPool)
     {
-        boost::unique_lock<boost::mutex> locker(m_busyMutex);
-        while (busyNumOfThread() == maxNumOfThread())
+        return;
+    }
+
+    {
+        boost::unique_lock<boost::mutex> locker(m_jobQueueMutex);
+        while (m_jobQueue.size() == MaxJobQueueSize && !m_isStopThreadPool)
         {
-            m_maxCond.wait(locker);
+            m_jobQueuePutCond.wait(locker);
         }
+
+        m_jobQueue.push(job);
     }
 
-    dynamicAdjustThreadPoolSize();
-
-    CWorkerThreadPtr workThread = idleThread();
-    if (workThread != NULL)
-    {
-        // 在执行工作线程之前将workMutex上锁
-        // 防止在执行工作线程时，对工作线程setJob
-        workThread->workMutex().lock();
-
-        moveToBusyList(workThread);
-        workThread->setThreadPool(shared_from_this());
-        workThread->setJob(job, jobData);
-    }
+    m_jobQueueGetCond.notify_one();
 }
 
 void CThreadPool::terminateAll()
 {
+    m_isStopThreadPool = true;
+    m_jobQueueGetCond.notify_all();
+
     for (auto& iter : m_threadList)
     {
-        // 中断工作线程，即使工作线程在处理job或在等待job
-        iter->interrupt();
         if (iter->joinable())
         {
             iter->join();
         }
     }
-
     m_threadList.clear();
-    m_idleList.clear();
-    m_busyList.clear();
+
+    {
+        boost::lock_guard<boost::mutex> locker(m_idleListMutex);
+        m_idleList.clear();
+    }
+
+    {
+        boost::lock_guard<boost::mutex> locker(m_busyListMutex);
+        m_busyList.clear();
+    }
+
+    cleanJobQueue();
 }
 
 void CThreadPool::createIdleThread(unsigned int num)
@@ -101,18 +108,16 @@ void CThreadPool::createIdleThread(unsigned int num)
 
 void CThreadPool::deleteIdleThread(unsigned int num)
 {
-    boost::lock_guard<boost::mutex> locker(m_idleMutex);
-    if (num > idleNumOfThread())
+    boost::lock_guard<boost::mutex> locker(m_idleListMutex);
+    if (num > m_idleList.size())
     {
-        num = idleNumOfThread();
+        num = m_idleList.size();
     }
 
     for (unsigned int i = 0; i < num; ++i)
     {
         CWorkerThreadPtr idleThread = m_idleList.front();
-
-        // 中断工作线程
-        idleThread->interrupt();
+        idleThread->stopWorkThread(true);
         if (idleThread->joinable())
         {
             idleThread->join();
@@ -132,25 +137,9 @@ void CThreadPool::deleteIdleThread(unsigned int num)
     }
 }
 
-CWorkerThreadPtr CThreadPool::idleThread()
-{
-    boost::unique_lock<boost::mutex> locker(m_idleMutex);
-    while (idleNumOfThread() == 0)
-    {
-        m_idleCond.wait(locker);
-    }
-
-    if (idleNumOfThread() > 0)
-    {
-        return m_idleList.front();
-    }
-
-    return CWorkerThreadPtr();
-}
-
 void CThreadPool::appendToIdleList(CWorkerThreadPtr workThread)
 {
-    boost::lock_guard<boost::mutex> locker(m_idleMutex);
+    boost::lock_guard<boost::mutex> locker(m_idleListMutex);
     m_idleList.push_back(workThread);
     m_threadList.push_back(workThread);
 }
@@ -158,11 +147,11 @@ void CThreadPool::appendToIdleList(CWorkerThreadPtr workThread)
 void CThreadPool::moveToBusyList(CWorkerThreadPtr idleThread)
 {
     {
-        boost::lock_guard<boost::mutex> locker(m_busyMutex);
+        boost::lock_guard<boost::mutex> locker(m_busyListMutex);
         m_busyList.push_back(idleThread);
     }
 
-    boost::lock_guard<boost::mutex> locker(m_idleMutex);
+    boost::lock_guard<boost::mutex> locker(m_idleListMutex);
     auto iter = std::find(m_idleList.begin(), m_idleList.end(), idleThread);
     if (iter != m_idleList.end())
     {
@@ -173,77 +162,46 @@ void CThreadPool::moveToBusyList(CWorkerThreadPtr idleThread)
 void CThreadPool::moveToIdleList(CWorkerThreadPtr busyThread)
 {
     {
-        boost::lock_guard<boost::mutex> locker(m_idleMutex);
+        boost::lock_guard<boost::mutex> locker(m_idleListMutex);
         m_idleList.push_back(busyThread);
     }
 
+    boost::lock_guard<boost::mutex> locker(m_busyListMutex);
+    auto iter = std::find(m_busyList.begin(), m_busyList.end(), busyThread);
+    if (iter != m_busyList.end())
     {
-        boost::lock_guard<boost::mutex> locker(m_busyMutex);
-        auto iter = std::find(m_busyList.begin(), m_busyList.end(), busyThread);
-        if (iter != m_busyList.end())
-        {
-            m_busyList.erase(iter);
-        }
+        m_busyList.erase(iter);
     }
-
-    m_idleCond.notify_one();
-    m_maxCond.notify_one();
 }
 
 void CThreadPool::dynamicAdjustThreadPoolSize()
 {
-    if (idleNumOfThread() > avalibleHighNumOfThread())
+    if (m_idleList.size() > m_avalibleHighNumOfThread)
     {
-        unsigned int needDeleteNumOfThread = idleNumOfThread() - initNumOfThread();
+        unsigned int needDeleteNumOfThread = m_idleList.size() - m_initNumOfThread;
         deleteIdleThread(needDeleteNumOfThread);
     }
 
-    if (idleNumOfThread() < avalibleLowNumOfThread())
+    if (m_idleList.size() < m_avalibleLowNumOfThread)
     {
-        if (allNumOfThread() + initNumOfThread() - idleNumOfThread() < maxNumOfThread())
+        if (m_threadList.size() + m_initNumOfThread - m_idleList.size() < m_maxNumOfThread)
         {
-            unsigned int needCreateNumOfThread = initNumOfThread() - idleNumOfThread();
+            unsigned int needCreateNumOfThread = m_initNumOfThread - m_idleList.size();
             createIdleThread(needCreateNumOfThread);
         }
         else
         {
-            unsigned int needCreateNumOfThread = maxNumOfThread() - allNumOfThread();
+            unsigned int needCreateNumOfThread = m_maxNumOfThread - m_threadList.size();
             createIdleThread(needCreateNumOfThread);
         }
     }
 }
 
-unsigned int CThreadPool::maxNumOfThread() const
+void CThreadPool::cleanJobQueue()
 {
-    return m_maxNumOfThread;
-}
-
-unsigned int CThreadPool::avalibleLowNumOfThread() const
-{
-    return m_avalibleLowNumOfThread;
-}
-
-unsigned int CThreadPool::avalibleHighNumOfThread() const
-{
-    return m_avalibleHighNumOfThread;
-}
-
-unsigned int CThreadPool::initNumOfThread() const
-{
-    return m_initNumOfThread;
-}
-
-unsigned int CThreadPool::allNumOfThread() const
-{
-    return m_threadList.size();
-}
-
-unsigned int CThreadPool::busyNumOfThread() const
-{
-    return m_busyList.size();
-}
-
-unsigned int CThreadPool::idleNumOfThread() const
-{
-    return m_idleList.size();
+    boost::lock_guard<boost::mutex> locker(m_jobQueueMutex);
+    while (!m_jobQueue.empty())
+    {
+        m_jobQueue.pop();
+    }
 }

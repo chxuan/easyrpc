@@ -48,31 +48,15 @@ public:
     void setThreadPool(CThreadPoolPtr threadPool);
 
     /**
-    * @brief setJob 设置工作线程的任务
+    * @brief stopWorkThread 设置是否需要停止工作线程
     *
-    * @param job 任务
-    * @param jobData 任务数据
+    * @param isStopWorkThread 是否停止工作线程的标志变量
     */
-    void setJob(CJobPtr job, void* jobData);
-
-    /**
-    * @brief workMutex 获得工作锁，该锁在工作线程开始执行job时上锁
-    * 在结束job时解锁
-    *
-    * @return 工作锁
-    */
-    boost::mutex& workMutex();
+    void stopWorkThread(bool isStopWorkThread);
 
 private:
     CThreadPoolPtr m_threadPool;
-    CJobPtr m_job;
-    void* m_jobData;
-
-    boost::mutex m_workMutex;
-    boost::mutex m_jobMutex;
-    boost::condition_variable_any m_jobCond;
-
-    boost::atomic<bool> m_isSetJob;
+    boost::atomic<bool> m_isStopWorkThread;
 };
 
 typedef boost::shared_ptr<CWorkerThread> CWorkerThreadPtr;
