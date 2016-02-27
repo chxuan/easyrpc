@@ -13,11 +13,12 @@
 
 #include "CRealJob.h"
 
-CRealJob::CRealJob()
+CRealJob::CRealJob(OnDoTask func, void* jobData)
     : CJob(),
-      m_doTask(NULL)
+      m_jobData(jobData)
 {
-    // Do nothing
+    assert(func != NULL);
+    m_doTask = func;
 }
 
 CRealJob::~CRealJob()
@@ -25,16 +26,10 @@ CRealJob::~CRealJob()
     // Do nothing
 }
 
-void CRealJob::run(void* jobData)
+void CRealJob::run()
 {
     if (m_doTask != NULL)
     {
-        m_doTask(jobData);
+        m_doTask(m_jobData);
     }
-}
-
-void CRealJob::setJob(OnDoTask func)
-{
-    assert(func != NULL);
-    m_doTask = func;
 }

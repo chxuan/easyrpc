@@ -48,9 +48,8 @@ public:
     * @brief run 执行具体的job
     *
     * @param job 具体的任务
-    * @param jobData 任务数据
     */
-    void run(CJobPtr job, void* jobData);
+    void run(CJobPtr job);
 
     /**
     * @brief terminateAll 终止全部的线程

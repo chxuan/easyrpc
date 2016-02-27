@@ -36,10 +36,10 @@ void CThreadManage::initThreadNum(unsigned int initNumOfThread)
     m_threadPool->initThreadNum(initNumOfThread);
 }
 
-void CThreadManage::run(CJobPtr job, void *jobData)
+void CThreadManage::run(CJobPtr job)
 {
     assert(m_threadPool != NULL);
-    m_threadPool->run(job, jobData);
+    m_threadPool->run(job);
 }
 
 void CThreadManage::terminateAll()

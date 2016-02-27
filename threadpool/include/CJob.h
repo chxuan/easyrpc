@@ -14,10 +14,8 @@
 #ifndef _CJOB_H
 #define _CJOB_H
 
-#include "CThread.h"
 #include <string>
-
-typedef boost::function1<void, void*> OnDoTask;
+#include <boost/smart_ptr.hpp>
 
 /**
 * @brief 任务类
@@ -28,7 +26,7 @@ public:
     CJob()
         : m_jobNo(0)
     {
-        m_workThread.reset();
+        // Do nothing
     }
 
     virtual ~CJob()
@@ -38,17 +36,8 @@ public:
 
     /**
     * @brief run 执行任务
-    *
-    * @param jobData 任务数据
     */
-    virtual void run(void* jobData) = 0;
-
-    /**
-    * @brief setJob 设置任务，该任务为回调函数
-    *
-    * @param func 回调函数
-    */
-    virtual void setJob(OnDoTask func) = 0;
+    virtual void run() = 0;
 
 public:
     int jobNo() const { return m_jobNo; }
@@ -57,13 +46,9 @@ public:
     std::string jobName() const { return m_jobName; }
     void setJobName(const std::string& jobName) { m_jobName = jobName; }
 
-    CThreadPtr workThread() const { return m_workThread; }
-    void setWorkThread(CThreadPtr workThread) { m_workThread = workThread; }
-
 private:
     int m_jobNo;
     std::string m_jobName;
-    CThreadPtr m_workThread;
 };
 
 typedef boost::shared_ptr<CJob> CJobPtr;

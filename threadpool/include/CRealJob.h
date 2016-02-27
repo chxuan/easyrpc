@@ -15,6 +15,9 @@
 #define _CREALJOB_H
 
 #include "CJob.h"
+#include <boost/function.hpp>
+
+typedef boost::function1<void, void*> OnDoTask;
 
 /**
 * @brief 任务类，继承自CJob
@@ -22,25 +25,17 @@
 class CRealJob : public CJob
 {
 public:
-    CRealJob();
+    CRealJob(OnDoTask func, void* jobData);
     virtual ~CRealJob();
 
     /**
     * @brief run 执行任务
-    *
-    * @param jobData 任务数据
     */
-    virtual void run(void* jobData);
-
-    /**
-    * @brief setJob 设置任务，该任务为回调函数
-    *
-    * @param func 回调函数
-    */
-    virtual void setJob(OnDoTask func);
+    virtual void run();
 
 private:
     OnDoTask m_doTask;
+    void* m_jobData;
 };
 
 typedef boost::shared_ptr<CRealJob> CRealJobPtr;
