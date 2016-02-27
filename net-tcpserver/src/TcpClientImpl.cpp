@@ -79,6 +79,10 @@ void TcpClientImpl::handleConnect(const boost::system::error_code &error)
     {
         std::cout << error.message() << std::endl;
         std::cout << __FUNCTION__ << " " << __LINE__ << std::endl;
+        if (m_onHandleError != NULL)
+        {
+            m_onHandleError(error);
+        }
         return;
     }
 

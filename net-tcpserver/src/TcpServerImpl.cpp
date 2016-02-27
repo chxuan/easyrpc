@@ -14,7 +14,11 @@
 #include "TcpServerImpl.h"
 #include "Message.h"
 #include "PeopleInfoMessage.h"
+#include "CThreadManage.h"
+#include "CRealJob.h"
 #include <iostream>
+
+static const unsigned int DefaultNumOfThread = 10;
 
 TcpServerImpl::TcpServerImpl(unsigned short port)
     : m_acceptor(m_ioService,
@@ -25,6 +29,8 @@ TcpServerImpl::TcpServerImpl(unsigned short port)
       m_onClientDisconnect(NULL)
 {
     m_ioServiceThread.reset();
+    m_threadManage.reset();
+    createThreadManage();
     accept();
 }
 
@@ -85,6 +91,15 @@ void TcpServerImpl::setServerParam(const ServerParam &param)
     m_onClientDisconnect = param.m_onClientDisconnect;
 }
 
+void TcpServerImpl::createThreadManage()
+{
+    if (m_threadManage.use_count() == 0)
+    {
+        m_threadManage = boost::make_shared<CThreadManage>();
+        m_threadManage->initThreadNum(DefaultNumOfThread);
+    }
+}
+
 void TcpServerImpl::accept()
 {
     std::cout << __FUNCTION__ << " " << __LINE__ << std::endl;
@@ -109,7 +124,7 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
 //        tcpSession->asyncWrite(peopleInfoMessage);
 
         TcpSessionParam tcpSessionParam;
-        tcpSessionParam.m_onRecivedMessage = m_onRecivedMessage;
+        tcpSessionParam.m_onRecivedMessage = boost::bind(&TcpServerImpl::handleReciveMessage, this, _1);
         tcpSessionParam.m_onHandleError = m_onHandleError;
         tcpSession->setTcpSessionParam(tcpSessionParam);
 
@@ -119,6 +134,10 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
     else
     {
         std::cout << "Tcp server accept failed: " << error.message() << std::endl;
+        if (m_onHandleError != NULL)
+        {
+            m_onHandleError(error);
+        }
     }
 
     accept();
@@ -177,4 +196,16 @@ TcpSessionPtr TcpServerImpl::tcpSession(const std::string& remoteAddress)
     }
 
     return TcpSessionPtr();
+}
+
+void TcpServerImpl::handleReciveMessage(MessagePtr message)
+{
+    if (message.use_count() == 0)
+    {
+        std::cout << "message.use_count() == 0" << std::endl;
+        return;
+    }
+
+    CRealJobPtr job(new CRealJob(m_onRecivedMessage, message));
+    m_threadManage->run(job);
 }

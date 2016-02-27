@@ -57,7 +57,7 @@ void CWorkerThread::run()
 
         if (job.use_count() != 0)
         {
-            job->run(NULL);
+            job->run();
             job.reset();
             m_threadPool->m_jobQueuePutCond.notify_one();
         }

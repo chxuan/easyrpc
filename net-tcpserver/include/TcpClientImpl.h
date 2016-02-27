@@ -16,6 +16,9 @@
 
 #include "TcpSession.hpp"
 
+class CThreadManage;
+
+
 class ClientParam
 {
 public:
@@ -59,5 +62,7 @@ private:
 
     OnHandleError m_onHandleError;
 };
+
+typedef boost::shared_ptr<TcpClientImpl> TcpClientImplPtr;
 
 #endif

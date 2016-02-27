@@ -13,11 +13,12 @@
 
 #include "CRealJob.h"
 
-CRealJob::CRealJob()
+CRealJob::CRealJob(OnReciveMessage func, MessagePtr message)
     : CJob(),
-      m_doTask(NULL)
+      m_message(message)
 {
-    // Do nothing
+    assert(func != NULL);
+    m_onReciveMessage = func;
 }
 
 CRealJob::~CRealJob()
@@ -25,16 +26,10 @@ CRealJob::~CRealJob()
     // Do nothing
 }
 
-void CRealJob::run(void* jobData)
+void CRealJob::run()
 {
-    if (m_doTask != NULL)
+    if (m_onReciveMessage != NULL)
     {
-        m_doTask(jobData);
+        m_onReciveMessage(m_message);
     }
-}
-
-void CRealJob::setJob(OnDoTask func)
-{
-    assert(func != NULL);
-    m_doTask = func;
 }

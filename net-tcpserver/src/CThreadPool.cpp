@@ -46,7 +46,7 @@ void CThreadPool::initThreadNum(unsigned int initNumOfThread)
     createIdleThread(m_initNumOfThread);
 }
 
-void CThreadPool::run(CJobPtr job, void *jobData)
+void CThreadPool::run(CJobPtr job)
 {
     assert(job != NULL);
 

@@ -21,9 +21,11 @@
 
 class CWorkerThread;
 class CJob;
+class Message;
 
 typedef boost::shared_ptr<CWorkerThread> CWorkerThreadPtr;
 typedef boost::shared_ptr<CJob> CJobPtr;
+typedef boost::shared_ptr<Message> MessagePtr;
 
 /**
 * @brief 线程池类，管理并发线程
@@ -48,9 +50,8 @@ public:
     * @brief run 执行具体的job
     *
     * @param job 具体的任务
-    * @param jobData 任务数据
     */
-    void run(CJobPtr job, void* jobData);
+    void run(CJobPtr job);
 
     /**
     * @brief terminateAll 终止全部的线程

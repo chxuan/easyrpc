@@ -16,6 +16,9 @@
 
 #include "TcpSession.hpp"
 
+class CThreadManage;
+typedef boost::shared_ptr<CThreadManage> CThreadManagePtr;
+
 typedef boost::function1<void, const std::string&> OnClientConnect;
 typedef boost::function1<void, const std::string&> OnClientDisconnect;
 
@@ -61,6 +64,8 @@ public:
     void setServerParam(const ServerParam& param);
 
 private:
+    void createThreadManage();
+
     void accept();
 
     void handleAccept(TcpSessionPtr tcpSession,
@@ -74,6 +79,8 @@ private:
 
     TcpSessionPtr tcpSession(const std::string& remoteAddress);
 
+    void handleReciveMessage(MessagePtr message);
+
 private:
     boost::asio::io_service m_ioService;
     boost::asio::ip::tcp::acceptor m_acceptor;
@@ -85,10 +92,14 @@ private:
     typedef std::unordered_map<std::string, TcpSessionPtr> TcpSessionMap;
     TcpSessionMap m_tcpSessionMap;
 
+    CThreadManagePtr m_threadManage;
+
     OnReciveMessage m_onRecivedMessage;
     OnHandleError m_onHandleError;
     OnClientConnect m_onClientConnect;
     OnClientDisconnect m_onClientDisconnect;
 };
+
+typedef boost::shared_ptr<TcpServerImpl> TcpServerImplPtr;
 
 #endif

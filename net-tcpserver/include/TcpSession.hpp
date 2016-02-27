@@ -37,7 +37,7 @@
 #include "Message.h"
 #include "PeopleInfoMessage.h"
 
-typedef boost::function2<void, MessagePtr, const boost::system::error_code&> OnReciveMessage;
+typedef boost::function1<void, MessagePtr> OnReciveMessage;
 typedef boost::function1<void, const boost::system::error_code&> OnHandleError;
 
 class TcpSessionParam
@@ -144,9 +144,9 @@ private:
         if (error)
         {
             std::cout << "Read header failed: " << error.message() << std::endl;
-            if (m_onReciveMessage != NULL)
+            if (m_onHandleError != NULL)
             {
-                m_onReciveMessage(MessagePtr(), error);
+                m_onHandleError(error);
             }
             return;
         }
@@ -158,9 +158,9 @@ private:
         {
             std::cout << "Header doesn't seem to be valid" << std::endl;
             boost::system::error_code error(boost::asio::error::invalid_argument);
-            if (m_onReciveMessage != NULL)
+            if (m_onHandleError != NULL)
             {
-                m_onReciveMessage(MessagePtr(), error);
+                m_onHandleError(error);
             }
             return;
         }
@@ -177,9 +177,9 @@ private:
         if (error)
         {
             std::cout << "Read message type failed: " << error.message() << std::endl;
-            if (m_onReciveMessage != NULL)
+            if (m_onHandleError != NULL)
             {
-                m_onReciveMessage(MessagePtr(), error);
+                m_onHandleError(error);
             }
             return;
         }
@@ -193,9 +193,9 @@ private:
         {
             std::cout << "Mesage type doesn't seem to be valid" << std::endl;
             boost::system::error_code error(boost::asio::error::invalid_argument);
-            if (m_onReciveMessage != NULL)
+            if (m_onHandleError != NULL)
             {
-                m_onReciveMessage(message, error);
+                m_onHandleError(error);
             }
             return;
         }
@@ -209,13 +209,20 @@ private:
     {
         asyncRead();
 
-        if (!error)
+        if (error)
         {
-            message->m_data = std::string(&m_inboundData[0], m_inboundData.size());
+            std::cout << "Read message data failed: " << error.message() << std::endl;
+            if (m_onHandleError != NULL)
+            {
+                m_onHandleError(error);
+            }
+            return;
         }
+
+        message->m_data = std::string(&m_inboundData[0], m_inboundData.size());
         if (m_onReciveMessage != NULL)
         {
-            m_onReciveMessage(message, error);
+            m_onReciveMessage(message);
         }
     }
 
@@ -224,6 +231,10 @@ private:
         if (error)
         {
             std::cout << "Write message failed: " << error.message() << std::endl;
+            if (m_onHandleError != NULL)
+            {
+                m_onHandleError(error);
+            }
         }
 
         // Nothing to do. The socket will be closed automatically when the last
