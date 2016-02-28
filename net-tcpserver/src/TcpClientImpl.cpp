@@ -12,14 +12,19 @@
 */
 
 #include "TcpClientImpl.h"
+#include "CThreadManage.h"
+#include "CRealJob.h"
+
+static const unsigned int DefaultNumOfThread = 10;
 
 TcpClientImpl::TcpClientImpl(const std::string &ip, unsigned short port)
     : m_endpoint(boost::asio::ip::address::from_string(ip), port),
       m_tcpSession(m_ioService),
+      m_onRecivedMessage(NULL),
       m_onHandleError(NULL)
 {
     m_ioServiceThread.reset();
-    connect();
+    m_threadManage.reset();
 }
 
 TcpClientImpl::~TcpClientImpl()
@@ -29,6 +34,8 @@ TcpClientImpl::~TcpClientImpl()
 
 bool TcpClientImpl::start()
 {
+    connect();
+
     if (m_ioServiceThread.use_count() == 0)
     {
         try
@@ -48,10 +55,27 @@ bool TcpClientImpl::start()
 
 bool TcpClientImpl::stop()
 {
+    m_tcpSession.socket().close();
     m_ioService.stop();
-    joinIOServiceThread();
+
+    if (m_ioServiceThread.use_count() != 0)
+    {
+        if (m_ioServiceThread->joinable())
+        {
+            m_ioServiceThread->join();
+        }
+    }
 
     return true;
+}
+
+void TcpClientImpl::setThreadPoolNum(unsigned int num)
+{
+    if (m_threadManage.use_count() == 0)
+    {
+        m_threadManage = boost::make_shared<CThreadManage>();
+        m_threadManage->initThreadNum(DefaultNumOfThread);
+    }
 }
 
 void TcpClientImpl::setClientParam(const ClientParam &param)
@@ -60,8 +84,9 @@ void TcpClientImpl::setClientParam(const ClientParam &param)
     assert(param.m_onHandleError != NULL);
 
     m_onHandleError = param.m_onHandleError;
+    m_onRecivedMessage = param.m_onRecivedMessage;
     TcpSessionParam tcpSessionParam;
-    tcpSessionParam.m_onRecivedMessage = param.m_onRecivedMessage;
+    tcpSessionParam.m_onRecivedMessage = boost::bind(&TcpClientImpl::handleReciveMessage, this, _1);
     tcpSessionParam.m_onHandleError = param.m_onHandleError;
     m_tcpSession.setTcpSessionParam(tcpSessionParam);
 }
@@ -77,11 +102,9 @@ void TcpClientImpl::handleConnect(const boost::system::error_code &error)
 {
     if (error)
     {
-        std::cout << error.message() << std::endl;
-        std::cout << __FUNCTION__ << " " << __LINE__ << std::endl;
         if (m_onHandleError != NULL)
         {
-            m_onHandleError(error);
+            m_onHandleError(error, "");
         }
         return;
     }
@@ -89,13 +112,14 @@ void TcpClientImpl::handleConnect(const boost::system::error_code &error)
     m_tcpSession.asyncRead();
 }
 
-void TcpClientImpl::joinIOServiceThread()
+void TcpClientImpl::handleReciveMessage(MessagePtr message)
 {
-    if (m_ioServiceThread.use_count() != 0)
+    if (message.use_count() == 0)
     {
-        if (m_ioServiceThread->joinable())
-        {
-            m_ioServiceThread->join();
-        }
+        std::cout << "Tcp client message.use_count() == 0" << std::endl;
+        return;
     }
+
+    CRealJobPtr job(new CRealJob(m_onRecivedMessage, message));
+    m_threadManage->run(job);
 }

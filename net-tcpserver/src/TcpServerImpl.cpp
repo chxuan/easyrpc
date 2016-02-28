@@ -12,8 +12,6 @@
 */
 
 #include "TcpServerImpl.h"
-#include "Message.h"
-#include "PeopleInfoMessage.h"
 #include "CThreadManage.h"
 #include "CRealJob.h"
 #include <iostream>
@@ -30,8 +28,6 @@ TcpServerImpl::TcpServerImpl(unsigned short port)
 {
     m_ioServiceThread.reset();
     m_threadManage.reset();
-    createThreadManage();
-    accept();
 }
 
 TcpServerImpl::~TcpServerImpl()
@@ -41,6 +37,8 @@ TcpServerImpl::~TcpServerImpl()
 
 bool TcpServerImpl::start()
 {
+    accept();
+
     if (m_ioServiceThread.use_count() == 0)
     {
         try
@@ -62,20 +60,25 @@ bool TcpServerImpl::stop()
 {
     closeAllTcpSession();
     m_ioService.stop();
-    joinIOServiceThread();
+
+    if (m_ioServiceThread.use_count() != 0)
+    {
+        if (m_ioServiceThread->joinable())
+        {
+            m_ioServiceThread->join();
+        }
+    }
 
     return true;
 }
 
-std::vector<std::string> TcpServerImpl::allRemoteAddress()
+void TcpServerImpl::setThreadPoolNum(unsigned int num)
 {
-    std::vector<std::string> vecAllRemoteAddress;
-    for (auto& iter : m_tcpSessionMap)
+    if (m_threadManage.use_count() == 0)
     {
-        vecAllRemoteAddress.push_back(iter.first);
+        m_threadManage = boost::make_shared<CThreadManage>();
+        m_threadManage->initThreadNum(num);
     }
-
-    return vecAllRemoteAddress;
 }
 
 void TcpServerImpl::setServerParam(const ServerParam &param)
@@ -91,18 +94,8 @@ void TcpServerImpl::setServerParam(const ServerParam &param)
     m_onClientDisconnect = param.m_onClientDisconnect;
 }
 
-void TcpServerImpl::createThreadManage()
-{
-    if (m_threadManage.use_count() == 0)
-    {
-        m_threadManage = boost::make_shared<CThreadManage>();
-        m_threadManage->initThreadNum(DefaultNumOfThread);
-    }
-}
-
 void TcpServerImpl::accept()
 {
-    std::cout << __FUNCTION__ << " " << __LINE__ << std::endl;
     TcpSessionPtr tcpSession(new TcpSession(m_ioService));
     m_acceptor.async_accept(tcpSession->socket(),
         boost::bind(&TcpServerImpl::handleAccept, this, tcpSession,
@@ -112,35 +105,32 @@ void TcpServerImpl::accept()
 void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
                                  const boost::system::error_code &error)
 {
-    std::cout << __FUNCTION__ << " " << __LINE__ << std::endl;
+    accept();
+
     if (!error)
     {
-        //Message message;
-        //tcpSession->asyncRead(message);
-//        PeopleInfoMessage *peopleInfoMessage = new PeopleInfoMessage;
-//        peopleInfoMessage->m_messageType = 1000;
-//        peopleInfoMessage->m_name = "Jack";
-//        peopleInfoMessage->m_age = 20;
-//        tcpSession->asyncWrite(peopleInfoMessage);
-
         TcpSessionParam tcpSessionParam;
         tcpSessionParam.m_onRecivedMessage = boost::bind(&TcpServerImpl::handleReciveMessage, this, _1);
-        tcpSessionParam.m_onHandleError = m_onHandleError;
+        tcpSessionParam.m_onHandleError = boost::bind(&TcpServerImpl::handleError, this, _1, _2);
         tcpSession->setTcpSessionParam(tcpSessionParam);
 
-        std::cout << "remote address: " << tcpSession->remoteAddress() << std::endl;
-        m_tcpSessionMap.insert(std::make_pair(tcpSession->remoteAddress(), tcpSession));
+        std::string remoteAddress = tcpSession->remoteAddress();
+        m_tcpSessionMap.insert(std::make_pair(remoteAddress, tcpSession));
+        if (m_onClientConnect != NULL)
+        {
+            m_onClientConnect(remoteAddress);
+        }
+
+        tcpSession->asyncRead();
     }
     else
     {
         std::cout << "Tcp server accept failed: " << error.message() << std::endl;
         if (m_onHandleError != NULL)
         {
-            m_onHandleError(error);
+            m_onHandleError(error, "");
         }
     }
-
-    accept();
 }
 
 void TcpServerImpl::closeAllTcpSession()
@@ -163,17 +153,6 @@ void TcpServerImpl::closeAllTcpSession()
     }
 
     m_tcpSessionMap.clear();
-}
-
-void TcpServerImpl::joinIOServiceThread()
-{
-    if (m_ioServiceThread.use_count() != 0)
-    {
-        if (m_ioServiceThread->joinable())
-        {
-            m_ioServiceThread->join();
-        }
-    }
 }
 
 bool TcpServerImpl::isTcpSessionExists(const std::string &remoteAddress)
@@ -202,10 +181,44 @@ void TcpServerImpl::handleReciveMessage(MessagePtr message)
 {
     if (message.use_count() == 0)
     {
-        std::cout << "message.use_count() == 0" << std::endl;
+        std::cout << "Tcp server message.use_count() == 0" << std::endl;
         return;
     }
 
     CRealJobPtr job(new CRealJob(m_onRecivedMessage, message));
     m_threadManage->run(job);
+}
+
+void TcpServerImpl::handleError(const boost::system::error_code &error, const std::string &remoteAddress)
+{
+    if (error)
+    {
+        std::string errorString = error.message();
+        if (errorString == "End of file")
+        {
+            closeTcpSession(remoteAddress);
+            if (m_onClientDisconnect != NULL)
+            {
+                m_onClientDisconnect(remoteAddress);
+            }
+        }
+        else
+        {
+            if (m_onHandleError != NULL)
+            {
+                m_onHandleError(error, remoteAddress);
+            }
+        }
+    }
+}
+
+void TcpServerImpl::closeTcpSession(const std::string &remoteAddress)
+{
+    auto iter = m_tcpSessionMap.find(remoteAddress);
+    if (iter != m_tcpSessionMap.end())
+    {
+        TcpSessionPtr session = iter->second;
+        session->socket().close();
+        m_tcpSessionMap.erase(iter);
+    }
 }

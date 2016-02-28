@@ -50,22 +50,20 @@ public:
     bool stop();
 
     template<typename T>
-    void asyncWrite(const T t, const std::string& remoteAddress)
+    void write(const T t, const std::string& remoteAddress)
     {
         TcpSessionPtr session = tcpSession(remoteAddress);
-        if (session != NULL)
+        if (session.use_count() != 0)
         {
-            session->asyncWrite(t);
+            session->write(t);
         }
     }
 
-    std::vector<std::string> allRemoteAddress();
+    void setThreadPoolNum(unsigned int num);
 
     void setServerParam(const ServerParam& param);
 
 private:
-    void createThreadManage();
-
     void accept();
 
     void handleAccept(TcpSessionPtr tcpSession,
@@ -73,13 +71,15 @@ private:
 
     void closeAllTcpSession();
 
-    void joinIOServiceThread();
-
     bool isTcpSessionExists(const std::string& remoteAddress);
 
     TcpSessionPtr tcpSession(const std::string& remoteAddress);
 
     void handleReciveMessage(MessagePtr message);
+
+    void handleError(const boost::system::error_code& error, const std::string& remoteAddress);
+
+    void closeTcpSession(const std::string& remoteAddress);
 
 private:
     boost::asio::io_service m_ioService;

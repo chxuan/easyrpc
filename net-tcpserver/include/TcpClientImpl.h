@@ -17,7 +17,7 @@
 #include "TcpSession.hpp"
 
 class CThreadManage;
-
+typedef boost::shared_ptr<CThreadManage> CThreadManagePtr;
 
 class ClientParam
 {
@@ -42,6 +42,14 @@ public:
     bool start();
     bool stop();
 
+    template<typename T>
+    void write(const T t)
+    {
+        m_tcpSession.write(t);
+    }
+
+    void setThreadPoolNum(unsigned int num);
+
     void setClientParam(const ClientParam& param);
 
 private:
@@ -49,7 +57,7 @@ private:
 
     void handleConnect(const boost::system::error_code& error);
 
-    void joinIOServiceThread();
+    void handleReciveMessage(MessagePtr message);
 
 private:
     boost::asio::io_service m_ioService;
@@ -60,6 +68,9 @@ private:
 
     TcpSession m_tcpSession;
 
+    CThreadManagePtr m_threadManage;
+
+    OnReciveMessage m_onRecivedMessage;
     OnHandleError m_onHandleError;
 };
 

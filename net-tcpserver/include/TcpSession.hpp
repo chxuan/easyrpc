@@ -20,6 +20,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <queue>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/smart_ptr.hpp>
@@ -38,7 +39,7 @@
 #include "PeopleInfoMessage.h"
 
 typedef boost::function1<void, MessagePtr> OnReciveMessage;
-typedef boost::function1<void, const boost::system::error_code&> OnHandleError;
+typedef boost::function2<void, const boost::system::error_code&, const std::string&> OnHandleError;
 
 class TcpSessionParam
 {
@@ -92,7 +93,7 @@ public:
     }
 
     template<typename T>
-    void asyncWrite(const T t)
+    void write(const T t)
     {
         // 序列化数据
         try
@@ -134,8 +135,10 @@ public:
         buffers.push_back(boost::asio::buffer(m_outboundHeader));
         buffers.push_back(boost::asio::buffer(m_outboundMessageType));
         buffers.push_back(boost::asio::buffer(m_outboundData));
-        boost::asio::async_write(m_socket, buffers, boost::bind(&TcpSession::handleWrite, this,
-                                                                boost::asio::placeholders::error));
+
+        boost::system::error_code error;
+        boost::asio::write(m_socket, buffers, error);
+        checkError(error);
     }
 
 private:
@@ -144,10 +147,7 @@ private:
         if (error)
         {
             std::cout << "Read header failed: " << error.message() << std::endl;
-            if (m_onHandleError != NULL)
-            {
-                m_onHandleError(error);
-            }
+            checkError(error);
             return;
         }
 
@@ -158,10 +158,7 @@ private:
         {
             std::cout << "Header doesn't seem to be valid" << std::endl;
             boost::system::error_code error(boost::asio::error::invalid_argument);
-            if (m_onHandleError != NULL)
-            {
-                m_onHandleError(error);
-            }
+            checkError(error);
             return;
         }
 
@@ -177,10 +174,7 @@ private:
         if (error)
         {
             std::cout << "Read message type failed: " << error.message() << std::endl;
-            if (m_onHandleError != NULL)
-            {
-                m_onHandleError(error);
-            }
+            checkError(error);
             return;
         }
 
@@ -193,10 +187,7 @@ private:
         {
             std::cout << "Mesage type doesn't seem to be valid" << std::endl;
             boost::system::error_code error(boost::asio::error::invalid_argument);
-            if (m_onHandleError != NULL)
-            {
-                m_onHandleError(error);
-            }
+            checkError(error);
             return;
         }
 
@@ -212,10 +203,7 @@ private:
         if (error)
         {
             std::cout << "Read message data failed: " << error.message() << std::endl;
-            if (m_onHandleError != NULL)
-            {
-                m_onHandleError(error);
-            }
+            checkError(error);
             return;
         }
 
@@ -226,19 +214,23 @@ private:
         }
     }
 
-    void handleWrite(const boost::system::error_code& error)
+    void checkError(const boost::system::error_code& error)
     {
         if (error)
         {
-            std::cout << "Write message failed: " << error.message() << std::endl;
             if (m_onHandleError != NULL)
             {
-                m_onHandleError(error);
+                std::string errorString = error.message();
+                if (errorString == "End of file")
+                {
+                    m_onHandleError(error, remoteAddress());
+                }
+                else
+                {
+                    m_onHandleError(error, "");
+                }
             }
         }
-
-        // Nothing to do. The socket will be closed automatically when the last
-        // reference to the connection object goes away.
     }
 
 private:
