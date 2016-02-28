@@ -71,11 +71,9 @@ private:
 
     void closeAllTcpSession();
 
-    bool isTcpSessionExists(const std::string& remoteAddress);
-
     TcpSessionPtr tcpSession(const std::string& remoteAddress);
 
-    void handleReciveMessage(MessagePtr message);
+    void handleReciveMessage(MessagePtr message, const std::string& remoteAddress);
 
     void handleError(const boost::system::error_code& error, const std::string& remoteAddress);
 
@@ -87,6 +85,8 @@ private:
 
     typedef boost::shared_ptr<boost::thread> ThreadPtr;
     ThreadPtr m_ioServiceThread;
+
+    boost::mutex m_sessionMapMutex;
 
     // key: ip:port(127.0.0.1:8888)
     typedef std::unordered_map<std::string, TcpSessionPtr> TcpSessionMap;

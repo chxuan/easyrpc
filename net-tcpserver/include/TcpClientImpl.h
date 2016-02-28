@@ -57,7 +57,7 @@ private:
 
     void handleConnect(const boost::system::error_code& error);
 
-    void handleReciveMessage(MessagePtr message);
+    void handleReciveMessage(MessagePtr message, const std::string& remoteAddress);
 
 private:
     boost::asio::io_service m_ioService;

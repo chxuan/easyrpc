@@ -12,8 +12,16 @@
 class TcpServerMessageHandler
 {
 public:
-    void handleReciveMessage(MessagePtr message)
+    TcpServerMessageHandler(TcpServerImplPtr server)
     {
+        assert(server.use_count() != 0);
+        m_server = server;
+    }
+
+public:
+    void handleReciveMessage(MessagePtr message, const std::string& remoteAddress)
+    {
+        std::cout << "remote address: " << remoteAddress << std::endl;
         unsigned int messageType = message->m_messageType;
         switch (messageType)
         {
@@ -27,7 +35,13 @@ public:
             std::cout << "m_name: " << peopleInfoMessage.m_name << std::endl;
             std::cout << "m_age: " << peopleInfoMessage.m_age << std::endl;
             std::cout << "#################" << std::endl;
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
+
+            PeopleInfoMessagePtr peopleInfo(new PeopleInfoMessage);
+            peopleInfo->m_messageType = 1000;
+            peopleInfo->m_name = "Jack";
+            peopleInfo->m_age = 20;
+            m_server->write(peopleInfo, remoteAddress);
+
             break;
         }
         default:
@@ -65,52 +79,36 @@ private:
         ia >> t;
         t.m_messageType = message->m_messageType;
     }
+
+private:
+    TcpServerImplPtr m_server;
 };
+
+typedef boost::shared_ptr<TcpServerMessageHandler> TcpServerMessageHandlerPtr;
 
 int main()
 {
-    TcpServerImpl server(8888);
-    server.setThreadPoolNum(10);
+    TcpServerImplPtr server(new TcpServerImpl(8888));
+    server->setThreadPoolNum(10);
 
-    TcpServerMessageHandler handler;
+    TcpServerMessageHandlerPtr handler(new TcpServerMessageHandler(server));
 
     ServerParam param;
     param.m_onRecivedMessage =
-            boost::bind(&TcpServerMessageHandler::handleReciveMessage, &handler, _1);
+            boost::bind(&TcpServerMessageHandler::handleReciveMessage, handler, _1, _2);
     param.m_onHandleError =
-            boost::bind(&TcpServerMessageHandler::handleError, &handler, _1, _2);
+            boost::bind(&TcpServerMessageHandler::handleError, handler, _1, _2);
     param.m_onClientConnect =
-            boost::bind(&TcpServerMessageHandler::handleClientConnect, &handler, _1);
+            boost::bind(&TcpServerMessageHandler::handleClientConnect, handler, _1);
     param.m_onClientDisconnect =
-            boost::bind(&TcpServerMessageHandler::handleClientDisconnect, &handler, _1);
-    server.setServerParam(param);
+            boost::bind(&TcpServerMessageHandler::handleClientDisconnect, handler, _1);
+    server->setServerParam(param);
 
-    server.start();
+    server->start();
 
     std::cout << "Server starting..." << std::endl;
 
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));
-
-#if 0
-    for (auto& iter : server.allRemoteAddress())
-    {
-        boost::shared_ptr<PeopleInfoMessage> peopleInfoMessage(new PeopleInfoMessage);
-        peopleInfoMessage->m_messageType = 1000;
-        peopleInfoMessage->m_name = "Jack";
-        peopleInfoMessage->m_age = 20;
-        server.asyncWrite(peopleInfoMessage, iter);
-
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(10));
-
-        boost::shared_ptr<PeopleInfoMessage> peopleInfoMessage2(new PeopleInfoMessage);
-        peopleInfoMessage2->m_messageType = 2000;
-        peopleInfoMessage2->m_name = "Tom";
-        peopleInfoMessage2->m_age = 22;
-        server.asyncWrite(peopleInfoMessage2, iter);
-    }
-#endif
-
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));
+    std::cin.get();
 
     std::cout << "Server stoped..." << std::endl;
 

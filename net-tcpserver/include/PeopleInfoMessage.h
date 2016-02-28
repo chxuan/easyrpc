@@ -2,7 +2,7 @@
 #define _PEOPLEINFOMESSAGE_H
 
 #include "Message.h"
-#include <iostream>
+
 class PeopleInfoMessage
 {
 public:
@@ -18,6 +18,8 @@ public:
     unsigned int m_age;
     unsigned int m_sex;
 };
+
+typedef boost::shared_ptr<PeopleInfoMessage> PeopleInfoMessagePtr;
 
 namespace boost
 {

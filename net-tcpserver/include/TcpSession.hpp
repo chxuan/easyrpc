@@ -36,9 +36,8 @@
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/serialization/unordered_set.hpp>
 #include "Message.h"
-#include "PeopleInfoMessage.h"
 
-typedef boost::function1<void, MessagePtr> OnReciveMessage;
+typedef boost::function2<void, MessagePtr, const std::string&> OnReciveMessage;
 typedef boost::function2<void, const boost::system::error_code&, const std::string&> OnHandleError;
 
 class TcpSessionParam
@@ -95,6 +94,7 @@ public:
     template<typename T>
     void write(const T t)
     {
+        boost::lock_guard<boost::mutex> locker(m_writeMutex);
         // 序列化数据
         try
         {
@@ -210,7 +210,7 @@ private:
         message->m_data = std::string(&m_inboundData[0], m_inboundData.size());
         if (m_onReciveMessage != NULL)
         {
-            m_onReciveMessage(message);
+            m_onReciveMessage(message, remoteAddress());
         }
     }
 
@@ -252,6 +252,8 @@ private:
 
     OnReciveMessage m_onReciveMessage;
     OnHandleError m_onHandleError;
+
+    boost::mutex m_writeMutex;
 };
 
 typedef boost::shared_ptr<TcpSession> TcpSessionPtr;

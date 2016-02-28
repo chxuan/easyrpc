@@ -86,7 +86,7 @@ void TcpClientImpl::setClientParam(const ClientParam &param)
     m_onHandleError = param.m_onHandleError;
     m_onRecivedMessage = param.m_onRecivedMessage;
     TcpSessionParam tcpSessionParam;
-    tcpSessionParam.m_onRecivedMessage = boost::bind(&TcpClientImpl::handleReciveMessage, this, _1);
+    tcpSessionParam.m_onRecivedMessage = boost::bind(&TcpClientImpl::handleReciveMessage, this, _1, _2);
     tcpSessionParam.m_onHandleError = param.m_onHandleError;
     m_tcpSession.setTcpSessionParam(tcpSessionParam);
 }
@@ -112,7 +112,7 @@ void TcpClientImpl::handleConnect(const boost::system::error_code &error)
     m_tcpSession.asyncRead();
 }
 
-void TcpClientImpl::handleReciveMessage(MessagePtr message)
+void TcpClientImpl::handleReciveMessage(MessagePtr message, const std::string& remoteAddress)
 {
     if (message.use_count() == 0)
     {
@@ -120,6 +120,6 @@ void TcpClientImpl::handleReciveMessage(MessagePtr message)
         return;
     }
 
-    CRealJobPtr job(new CRealJob(m_onRecivedMessage, message));
+    CRealJobPtr job(new CRealJob(m_onRecivedMessage, message, remoteAddress));
     m_threadManage->run(job);
 }

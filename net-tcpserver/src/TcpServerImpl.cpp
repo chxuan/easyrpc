@@ -110,12 +110,15 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
     if (!error)
     {
         TcpSessionParam tcpSessionParam;
-        tcpSessionParam.m_onRecivedMessage = boost::bind(&TcpServerImpl::handleReciveMessage, this, _1);
+        tcpSessionParam.m_onRecivedMessage = boost::bind(&TcpServerImpl::handleReciveMessage, this, _1, _2);
         tcpSessionParam.m_onHandleError = boost::bind(&TcpServerImpl::handleError, this, _1, _2);
         tcpSession->setTcpSessionParam(tcpSessionParam);
 
         std::string remoteAddress = tcpSession->remoteAddress();
-        m_tcpSessionMap.insert(std::make_pair(remoteAddress, tcpSession));
+        {
+            boost::lock_guard<boost::mutex> locker(m_sessionMapMutex);
+            m_tcpSessionMap.insert(std::make_pair(remoteAddress, tcpSession));
+        }
         if (m_onClientConnect != NULL)
         {
             m_onClientConnect(remoteAddress);
@@ -135,6 +138,7 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
 
 void TcpServerImpl::closeAllTcpSession()
 {
+    boost::lock_guard<boost::mutex> locker(m_sessionMapMutex);
     auto begin = m_tcpSessionMap.begin();
     auto end = m_tcpSessionMap.end();
     while (begin != end)
@@ -155,19 +159,9 @@ void TcpServerImpl::closeAllTcpSession()
     m_tcpSessionMap.clear();
 }
 
-bool TcpServerImpl::isTcpSessionExists(const std::string &remoteAddress)
-{
-    auto iter = m_tcpSessionMap.find(remoteAddress);
-    if (iter != m_tcpSessionMap.end())
-    {
-        return true;
-    }
-
-    return false;
-}
-
 TcpSessionPtr TcpServerImpl::tcpSession(const std::string& remoteAddress)
 {
+    boost::lock_guard<boost::mutex> locker(m_sessionMapMutex);
     auto iter = m_tcpSessionMap.find(remoteAddress);
     if (iter != m_tcpSessionMap.end())
     {
@@ -177,7 +171,7 @@ TcpSessionPtr TcpServerImpl::tcpSession(const std::string& remoteAddress)
     return TcpSessionPtr();
 }
 
-void TcpServerImpl::handleReciveMessage(MessagePtr message)
+void TcpServerImpl::handleReciveMessage(MessagePtr message, const std::string& remoteAddress)
 {
     if (message.use_count() == 0)
     {
@@ -185,7 +179,7 @@ void TcpServerImpl::handleReciveMessage(MessagePtr message)
         return;
     }
 
-    CRealJobPtr job(new CRealJob(m_onRecivedMessage, message));
+    CRealJobPtr job(new CRealJob(m_onRecivedMessage, message, remoteAddress));
     m_threadManage->run(job);
 }
 
@@ -214,6 +208,7 @@ void TcpServerImpl::handleError(const boost::system::error_code &error, const st
 
 void TcpServerImpl::closeTcpSession(const std::string &remoteAddress)
 {
+    boost::lock_guard<boost::mutex> locker(m_sessionMapMutex);
     auto iter = m_tcpSessionMap.find(remoteAddress);
     if (iter != m_tcpSessionMap.end())
     {

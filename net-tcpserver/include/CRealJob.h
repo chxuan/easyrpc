@@ -19,7 +19,7 @@
 
 class Message;
 typedef boost::shared_ptr<Message> MessagePtr;
-typedef boost::function1<void, MessagePtr> OnReciveMessage;
+typedef boost::function2<void, MessagePtr, const std::string&> OnReciveMessage;
 
 /**
 * @brief 任务类，继承自CJob
@@ -27,7 +27,7 @@ typedef boost::function1<void, MessagePtr> OnReciveMessage;
 class CRealJob : public CJob
 {
 public:
-    CRealJob(OnReciveMessage func, MessagePtr message);
+    CRealJob(OnReciveMessage func, MessagePtr message, const std::string& remoteAddress);
     virtual ~CRealJob();
 
     /**
@@ -38,6 +38,7 @@ public:
 private:
     OnReciveMessage m_onReciveMessage;
     MessagePtr m_message;
+    std::string m_remoteAddress;
 };
 
 typedef boost::shared_ptr<CRealJob> CRealJobPtr;
