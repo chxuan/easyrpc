@@ -299,9 +299,8 @@ int main()
 
     for (int i = 0; i < 100; ++i)
     {
-        CRealJobPtr job(new CRealJob);
-        job->setJob(boost::bind(doTask, _1));
-        manage->run(job, NULL);
+        CRealJobPtr job(new CRealJob(boost::bind(doTask, _1), NULL));
+        manage->run(job);
     }
 
     boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));
