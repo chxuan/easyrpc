@@ -55,8 +55,16 @@ bool TcpClientImpl::start()
 
 bool TcpClientImpl::stop()
 {
-    m_tcpSession.socket().close();
-    m_ioService.stop();
+    try
+    {
+        m_tcpSession.socket().close();
+        m_ioService.stop();
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "Error: " << e.what() << std::endl;
+        return false;
+    }
 
     if (m_ioServiceThread.use_count() != 0)
     {

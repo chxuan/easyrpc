@@ -14,7 +14,7 @@
 #ifndef _TCPSERVER_H
 #define _TCPSERVER_H
 
-#include "TcpSession.hpp"
+#include "TcpSession.h"
 
 class CThreadManage;
 typedef boost::shared_ptr<CThreadManage> CThreadManagePtr;
@@ -22,6 +22,9 @@ typedef boost::shared_ptr<CThreadManage> CThreadManagePtr;
 typedef boost::function1<void, const std::string&> OnClientConnect;
 typedef boost::function1<void, const std::string&> OnClientDisconnect;
 
+/**
+ * @brief 服务器参数，设置接收消息、错误处理、客户端连接和断开连接回调函数
+ */
 class ServerParam
 {
 public:
@@ -40,15 +43,52 @@ public:
     OnClientDisconnect m_onClientDisconnect;
 };
 
+/**
+ * @brief tcp服务器实现类
+ */
 class TcpServerImpl
 {
 public:
     TcpServerImpl(unsigned short port);
     ~TcpServerImpl();
 
+    /**
+    * @brief start 开始服务
+    *
+    * @note 在调用该函数之前，请先调用setThreadPoolNum和setClientParam函数
+    *
+    * @return 成功返回true，否则返回false
+    */
     bool start();
+
+    /**
+    * @brief stop 停止服务
+    *
+    * @return 成功返回true，否则返回false
+    */
     bool stop();
 
+    /**
+    * @brief setThreadPoolNum 设置线程池数量
+    *
+    * @param num 线程池数量
+    */
+    void setThreadPoolNum(unsigned int num);
+
+    /**
+    * @brief setClientParam 设置服务器参数，主要是回调函数
+    *
+    * @param param 服务器参数
+    */
+    void setServerParam(const ServerParam& param);
+
+    /**
+    * @brief write 同步写数据
+    *
+    * @tparam T 模版类型
+    * @param t 消息结构
+    * @param remoteAddress 客户端地址（地址格式：127.0.0.1:8888）
+    */
     template<typename T>
     void write(const T t, const std::string& remoteAddress)
     {
@@ -59,25 +99,59 @@ public:
         }
     }
 
-    void setThreadPoolNum(unsigned int num);
-
-    void setServerParam(const ServerParam& param);
-
 private:
+    /**
+     * @brief accept 异步监听客户端的连接
+     */
     void accept();
 
+    /**
+     * @brief handleAccept 处理客户端的连接
+     *
+     * @param tcpSession 服务器与客户端的会话
+     * @param error 错误类型
+     */
     void handleAccept(TcpSessionPtr tcpSession,
                       const boost::system::error_code& error);
 
+    /**
+     * @brief closeAllTcpSession 关闭服务器与所有的客户端的会话（连接）
+     */
     void closeAllTcpSession();
 
+    /**
+     * @brief tcpSession 通过远端地址获得服务器与客户端的会话
+     *
+     * @param remoteAddress 远端地址
+     *
+     * @return tcp会话
+     */
     TcpSessionPtr tcpSession(const std::string& remoteAddress);
 
+    /**
+     * @brief handleReciveMessage 处理接收到的消息
+     *
+     * @param message 消息
+     * @param remoteAddress 远端地址
+     */
     void handleReciveMessage(MessagePtr message, const std::string& remoteAddress);
 
+    /**
+     * @brief handleError 处理错误
+     *
+     * @param error 错误类型
+     * @param remoteAddress 远端地址，该地址可能为空
+     */
     void handleError(const boost::system::error_code& error, const std::string& remoteAddress);
 
-    void closeTcpSession(const std::string& remoteAddress);
+    /**
+     * @brief closeTcpSession 通过远端地址关闭服务器与客户端的会话（连接）
+     *
+     * @param remoteAddress 远端地址
+     *
+     * @return 成功返回true，否则返回false
+     */
+    bool closeTcpSession(const std::string& remoteAddress);
 
 private:
     boost::asio::io_service m_ioService;

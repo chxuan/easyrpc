@@ -59,7 +59,16 @@ bool TcpServerImpl::start()
 bool TcpServerImpl::stop()
 {
     closeAllTcpSession();
-    m_ioService.stop();
+
+    try
+    {
+        m_ioService.stop();
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "Error: " << e.what() << std::endl;
+        return false;
+    }
 
     if (m_ioServiceThread.use_count() != 0)
     {
@@ -206,14 +215,26 @@ void TcpServerImpl::handleError(const boost::system::error_code &error, const st
     }
 }
 
-void TcpServerImpl::closeTcpSession(const std::string &remoteAddress)
+bool TcpServerImpl::closeTcpSession(const std::string &remoteAddress)
 {
     boost::lock_guard<boost::mutex> locker(m_sessionMapMutex);
     auto iter = m_tcpSessionMap.find(remoteAddress);
     if (iter != m_tcpSessionMap.end())
     {
         TcpSessionPtr session = iter->second;
-        session->socket().close();
-        m_tcpSessionMap.erase(iter);
+        try
+        {
+            session->socket().close();
+            m_tcpSessionMap.erase(iter);
+            return true;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "Error: " << e.what() << std::endl;
+            m_tcpSessionMap.erase(iter);
+            return false;
+        }
     }
+
+    return false;
 }

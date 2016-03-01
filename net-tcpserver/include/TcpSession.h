@@ -41,6 +41,9 @@ typedef boost::shared_ptr<Message> MessagePtr;
 typedef boost::function2<void, MessagePtr, const std::string&> OnReciveMessage;
 typedef boost::function2<void, const boost::system::error_code&, const std::string&> OnHandleError;
 
+/**
+* @brief 会话参数，设置接收消息、错误处理回调函数
+*/
 class TcpSessionParam
 {
 public:
@@ -60,16 +63,52 @@ class TcpSession
 public:
     TcpSession(boost::asio::io_service& ioService);
 
+    /**
+    * @brief setTcpSessionParam 设置会话参数
+    *
+    * @param param 会话参数
+    */
     void setTcpSessionParam(const TcpSessionParam& param);
 
+    /**
+    * @brief socket 获取socket
+    *
+    * @return socket
+    */
     boost::asio::ip::tcp::socket& socket();
+
+    /**
+    * @brief remoteIp 获取ip地址
+    *
+    * @return ip地址
+    */
     std::string remoteIp();
+
+    /**
+    * @brief remotePort 获取端口号
+    *
+    * @return 端口号
+    */
     unsigned short remotePort();
+
+    /**
+    * @brief remoteAddress 获取远端地址（地址格式：127.0.0.1:8888）
+    *
+    * @return 远端地址
+    */
     std::string remoteAddress();
 
+    /**
+    * @brief asyncRead 异步读取消息
+    */
     void asyncRead();
 
     template<typename T>
+    /**
+    * @brief write 同步写消息
+    *
+    * @param t 消息结构
+    */
     void write(const T t)
     {
         boost::lock_guard<boost::mutex> locker(m_writeMutex);
@@ -120,9 +159,33 @@ public:
     }
 
 private:
+    /**
+    * @brief handleReadHeader 处理读取的消息头
+    *
+    * @param error 错误类型
+    */
     void handleReadHeader(const boost::system::error_code& error);
+
+    /**
+    * @brief handleReadMessageType 处理读取的消息类型
+    *
+    * @param error 错误类型
+    */
     void handleReadMessageType(const boost::system::error_code& error);
+
+    /**
+    * @brief handleReadData 处理读取的消息体
+    *
+    * @param message 消息
+    * @param error 错误类型
+    */
     void handleReadData(MessagePtr message, const boost::system::error_code& error);
+
+    /**
+    * @brief checkError 判断是什么类型的错误，然后做相应的处理
+    *
+    * @param error 错误类型
+    */
     void checkError(const boost::system::error_code& error);
 
 private:

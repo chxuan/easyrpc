@@ -19,6 +19,9 @@
 
 #define TCP_MESSAGE_HEADER unsigned int m_messageType;
 
+/**
+* @brief 用于tcp服务器接收的消息结构
+*/
 class Message
 {
 public:
