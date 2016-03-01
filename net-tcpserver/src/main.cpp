@@ -6,13 +6,13 @@
  ************************************************************************/
 
 #include <iostream>
-#include "TcpServerImpl.h"
+#include "TcpServerWrapper.h"
 #include "PeopleInfoMessage.h"
 
 class TcpServerMessageHandler
 {
 public:
-    TcpServerMessageHandler(TcpServerImplPtr server)
+    TcpServerMessageHandler(TcpServerWrapperPtr server)
     {
         assert(server.use_count() != 0);
         m_server = server;
@@ -81,14 +81,14 @@ private:
     }
 
 private:
-    TcpServerImplPtr m_server;
+    TcpServerWrapperPtr m_server;
 };
 
 typedef boost::shared_ptr<TcpServerMessageHandler> TcpServerMessageHandlerPtr;
 
 int main()
 {
-    TcpServerImplPtr server(new TcpServerImpl(8888));
+    TcpServerWrapperPtr server(new TcpServerWrapper(8888));
     server->setThreadPoolNum(10);
 
     TcpServerMessageHandlerPtr handler(new TcpServerMessageHandler(server));
