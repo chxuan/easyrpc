@@ -58,6 +58,9 @@ public:
     OnHandleError m_onHandleError;
 };
 
+/**
+* @brief tcp会话类，提供服务器与客户端的通信接口
+*/
 class TcpSession
 {
 public:
