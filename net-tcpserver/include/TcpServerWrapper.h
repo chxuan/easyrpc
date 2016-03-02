@@ -70,6 +70,7 @@ public:
 
 private:
     TcpServerImplPtr m_impl;
+    bool m_isBindSuccess;
 };
 
 typedef boost::shared_ptr<TcpServerWrapper> TcpServerWrapperPtr;

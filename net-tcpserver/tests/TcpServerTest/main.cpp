@@ -104,9 +104,16 @@ int main()
             boost::bind(&TcpServerMessageHandler::handleClientDisconnect, handler, _1);
     server->setServerParam(param);
 
-    server->start();
-
-    std::cout << "Server starting..." << std::endl;
+    bool ok = server->start();
+    if (ok)
+    {
+        std::cout << "Server starting..." << std::endl;
+    }
+    else
+    {
+        std::cout << "Server start failed" << std::endl;
+        return 0;
+    }
 
     std::cin.get();
 
