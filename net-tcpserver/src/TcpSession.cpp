@@ -68,46 +68,14 @@ void TcpSession::handleReadHeader(const boost::system::error_code& error)
         return;
     }
 
-    // 解析header
-    std::istringstream is(std::string(m_inboundHeader, HeaderLength));
-    std::size_t inboundDataSize = 0;
-    if (!(is >> std::hex >> inboundDataSize))
-    {
-        std::cout << "Header doesn't seem to be valid" << std::endl;
-        boost::system::error_code error(boost::asio::error::invalid_argument);
-        checkError(error);
-        return;
-    }
+    Header header;
+    memcpy(&header, m_inboundHeader, HeaderLength);
 
     m_inboundData.clear();
-    m_inboundData.resize(inboundDataSize);
-    boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundMessageType),
-                            boost::bind(&TcpSession::handleReadMessageType, this,
-                                        boost::asio::placeholders::error));
-}
-
-void TcpSession::handleReadMessageType(const boost::system::error_code& error)
-{
-    if (error)
-    {
-        std::cout << "Read message type failed: " << error.message() << std::endl;
-        checkError(error);
-        return;
-    }
+    m_inboundData.resize(header.m_dataSize);
 
     MessagePtr message(new Message);
-
-    // 解析message type
-    std::istringstream is(std::string(m_inboundMessageType, MessageTypeLength));
-    message->m_messageType = 0;
-    if (!(is >> std::hex >> message->m_messageType))
-    {
-        std::cout << "Mesage type doesn't seem to be valid" << std::endl;
-        boost::system::error_code error(boost::asio::error::invalid_argument);
-        checkError(error);
-        return;
-    }
-
+    message->m_messageType = header.m_messageType;
     boost::asio::async_read(m_socket, boost::asio::buffer(m_inboundData),
                             boost::bind(&TcpSession::handleReadData, this,
                                         message, boost::asio::placeholders::error));

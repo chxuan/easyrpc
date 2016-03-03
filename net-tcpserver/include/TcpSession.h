@@ -59,6 +59,23 @@ public:
 };
 
 /**
+* @brief 消息头部，包含消息体大小、消息类型
+*/
+class Header
+{
+public:
+    Header()
+        : m_dataSize(0),
+          m_messageType(0)
+    {
+        // Do nothing
+    }
+
+    unsigned int m_dataSize;
+    unsigned int m_messageType;
+};
+
+/**
 * @brief tcp会话类，提供服务器与客户端的通信接口
 */
 class TcpSession
@@ -116,13 +133,13 @@ public:
     void write(const T t)
     {
         boost::lock_guard<boost::mutex> locker(m_writeMutex);
+
         // 序列化数据
+        std::ostringstream archiveStream;
         try
         {
-            std::ostringstream archiveStream;
             boost::archive::binary_oarchive archive(archiveStream);
             archive << *t;
-            m_outboundData = archiveStream.str();
         }
         catch (std::exception& e)
         {
@@ -130,32 +147,16 @@ public:
             return;
         }
 
-        // 格式化header
-        std::ostringstream headerStream;
-        headerStream << std::setw(HeaderLength)
-          << std::hex << m_outboundData.size();
-        if (!headerStream || headerStream.str().size() != HeaderLength)
-        {
-            std::cout << "Format the header failed" << std::endl;
-            return;
-        }
-        m_outboundHeader = headerStream.str();
+        Header header;
+        header.m_dataSize = archiveStream.str().size();
+        header.m_messageType = t->m_messageType;
 
-        // 格式化MessageType
-        std::ostringstream messageTypeStream;
-        messageTypeStream << std::setw(MessageTypeLength)
-          << std::hex << t->m_messageType;
-        if (!messageTypeStream || messageTypeStream.str().size() != MessageTypeLength)
-        {
-            std::cout << "Format the message type failed" << std::endl;
-            return;
-        }
-        m_outboundMessageType = messageTypeStream.str();
+        char headerBuf[HeaderLength] = {'\0'};
+        memcpy(headerBuf, &header, sizeof(headerBuf));
 
         std::vector<boost::asio::const_buffer> buffers;
-        buffers.push_back(boost::asio::buffer(m_outboundHeader));
-        buffers.push_back(boost::asio::buffer(m_outboundMessageType));
-        buffers.push_back(boost::asio::buffer(m_outboundData));
+        buffers.push_back(boost::asio::buffer(headerBuf));
+        buffers.push_back(boost::asio::buffer(archiveStream.str()));
 
         boost::system::error_code error;
         boost::asio::write(m_socket, buffers, error);
@@ -169,13 +170,6 @@ private:
     * @param error 错误类型
     */
     void handleReadHeader(const boost::system::error_code& error);
-
-    /**
-    * @brief handleReadMessageType 处理读取的消息类型
-    *
-    * @param error 错误类型
-    */
-    void handleReadMessageType(const boost::system::error_code& error);
 
     /**
     * @brief handleReadData 处理读取的消息体
@@ -197,16 +191,10 @@ private:
 
     enum
     {
-        HeaderLength = 8,
-        MessageTypeLength = 8
+        HeaderLength = 8
     };
 
-    std::string m_outboundHeader;
-    std::string m_outboundMessageType;
-    std::string m_outboundData;
-
     char m_inboundHeader[HeaderLength];
-    char m_inboundMessageType[MessageTypeLength];
     std::vector<char> m_inboundData;
 
     OnReciveMessage m_onReciveMessage;
