@@ -106,12 +106,13 @@ public:
     */
     void asyncRead();
 
-    template<typename T>
     /**
     * @brief write 同步写消息
     *
+    * @tparam T 摸板类型
     * @param t 消息结构
     */
+    template<typename T>
     void write(const T t)
     {
         boost::lock_guard<boost::mutex> locker(m_writeMutex);
