@@ -10,10 +10,11 @@ framework set
 依赖的第三方库
 -------------
 
-> - clog框架依赖log4cpp、utils
-> - net-thrift框架依赖thrift、boost
-> - net-rcf框架依赖RCF、boost
-> - utils框架依赖libuuid、openssl
+> - clog依赖log4cpp、utils
+> - net-tcpserver依赖boost.asio
+> - net-thrift依赖thrift、boost
+> - net-rcf依赖RCF、boost
+> - utils依赖libuuid、openssl
 > - threadpool依赖boost
 
 开发平台
@@ -309,6 +310,7 @@ int main()
 }
 ```
 该线程池是一个通用的线程池框架，CThreadManage作为线程池的一个包装类，该例子创建了10个线程并且并发执行了100个任务，该任务最终体现为回调doTask函数，调用run函数时并没有真正的执行任务，而是将任务放入任务队列，然后通知空闲线程来取走任务，直到任务队列为空，main函数return时，线程池将等待正在执行的任务，直到任务执行完成并放弃执行任务队列的任务。
+
 
 
 
