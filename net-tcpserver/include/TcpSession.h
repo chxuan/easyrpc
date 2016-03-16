@@ -147,8 +147,10 @@ public:
             return;
         }
 
+        std::string messageData = archiveStream.str();
+
         Header header;
-        header.m_dataSize = archiveStream.str().size();
+        header.m_dataSize = messageData.size();
         header.m_messageType = t->m_messageType;
 
         char headerBuf[HeaderLength] = {'\0'};
@@ -156,7 +158,7 @@ public:
 
         std::vector<boost::asio::const_buffer> buffers;
         buffers.push_back(boost::asio::buffer(headerBuf));
-        buffers.push_back(boost::asio::buffer(archiveStream.str()));
+        buffers.push_back(boost::asio::buffer(messageData));
 
         boost::system::error_code error;
         boost::asio::write(m_socket, buffers, error);
