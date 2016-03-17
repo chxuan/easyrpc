@@ -53,15 +53,12 @@ void CWorkerThread::run()
             }
         }
 
-        m_threadPool->moveToBusyList(shared_from_this());
-
         if (job.use_count() != 0)
         {
             job->run();
             job.reset();
             m_threadPool->m_jobQueuePutCond.notify_one();
         }
-        m_threadPool->moveToIdleList(shared_from_this());
     }
 }
 
