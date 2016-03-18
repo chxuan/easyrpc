@@ -15,11 +15,11 @@
 #define _CREALJOB_H
 
 #include "CJob.h"
-#include <boost/function.hpp>
+#include <functional>
 
 class Message;
-typedef boost::shared_ptr<Message> MessagePtr;
-typedef boost::function2<void, MessagePtr, const std::string&> OnReciveMessage;
+typedef std::shared_ptr<Message> MessagePtr;
+typedef std::function<void (MessagePtr, const std::string&)> OnReciveMessage;
 
 /**
 * @brief 任务类，继承自CJob
@@ -41,6 +41,6 @@ private:
     std::string m_remoteAddress;
 };
 
-typedef boost::shared_ptr<CRealJob> CRealJobPtr;
+typedef std::shared_ptr<CRealJob> CRealJobPtr;
 
 #endif

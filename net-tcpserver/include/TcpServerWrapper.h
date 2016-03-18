@@ -73,6 +73,6 @@ private:
     bool m_isBindSuccess;
 };
 
-typedef boost::shared_ptr<TcpServerWrapper> TcpServerWrapperPtr;
+typedef std::shared_ptr<TcpServerWrapper> TcpServerWrapperPtr;
 
 #endif

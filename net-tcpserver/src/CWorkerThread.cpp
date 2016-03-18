@@ -33,7 +33,7 @@ void CWorkerThread::run()
     {
         CJobPtr job;
         {
-            boost::unique_lock<boost::mutex> locker(m_threadPool->m_jobQueueMutex);
+            std::unique_lock<std::mutex> locker(m_threadPool->m_jobQueueMutex);
             while (m_threadPool->m_jobQueue.empty() &&
                    !m_threadPool->m_isStopThreadPool &&
                    !m_isStopWorkThread)

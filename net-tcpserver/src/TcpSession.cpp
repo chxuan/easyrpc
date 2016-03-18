@@ -12,7 +12,6 @@
 */
 
 #include "TcpSession.h"
-#include "Message.h"
 
 TcpSession::TcpSession(boost::asio::io_service& ioService)
     : m_socket(ioService),
@@ -108,11 +107,11 @@ void TcpSession::checkError(const boost::system::error_code& error)
             std::string errorString = error.message();
             if (errorString == "End of file")
             {
-                m_onHandleError(error, remoteAddress());
+                m_onHandleError(errorString, remoteAddress());
             }
             else
             {
-                m_onHandleError(error, "");
+                m_onHandleError(errorString, "");
             }
         }
     }

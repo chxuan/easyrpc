@@ -17,10 +17,10 @@
 #include "TcpSession.h"
 
 class CThreadManage;
-typedef boost::shared_ptr<CThreadManage> CThreadManagePtr;
+typedef std::shared_ptr<CThreadManage> CThreadManagePtr;
 
-typedef boost::function1<void, const std::string&> OnClientConnect;
-typedef boost::function1<void, const std::string&> OnClientDisconnect;
+typedef std::function<void (const std::string&)> OnClientConnect;
+typedef std::function<void (const std::string&)> OnClientDisconnect;
 
 /**
  * @brief 服务器参数，设置接收消息、错误处理、客户端连接和断开连接回调函数
@@ -139,10 +139,10 @@ private:
     /**
      * @brief handleError 处理错误
      *
-     * @param error 错误类型
+     * @param errorString 错误描述
      * @param remoteAddress 远端地址，该地址可能为空
      */
-    void handleError(const boost::system::error_code& error, const std::string& remoteAddress);
+    void handleError(const std::string &errorString, const std::string& remoteAddress);
 
     /**
      * @brief closeTcpSession 通过远端地址关闭服务器与客户端的会话（连接）
@@ -157,10 +157,10 @@ private:
     boost::asio::io_service m_ioService;
     boost::asio::ip::tcp::acceptor m_acceptor;
 
-    typedef boost::shared_ptr<boost::thread> ThreadPtr;
+    typedef std::shared_ptr<std::thread> ThreadPtr;
     ThreadPtr m_ioServiceThread;
 
-    boost::mutex m_sessionMapMutex;
+    std::mutex m_sessionMapMutex;
 
     // key: ip:port(127.0.0.1:8888)
     typedef std::unordered_map<std::string, TcpSessionPtr> TcpSessionMap;
@@ -174,6 +174,6 @@ private:
     OnClientDisconnect m_onClientDisconnect;
 };
 
-typedef boost::shared_ptr<TcpServerImpl> TcpServerImplPtr;
+typedef std::shared_ptr<TcpServerImpl> TcpServerImplPtr;
 
 #endif

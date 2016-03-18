@@ -1,7 +1,7 @@
 /* Copyright(C)
 * For free
 * All right reserved
-* 
+*
 */
 /**
 * @file CThread.h
@@ -15,9 +15,8 @@
 #define _CTHREAD_H
 
 #include <assert.h>
-#include <boost/thread.hpp>
-#include <boost/bind.hpp>
-#include <boost/smart_ptr.hpp>
+#include <thread>
+#include <memory>
 
 /**
 * @brief 线程类，封装了boost.thread的常用函数
@@ -25,7 +24,7 @@
 class CThread
 {
 public:
-    typedef boost::shared_ptr<boost::thread> ThreadPtr;
+    typedef std::shared_ptr<std::thread> ThreadPtr;
 
     CThread()
     {
@@ -56,7 +55,7 @@ public:
     {
         if (m_thread == NULL)
         {
-            m_thread = boost::make_shared<boost::thread>(boost::bind(&CThread::handleThread, this));
+            m_thread = std::make_shared<std::thread>(std::bind(&CThread::handleThread, this));
         }
     }
 
@@ -78,22 +77,7 @@ public:
         m_thread->detach();
     }
 
-    /**
-    * @brief interrupt 强制中断线程的执行
-    */
-    void interrupt()
-    {
-        assert(m_thread != NULL);
-        m_thread->interrupt();
-    }
-
-    bool interruptionRequested() const
-    {
-        assert(m_thread != NULL);
-        m_thread->interruption_requested();
-    }
-
-    boost::thread::id threadID() const
+    std::thread::id threadID() const
     {
         assert(m_thread != NULL);
         return m_thread->get_id();
@@ -109,6 +93,6 @@ private:
     ThreadPtr m_thread;
 };
 
-typedef boost::shared_ptr<CThread> CThreadPtr;
+typedef std::shared_ptr<CThread> CThreadPtr;
 
 #endif

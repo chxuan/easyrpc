@@ -43,7 +43,7 @@ bool TcpServerImpl::start()
     {
         try
         {
-            m_ioServiceThread = boost::make_shared<boost::thread>
+            m_ioServiceThread = std::make_shared<std::thread>
                     (boost::bind(&boost::asio::io_service::run, &m_ioService));
         }
         catch (std::exception& e)
@@ -85,7 +85,7 @@ void TcpServerImpl::setThreadPoolNum(unsigned int num)
 {
     if (m_threadManage.use_count() == 0)
     {
-        m_threadManage = boost::make_shared<CThreadManage>();
+        m_threadManage = std::make_shared<CThreadManage>();
         m_threadManage->initThreadNum(num);
     }
 }
@@ -119,13 +119,15 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
     if (!error)
     {
         TcpSessionParam tcpSessionParam;
-        tcpSessionParam.m_onRecivedMessage = boost::bind(&TcpServerImpl::handleReciveMessage, this, _1, _2);
-        tcpSessionParam.m_onHandleError = boost::bind(&TcpServerImpl::handleError, this, _1, _2);
+        tcpSessionParam.m_onRecivedMessage = std::bind(&TcpServerImpl::handleReciveMessage,
+                                                       this, std::placeholders::_1, std::placeholders::_2);
+        tcpSessionParam.m_onHandleError = std::bind(&TcpServerImpl::handleError,
+                                                    this, std::placeholders::_1, std::placeholders::_2);
         tcpSession->setTcpSessionParam(tcpSessionParam);
 
         std::string remoteAddress = tcpSession->remoteAddress();
         {
-            boost::lock_guard<boost::mutex> locker(m_sessionMapMutex);
+            std::lock_guard<std::mutex> locker(m_sessionMapMutex);
             m_tcpSessionMap.insert(std::make_pair(remoteAddress, tcpSession));
         }
         if (m_onClientConnect != NULL)
@@ -140,14 +142,14 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
         std::cout << "Tcp server accept failed: " << error.message() << std::endl;
         if (m_onHandleError != NULL)
         {
-            m_onHandleError(error, "");
+            m_onHandleError(error.message(), "");
         }
     }
 }
 
 void TcpServerImpl::closeAllTcpSession()
 {
-    boost::lock_guard<boost::mutex> locker(m_sessionMapMutex);
+    std::lock_guard<std::mutex> locker(m_sessionMapMutex);
     auto begin = m_tcpSessionMap.begin();
     auto end = m_tcpSessionMap.end();
     while (begin != end)
@@ -170,7 +172,7 @@ void TcpServerImpl::closeAllTcpSession()
 
 TcpSessionPtr TcpServerImpl::tcpSession(const std::string& remoteAddress)
 {
-    boost::lock_guard<boost::mutex> locker(m_sessionMapMutex);
+    std::lock_guard<std::mutex> locker(m_sessionMapMutex);
     auto iter = m_tcpSessionMap.find(remoteAddress);
     if (iter != m_tcpSessionMap.end())
     {
@@ -192,32 +194,28 @@ void TcpServerImpl::handleReciveMessage(MessagePtr message, const std::string& r
     m_threadManage->run(job);
 }
 
-void TcpServerImpl::handleError(const boost::system::error_code &error, const std::string &remoteAddress)
+void TcpServerImpl::handleError(const std::string &errorString, const std::string &remoteAddress)
 {
-    if (error)
+    if (errorString == "End of file")
     {
-        std::string errorString = error.message();
-        if (errorString == "End of file")
+        closeTcpSession(remoteAddress);
+        if (m_onClientDisconnect != NULL)
         {
-            closeTcpSession(remoteAddress);
-            if (m_onClientDisconnect != NULL)
-            {
-                m_onClientDisconnect(remoteAddress);
-            }
+            m_onClientDisconnect(remoteAddress);
         }
-        else
+    }
+    else
+    {
+        if (m_onHandleError != NULL)
         {
-            if (m_onHandleError != NULL)
-            {
-                m_onHandleError(error, remoteAddress);
-            }
+            m_onHandleError(errorString, remoteAddress);
         }
     }
 }
 
 bool TcpServerImpl::closeTcpSession(const std::string &remoteAddress)
 {
-    boost::lock_guard<boost::mutex> locker(m_sessionMapMutex);
+    std::lock_guard<std::mutex> locker(m_sessionMapMutex);
     auto iter = m_tcpSessionMap.find(remoteAddress);
     if (iter != m_tcpSessionMap.end())
     {

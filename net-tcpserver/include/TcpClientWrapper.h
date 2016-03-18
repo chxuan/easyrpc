@@ -71,6 +71,6 @@ private:
     bool m_isImplSuccess;
 };
 
-typedef boost::shared_ptr<TcpClientWrapper> TcpClientWrapperPtr;
+typedef std::shared_ptr<TcpClientWrapper> TcpClientWrapperPtr;
 
 #endif

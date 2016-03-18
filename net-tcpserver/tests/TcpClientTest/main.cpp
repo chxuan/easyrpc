@@ -5,6 +5,7 @@
 	> Created Time: 2016年02月03日 星期三 15时06分27秒
  ************************************************************************/
 
+#include <assert.h>
 #include <iostream>
 #include "TcpClientWrapper.h"
 #include "PeopleInfoMessage.h"
@@ -20,13 +21,15 @@ public:
         {
         case 1000:
         {
-            PeopleInfoMessage peopleInfoMessage;
-            deSerialize(message, peopleInfoMessage);
+            PeopleInfoMessagePtr peopleInfoMessage(new PeopleInfoMessage);
+            bool ok = deSerialize(message, peopleInfoMessage);
+            assert(ok);
 
             std::cout << "#################" << std::endl;
-            std::cout << "m_messageType: " << peopleInfoMessage.m_messageType << std::endl;
-            std::cout << "m_name: " << peopleInfoMessage.m_name << std::endl;
-            std::cout << "m_age: " << peopleInfoMessage.m_age << std::endl;
+            std::cout << "m_messageType: " << peopleInfoMessage->m_messageType << std::endl;
+            std::cout << "m_name: " << peopleInfoMessage->m_name << std::endl;
+            std::cout << "m_age: " << peopleInfoMessage->m_age << std::endl;
+            std::cout << "m_sex: " << peopleInfoMessage->m_sex << std::endl;
             std::cout << "#################" << std::endl;
             break;
         }
@@ -38,26 +41,33 @@ public:
         }
     }
 
-    void handleError(const boost::system::error_code& error, const std::string& remoteAddress)
+    void handleError(const std::string& errorString, const std::string& remoteAddress)
     {
-        if (error)
-        {
-            std::cout << "Tcp client handle error: " << error.message() << std::endl;
-        }
+        std::cout << "Tcp client handle error: " << errorString << std::endl;
     }
 
 private:
     template<typename T>
-    void deSerialize(const MessagePtr message, T& t)
+    bool deSerialize(const MessagePtr message, T t)
     {
         std::istringstream is(message->m_data);
-        boost::archive::binary_iarchive ia(is);
-        ia >> t;
-        t.m_messageType = message->m_messageType;
+        try
+        {
+            boost::archive::binary_iarchive ia(is);
+            ia >> *t;
+            t->m_messageType = message->m_messageType;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "DeSerialize data failed: " << e.what() << std::endl;
+            return false;
+        }
+
+        return true;
     }
 };
 
-typedef boost::shared_ptr<TcpClientMessageHandler> TcpClientMessageHandlerPtr;
+typedef std::shared_ptr<TcpClientMessageHandler> TcpClientMessageHandlerPtr;
 
 int main()
 {
@@ -68,27 +78,30 @@ int main()
 
     ClientParam param;
     param.m_onRecivedMessage =
-            boost::bind(&TcpClientMessageHandler::handleReciveMessage, handler, _1, _2);
+            std::bind(&TcpClientMessageHandler::handleReciveMessage,
+                      handler, std::placeholders::_1, std::placeholders::_2);
     param.m_onHandleError =
-            boost::bind(&TcpClientMessageHandler::handleError, handler, _1, _2);
+            std::bind(&TcpClientMessageHandler::handleError,
+                      handler, std::placeholders::_1, std::placeholders::_2);
     client->setClientParam(param);
 
     client->start();
 
     std::cout << "Client starting..." << std::endl;
 
-    //for (int i = 0; i < 10; ++i)
-    while (true)
+    for (int i = 0; i < 10; ++i)
+    //while (true)
     {
         PeopleInfoMessagePtr peopleInfoMessage(new PeopleInfoMessage);
         peopleInfoMessage->m_messageType = 1000;
         peopleInfoMessage->m_name = "Jack";
         peopleInfoMessage->m_age = 20;
+        peopleInfoMessage->m_sex = 1;
         client->write(peopleInfoMessage);
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
     std::cout << "Client stoped..." << std::endl;
 

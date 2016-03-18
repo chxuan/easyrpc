@@ -12,28 +12,22 @@ public:
         m_sex = 0;
     }
 
-    TCP_MESSAGE_HEADER
+    template<class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+    {
+        (void)version;
+        ar & m_name;
+        ar & m_age;
+        ar & m_sex;
+    }
+
+    TCP_MESSAGE_HEADER;
 
     std::string m_name;
     unsigned int m_age;
     unsigned int m_sex;
 };
 
-typedef boost::shared_ptr<PeopleInfoMessage> PeopleInfoMessagePtr;
-
-namespace boost
-{
-    namespace serialization
-    {
-        template<class Archive>
-        void serialize(Archive& ar, PeopleInfoMessage& message, const unsigned int version)
-        {
-            (void)version;
-            ar & message.m_name;
-            ar & message.m_age;
-            ar & message.m_sex;
-        }
-    }
-}
+typedef std::shared_ptr<PeopleInfoMessage> PeopleInfoMessagePtr;
 
 #endif

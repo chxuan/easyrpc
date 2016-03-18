@@ -15,20 +15,20 @@
 #define _CWORKERTHREAD_H
 
 #include "CThread.h"
-#include <boost/atomic.hpp>
+#include <atomic>
 
 class CThreadPool;
 class CJob;
 
-typedef boost::shared_ptr<CThreadPool> CThreadPoolPtr;
-typedef boost::shared_ptr<CJob> CJobPtr;
+typedef std::shared_ptr<CThreadPool> CThreadPoolPtr;
+typedef std::shared_ptr<CJob> CJobPtr;
 
 /**
 * @brief 工作线程类，继承自CThread，执行具体的job
 */
 class CWorkerThread
         : public CThread,
-          public boost::enable_shared_from_this<CWorkerThread>
+          public std::enable_shared_from_this<CWorkerThread>
 {
 public:
     CWorkerThread();
@@ -56,9 +56,9 @@ public:
 
 private:
     CThreadPoolPtr m_threadPool;
-    boost::atomic<bool> m_isStopWorkThread;
+    std::atomic<bool> m_isStopWorkThread;
 };
 
-typedef boost::shared_ptr<CWorkerThread> CWorkerThreadPtr;
+typedef std::shared_ptr<CWorkerThread> CWorkerThreadPtr;
 
 #endif

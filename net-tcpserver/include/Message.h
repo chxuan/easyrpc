@@ -15,9 +15,19 @@
 #define _MESSAGE_H
 
 #include <string>
-#include <boost/smart_ptr.hpp>
+#include <memory>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/set.hpp>
+#include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/unordered_set.hpp>
 
-#define TCP_MESSAGE_HEADER unsigned int m_messageType;
+#define TCP_MESSAGE_HEADER unsigned int m_messageType
 
 /**
 * @brief 用于tcp服务器接收的消息结构
@@ -25,11 +35,11 @@
 class Message
 {
 public:
-    TCP_MESSAGE_HEADER
+    TCP_MESSAGE_HEADER;
 
     std::string m_data;
 };
 
-typedef boost::shared_ptr<Message> MessagePtr;
+typedef std::shared_ptr<Message> MessagePtr;
 
 #endif

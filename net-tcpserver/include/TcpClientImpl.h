@@ -17,7 +17,7 @@
 #include "TcpSession.h"
 
 class CThreadManage;
-typedef boost::shared_ptr<CThreadManage> CThreadManagePtr;
+typedef std::shared_ptr<CThreadManage> CThreadManagePtr;
 
 /**
 * @brief 客户端参数，设置接收消息、错误处理回调函数
@@ -108,7 +108,7 @@ private:
     boost::asio::io_service m_ioService;
     boost::asio::ip::tcp::endpoint m_endpoint;
 
-    typedef boost::shared_ptr<boost::thread> ThreadPtr;
+    typedef std::shared_ptr<std::thread> ThreadPtr;
     ThreadPtr m_ioServiceThread;
 
     TcpSession m_tcpSession;
@@ -119,6 +119,6 @@ private:
     OnHandleError m_onHandleError;
 };
 
-typedef boost::shared_ptr<TcpClientImpl> TcpClientImplPtr;
+typedef std::shared_ptr<TcpClientImpl> TcpClientImplPtr;
 
 #endif

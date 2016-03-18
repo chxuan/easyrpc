@@ -20,26 +20,16 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <memory>
+#include <thread>
+#include <mutex>
+#include <functional>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include <boost/smart_ptr.hpp>
-#include <boost/thread.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/map.hpp>
-#include <boost/serialization/set.hpp>
-#include <boost/serialization/unordered_map.hpp>
-#include <boost/serialization/unordered_set.hpp>
+#include "Message.h"
 
-class Message;
-
-typedef boost::shared_ptr<Message> MessagePtr;
-typedef boost::function2<void, MessagePtr, const std::string&> OnReciveMessage;
-typedef boost::function2<void, const boost::system::error_code&, const std::string&> OnHandleError;
+typedef std::function<void (MessagePtr, const std::string&)> OnReciveMessage;
+typedef std::function<void (const std::string&, const std::string&)> OnHandleError;
 
 /**
 * @brief 会话参数，设置接收消息、错误处理回调函数
@@ -132,7 +122,7 @@ public:
     template<typename T>
     void write(const T t)
     {
-        boost::lock_guard<boost::mutex> locker(m_writeMutex);
+        std::lock_guard<std::mutex> locker(m_writeMutex);
 
         // 序列化数据
         std::ostringstream archiveStream;
@@ -202,9 +192,9 @@ private:
     OnReciveMessage m_onReciveMessage;
     OnHandleError m_onHandleError;
 
-    boost::mutex m_writeMutex;
+    std::mutex m_writeMutex;
 };
 
-typedef boost::shared_ptr<TcpSession> TcpSessionPtr;
+typedef std::shared_ptr<TcpSession> TcpSessionPtr;
 
 #endif

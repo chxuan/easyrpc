@@ -12,6 +12,7 @@
 */
 
 #include "CRealJob.h"
+#include <assert.h>
 
 CRealJob::CRealJob(OnReciveMessage func, MessagePtr message, const std::string& remoteAddress)
     : CJob(),

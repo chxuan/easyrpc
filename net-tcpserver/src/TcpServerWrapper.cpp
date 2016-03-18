@@ -21,7 +21,7 @@ TcpServerWrapper::TcpServerWrapper(unsigned short port)
     {
         try
         {
-            m_impl = boost::make_shared<TcpServerImpl>(port);
+            m_impl = std::make_shared<TcpServerImpl>(port);
         }
         catch (std::exception& e)
         {

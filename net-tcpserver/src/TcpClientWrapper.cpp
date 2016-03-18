@@ -21,7 +21,7 @@ TcpClientWrapper::TcpClientWrapper(const std::string &ip, unsigned short port)
     {
         try
         {
-            m_impl = boost::make_shared<TcpClientImpl>(ip, port);
+            m_impl = std::make_shared<TcpClientImpl>(ip, port);
         }
         catch (std::exception& e)
         {

@@ -14,5 +14,4 @@ add_executable(${OUTPUTNAME} ${DIR_SRCS})
 
 target_link_libraries(${OUTPUTNAME} tcpserver_wrapper)
 target_link_libraries(${OUTPUTNAME} boost_serialization)
-target_link_libraries(${OUTPUTNAME} boost_thread)
 target_link_libraries(${OUTPUTNAME} boost_system)

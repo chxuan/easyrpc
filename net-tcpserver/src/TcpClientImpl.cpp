@@ -40,7 +40,7 @@ bool TcpClientImpl::start()
     {
         try
         {
-            m_ioServiceThread = boost::make_shared<boost::thread>
+            m_ioServiceThread = std::make_shared<std::thread>
                     (boost::bind(&boost::asio::io_service::run, &m_ioService));
         }
         catch (std::exception& e)
@@ -81,7 +81,7 @@ void TcpClientImpl::setThreadPoolNum(unsigned int num)
 {
     if (m_threadManage.use_count() == 0)
     {
-        m_threadManage = boost::make_shared<CThreadManage>();
+        m_threadManage = std::make_shared<CThreadManage>();
         m_threadManage->initThreadNum(DefaultNumOfThread);
     }
 }
@@ -94,7 +94,9 @@ void TcpClientImpl::setClientParam(const ClientParam &param)
     m_onHandleError = param.m_onHandleError;
     m_onRecivedMessage = param.m_onRecivedMessage;
     TcpSessionParam tcpSessionParam;
-    tcpSessionParam.m_onRecivedMessage = boost::bind(&TcpClientImpl::handleReciveMessage, this, _1, _2);
+    tcpSessionParam.m_onRecivedMessage = std::bind(&TcpClientImpl::handleReciveMessage,
+                                                   this, std::placeholders::_1,
+                                                   std::placeholders::_2);
     tcpSessionParam.m_onHandleError = param.m_onHandleError;
     m_tcpSession.setTcpSessionParam(tcpSessionParam);
 }
@@ -112,7 +114,7 @@ void TcpClientImpl::handleConnect(const boost::system::error_code &error)
     {
         if (m_onHandleError != NULL)
         {
-            m_onHandleError(error, "");
+            m_onHandleError(error.message(), "");
         }
         return;
     }
