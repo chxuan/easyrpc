@@ -15,7 +15,7 @@
 #define _CJOB_H
 
 #include <string>
-#include <boost/smart_ptr.hpp>
+#include <memory>
 
 /**
 * @brief 任务类
@@ -51,6 +51,6 @@ private:
     std::string m_jobName;
 };
 
-typedef boost::shared_ptr<CJob> CJobPtr;
+typedef std::shared_ptr<CJob> CJobPtr;
 
 #endif

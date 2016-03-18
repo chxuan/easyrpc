@@ -33,7 +33,7 @@ void CWorkerThread::run()
     {
         CJobPtr job;
         {
-            boost::unique_lock<boost::mutex> locker(m_threadPool->m_jobQueueMutex);
+            std::unique_lock<std::mutex> locker(m_threadPool->m_jobQueueMutex);
             while (m_threadPool->m_jobQueue.empty() &&
                    !m_threadPool->m_isStopThreadPool &&
                    !m_isStopWorkThread)
@@ -53,15 +53,12 @@ void CWorkerThread::run()
             }
         }
 
-        m_threadPool->moveToBusyList(shared_from_this());
-
         if (job.use_count() != 0)
         {
             job->run();
             job.reset();
             m_threadPool->m_jobQueuePutCond.notify_one();
         }
-        m_threadPool->moveToIdleList(shared_from_this());
     }
 }
 

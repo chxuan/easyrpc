@@ -6,15 +6,16 @@
  ************************************************************************/
 
 #include <iostream>
-#include <boost/thread.hpp>
-#include <boost/bind.hpp>
+#include <thread>
+#include <chrono>
+#include <functional>
 #include "CThreadManage.h"
 #include "CRealJob.h"
 
 void doTask(void* jobData)
 {
     std::cout << "Hello world" << std::endl;
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
 
 int main()
@@ -24,11 +25,11 @@ int main()
 
     for (int i = 0; i < 100; ++i)
     {
-        CRealJobPtr job(new CRealJob(boost::bind(doTask, _1), NULL));
+        CRealJobPtr job(new CRealJob(std::bind(doTask, std::placeholders::_1), NULL));
         manage->run(job);
     }
 
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     std::cout << "##############END###################" << std::endl;
     return 0;
 }

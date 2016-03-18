@@ -20,7 +20,7 @@ CThreadManage::CThreadManage()
     m_threadPool.reset();
     if (m_threadPool == NULL)
     {
-        m_threadPool = boost::make_shared<CThreadPool>();
+        m_threadPool = std::make_shared<CThreadPool>();
     }
 }
 

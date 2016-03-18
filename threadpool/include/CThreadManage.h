@@ -14,7 +14,7 @@
 #ifndef _CTHREADMANAGE_H
 #define _CTHREADMANAGE_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class CThreadPool;
 class CJob;
@@ -25,8 +25,8 @@ class CJob;
 class CThreadManage
 {
 public:
-    typedef boost::shared_ptr<CThreadPool> CThreadPoolPtr;
-    typedef boost::shared_ptr<CJob> CJobPtr;
+    typedef std::shared_ptr<CThreadPool> CThreadPoolPtr;
+    typedef std::shared_ptr<CJob> CJobPtr;
 
     CThreadManage();
     ~CThreadManage();
@@ -55,6 +55,6 @@ private:
     CThreadPoolPtr m_threadPool;
 };
 
-typedef boost::shared_ptr<CThreadManage> CThreadManagePtr;
+typedef std::shared_ptr<CThreadManage> CThreadManagePtr;
 
 #endif

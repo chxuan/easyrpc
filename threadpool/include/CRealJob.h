@@ -15,9 +15,9 @@
 #define _CREALJOB_H
 
 #include "CJob.h"
-#include <boost/function.hpp>
+#include <functional>
 
-typedef boost::function1<void, void*> OnDoTask;
+typedef std::function<void (void*)> OnDoTask;
 
 /**
 * @brief 任务类，继承自CJob
@@ -38,6 +38,6 @@ private:
     void* m_jobData;
 };
 
-typedef boost::shared_ptr<CRealJob> CRealJobPtr;
+typedef std::shared_ptr<CRealJob> CRealJobPtr;
 
 #endif

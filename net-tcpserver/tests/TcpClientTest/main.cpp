@@ -77,13 +77,15 @@ int main()
 
     std::cout << "Client starting..." << std::endl;
 
-    for (int i = 0; i < 10; ++i)
+    //for (int i = 0; i < 10; ++i)
+    while (true)
     {
         PeopleInfoMessagePtr peopleInfoMessage(new PeopleInfoMessage);
         peopleInfoMessage->m_messageType = 1000;
         peopleInfoMessage->m_name = "Jack";
         peopleInfoMessage->m_age = 20;
         client->write(peopleInfoMessage);
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
     }
 
     boost::this_thread::sleep_for(boost::chrono::milliseconds(5000));

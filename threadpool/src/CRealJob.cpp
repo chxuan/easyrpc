@@ -12,6 +12,7 @@
 */
 
 #include "CRealJob.h"
+#include <assert.h>
 
 CRealJob::CRealJob(OnDoTask func, void* jobData)
     : CJob(),
