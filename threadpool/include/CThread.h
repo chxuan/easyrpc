@@ -33,7 +33,7 @@ public:
 
     virtual ~CThread()
     {
-        if (m_thread != NULL)
+        if (m_thread.use_count() != 0)
         {
             if (m_thread->joinable())
             {
@@ -53,7 +53,7 @@ public:
     */
     void start()
     {
-        if (m_thread == NULL)
+        if (m_thread.use_count() == 0)
         {
             m_thread = std::make_shared<std::thread>(std::bind(&CThread::handleThread, this));
         }
@@ -61,25 +61,25 @@ public:
 
     bool joinable() const
     {
-        assert(m_thread != NULL);
+        assert(m_thread.use_count() != 0);
         return m_thread->joinable();
     }
 
     void join()
     {
-        assert(m_thread != NULL);
+        assert(m_thread.use_count() != 0);
         m_thread->join();
     }
 
     void detach()
     {
-        assert(m_thread != NULL);
+        assert(m_thread.use_count() != 0);
         m_thread->detach();
     }
 
     std::thread::id threadID() const
     {
-        assert(m_thread != NULL);
+        assert(m_thread.use_count() != 0);
         return m_thread->get_id();
     }
 
