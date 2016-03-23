@@ -15,7 +15,6 @@ framework set
 > - net-thrift依赖thrift、boost
 > - net-rcf依赖RCF、boost
 > - utils依赖libuuid、openssl
-> - threadpool依赖boost
 
 开发平台
 -------------
