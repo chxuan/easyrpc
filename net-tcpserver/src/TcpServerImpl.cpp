@@ -67,7 +67,6 @@ bool TcpServerImpl::stop()
     catch (std::exception& e)
     {
         std::cout << "Error: " << e.what() << std::endl;
-        return false;
     }
 
     if (m_ioServiceThread.use_count() != 0)
