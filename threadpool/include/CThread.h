@@ -19,7 +19,7 @@
 #include <memory>
 
 /**
-* @brief 线程类，封装了boost.thread的常用函数
+* @brief 线程类，封装了std::thread的常用函数
 */
 class CThread
 {
