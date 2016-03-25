@@ -70,7 +70,6 @@ public:
 
 private:
     TcpServerImplPtr m_impl;
-    bool m_isBindSuccess;
 };
 
 typedef std::shared_ptr<TcpServerWrapper> TcpServerWrapperPtr;

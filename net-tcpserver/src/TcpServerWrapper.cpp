@@ -14,44 +14,34 @@
 #include "TcpServerWrapper.h"
 
 TcpServerWrapper::TcpServerWrapper(unsigned short port)
-    : m_isBindSuccess(true)
 {
     m_impl.reset();
     if (m_impl.use_count() == 0)
     {
-        try
-        {
-            m_impl = std::make_shared<TcpServerImpl>(port);
-        }
-        catch (std::exception& e)
-        {
-            m_isBindSuccess = false;
-            std::cout << "Error: " << e.what() << std::endl;
-            return;
-        }
+        m_impl = std::make_shared<TcpServerImpl>(port);
     }
 }
 
 bool TcpServerWrapper::start()
 {
-    assert(m_impl.use_count() != 0 && m_isBindSuccess);
+    assert(m_impl.use_count() != 0);
     return m_impl->start();
 }
 
 bool TcpServerWrapper::stop()
 {
-    assert(m_impl.use_count() != 0 && m_isBindSuccess);
+    assert(m_impl.use_count() != 0);
     return m_impl->stop();
 }
 
 void TcpServerWrapper::setThreadPoolNum(unsigned int num)
 {
-    assert(m_impl.use_count() != 0 && m_isBindSuccess);
+    assert(m_impl.use_count() != 0);
     m_impl->setThreadPoolNum(num);
 }
 
 void TcpServerWrapper::setServerParam(const ServerParam &param)
 {
-    assert(m_impl.use_count() != 0 && m_isBindSuccess);
+    assert(m_impl.use_count() != 0);
     m_impl->setServerParam(param);
 }

@@ -101,6 +101,13 @@ public:
 
 private:
     /**
+    * @brief bindAndListen 绑定并监听端口
+    *
+    * @return 成功返回true，否则返回false 
+    */
+    bool bindAndListen();
+
+    /**
      * @brief accept 异步监听客户端的连接
      */
     void accept();
@@ -154,6 +161,7 @@ private:
     bool closeTcpSession(const std::string& remoteAddress);
 
 private:
+    unsigned short m_port;
     boost::asio::io_service m_ioService;
     boost::asio::ip::tcp::acceptor m_acceptor;
 

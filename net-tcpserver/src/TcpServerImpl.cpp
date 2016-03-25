@@ -19,8 +19,8 @@
 static const unsigned int DefaultNumOfThread = 10;
 
 TcpServerImpl::TcpServerImpl(unsigned short port)
-    : m_acceptor(m_ioService,
-      boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
+    : m_port(port),
+      m_acceptor(m_ioService),
       m_onRecivedMessage(NULL),
       m_onHandleError(NULL),
       m_onClientConnect(NULL),
@@ -37,6 +37,12 @@ TcpServerImpl::~TcpServerImpl()
 
 bool TcpServerImpl::start()
 {
+    bool ok = bindAndListen();
+    if (!ok)
+    {
+        return false;
+    }
+
     accept();
 
     if (m_ioServiceThread.use_count() == 0)
@@ -100,6 +106,24 @@ void TcpServerImpl::setServerParam(const ServerParam &param)
     m_onHandleError = param.m_onHandleError;
     m_onClientConnect = param.m_onClientConnect;
     m_onClientDisconnect = param.m_onClientDisconnect;
+}
+
+bool TcpServerImpl::bindAndListen()
+{
+    try
+    {
+        boost::asio::ip::tcp::endpoint ep(boost::asio::ip::tcp::v4(), m_port);
+        m_acceptor.open(ep.protocol());
+        m_acceptor.bind(ep);
+        m_acceptor.listen();
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "Error: " << e.what() << std::endl;
+        return false;
+    }
+
+    return true;
 }
 
 void TcpServerImpl::accept()
