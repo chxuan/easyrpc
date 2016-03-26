@@ -99,7 +99,7 @@ typedef std::shared_ptr<TcpServerMessageHandler> TcpServerMessageHandlerPtr;
 
 int main()
 {
-    TcpServerWrapperPtr server(new TcpServerWrapper(8888));
+    TcpServerWrapperPtr server(new TcpServerWrapper("127.0.0.1", 8888));
     server->setThreadPoolNum(10);
 
     TcpServerMessageHandlerPtr handler(new TcpServerMessageHandler(server));

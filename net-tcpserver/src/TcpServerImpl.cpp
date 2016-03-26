@@ -18,8 +18,9 @@
 
 static const unsigned int DefaultNumOfThread = 10;
 
-TcpServerImpl::TcpServerImpl(unsigned short port)
-    : m_port(port),
+TcpServerImpl::TcpServerImpl(const std::string& ip, unsigned short port)
+    : m_ip(ip),
+      m_port(port),
       m_acceptor(m_ioService),
       m_onRecivedMessage(NULL),
       m_onHandleError(NULL),
@@ -112,7 +113,7 @@ bool TcpServerImpl::bindAndListen()
 {
     try
     {
-        boost::asio::ip::tcp::endpoint ep(boost::asio::ip::tcp::v4(), m_port);
+        boost::asio::ip::tcp::endpoint ep(boost::asio::ip::address_v4::from_string(m_ip), m_port);
         m_acceptor.open(ep.protocol());
         m_acceptor.bind(ep);
         m_acceptor.listen();

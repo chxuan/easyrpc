@@ -22,7 +22,7 @@
 class TcpServerWrapper
 {
 public:
-    TcpServerWrapper(unsigned short port);
+    TcpServerWrapper(const std::string& ip, unsigned short port);
 
     /**
     * @brief start 开始服务

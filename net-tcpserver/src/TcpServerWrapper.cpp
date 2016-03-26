@@ -13,12 +13,12 @@
 
 #include "TcpServerWrapper.h"
 
-TcpServerWrapper::TcpServerWrapper(unsigned short port)
+TcpServerWrapper::TcpServerWrapper(const std::string& ip, unsigned short port)
 {
     m_impl.reset();
     if (m_impl.use_count() == 0)
     {
-        m_impl = std::make_shared<TcpServerImpl>(port);
+        m_impl = std::make_shared<TcpServerImpl>(ip, port);
     }
 }
 
