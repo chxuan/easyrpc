@@ -112,21 +112,18 @@ std::string LogImpl::createLogFile()
 
 bool LogImpl::initLogCore(const std::string& logFileName)
 {
-    log4cpp::PatternLayout* fileLayout = NULL;
-    fileLayout = new log4cpp::PatternLayout();
+    log4cpp::PatternLayout* fileLayout = new log4cpp::PatternLayout();
     fileLayout->setConversionPattern("%d: [%-5p] %c%x: %m%n");
 
-    log4cpp::PatternLayout* consoleLayout = NULL;
-    consoleLayout = new log4cpp::PatternLayout();
+    log4cpp::PatternLayout* consoleLayout = new log4cpp::PatternLayout();
     consoleLayout->setConversionPattern("%d: [%-5p] %c%x: %m%n");
 
-    log4cpp::RollingFileAppender* rollfileAppender = NULL;
-    rollfileAppender = new log4cpp::RollingFileAppender("rollfileAppender", logFileName, MAX_LOGFILE_SIZE, 1);
+    log4cpp::RollingFileAppender* rollfileAppender =
+                        new log4cpp::RollingFileAppender("rollfileAppender", logFileName, MAX_LOGFILE_SIZE, 1);
     rollfileAppender->setMaxBackupIndex(MAX_BACKUP_LOGFILE_COUNT);
     rollfileAppender->setLayout(fileLayout);
 
-    log4cpp::OstreamAppender* osAppender = NULL;
-    osAppender = new log4cpp::OstreamAppender("osAppender", &std::cout);
+    log4cpp::OstreamAppender* osAppender = new log4cpp::OstreamAppender("osAppender", &std::cout);
     osAppender->setLayout(consoleLayout);
 
     m_root = &(log4cpp::Category::getRoot().getInstance(""));
