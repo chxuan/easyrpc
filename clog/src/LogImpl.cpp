@@ -114,46 +114,22 @@ bool LogImpl::initLogCore(const std::string& logFileName)
 {
     log4cpp::PatternLayout* fileLayout = NULL;
     fileLayout = new log4cpp::PatternLayout();
-    if (fileLayout == NULL)
-    {
-        return false;
-    }
-
     fileLayout->setConversionPattern("%d: [%-5p] %c%x: %m%n");
 
     log4cpp::PatternLayout* consoleLayout = NULL;
     consoleLayout = new log4cpp::PatternLayout();
-    if (consoleLayout == NULL)
-    {
-        return false;
-    }
-
     consoleLayout->setConversionPattern("%d: [%-5p] %c%x: %m%n");
 
     log4cpp::RollingFileAppender* rollfileAppender = NULL;
     rollfileAppender = new log4cpp::RollingFileAppender("rollfileAppender", logFileName, MAX_LOGFILE_SIZE, 1);
-    if (rollfileAppender == NULL)
-    {
-        return false;
-    }
-
     rollfileAppender->setMaxBackupIndex(MAX_BACKUP_LOGFILE_COUNT);
     rollfileAppender->setLayout(fileLayout);
 
     log4cpp::OstreamAppender* osAppender = NULL;
     osAppender = new log4cpp::OstreamAppender("osAppender", &std::cout);
-    if (osAppender == NULL)
-    {
-        return false;
-    }
-
     osAppender->setLayout(consoleLayout);
 
     m_root = &(log4cpp::Category::getRoot().getInstance(""));
-    if (m_root == NULL)
-    {
-        return false;
-    }
 
     // 一个Category可以附加多个Appender
     m_root->setAdditivity(true);
