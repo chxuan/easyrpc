@@ -68,7 +68,6 @@ public:
 
 private:
     TcpClientImplPtr m_impl;
-    bool m_isImplSuccess;
 };
 
 typedef std::shared_ptr<TcpClientWrapper> TcpClientWrapperPtr;
