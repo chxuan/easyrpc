@@ -21,12 +21,11 @@ LogStream::LogStream(const std::string& filePath,
     : m_priorityLevel(priorityLevel)
 {
     m_buffer.reset();
-    if (m_buffer == NULL)
+    if (m_buffer.use_count() == 0)
     {
         m_buffer = std::make_shared<std::ostringstream>();
     }
 
-    assert(m_buffer != NULL);
     std::string strFilePath = filePath;
     int pos = strFilePath.find_last_of("/");
     (*m_buffer) << strFilePath.substr(pos + 1) << " " << function << "(" << line << ") ";
@@ -34,7 +33,7 @@ LogStream::LogStream(const std::string& filePath,
 
 LogStream::~LogStream()
 {
-    assert(m_buffer != NULL);
+    assert(m_buffer.use_count() != 0);
     bool ok = LogImpl::getInstance()->logPrint(m_priorityLevel, m_buffer->str());
     if (!ok)
     {

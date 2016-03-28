@@ -20,14 +20,14 @@
 /// LogWrapper的优先级的值和log4cpp的优先级的值一样，方便映射
 enum LogWrapperPriorityLevel
 {
-    LogWrapperFatalLevel  = 0,
-    LogWrapperAlertLevel  = 100,
-    LogWrapperCritLevel   = 200,
-    LogWrapperErrorLevel  = 300,
-    LogWrapperWarnLevel   = 400,
+    LogWrapperFatalLevel = 0,
+    LogWrapperAlertLevel = 100,
+    LogWrapperCritLevel = 200,
+    LogWrapperErrorLevel = 300,
+    LogWrapperWarnLevel = 400,
     LogWrapperNoticeLevel = 500,
-    LogWrapperInfoLevel   = 600,
-    LogWrapperDebugLevel  = 700
+    LogWrapperInfoLevel = 600,
+    LogWrapperDebugLevel = 700
 };
 
 #define LOCATION_INFO          __FILE__, __FUNCTION__, __LINE__
