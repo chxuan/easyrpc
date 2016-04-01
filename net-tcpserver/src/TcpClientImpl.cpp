@@ -73,6 +73,8 @@ bool TcpClientImpl::stop()
         }
     }
 
+    m_threadManage->terminateAll();
+
     return true;
 }
 

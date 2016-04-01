@@ -84,6 +84,8 @@ bool TcpServerImpl::stop()
         }
     }
 
+    m_threadManage->terminateAll();
+
     return true;
 }
 

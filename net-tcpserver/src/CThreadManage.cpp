@@ -18,7 +18,7 @@
 CThreadManage::CThreadManage()
 {
     m_threadPool.reset();
-    if (m_threadPool == NULL)
+    if (m_threadPool.use_count() == 0)
     {
         m_threadPool = std::make_shared<CThreadPool>();
     }
@@ -26,24 +26,24 @@ CThreadManage::CThreadManage()
 
 CThreadManage::~CThreadManage()
 {
-    assert(m_threadPool != NULL);
+    assert(m_threadPool.use_count() != 0);
     m_threadPool->terminateAll();
 }
 
 void CThreadManage::initThreadNum(unsigned int initNumOfThread)
 {
-    assert(m_threadPool != NULL);
+    assert(m_threadPool.use_count() != 0);
     m_threadPool->initThreadNum(initNumOfThread);
 }
 
 void CThreadManage::run(CJobPtr job)
 {
-    assert(m_threadPool != NULL);
+    assert(m_threadPool.use_count() != 0);
     m_threadPool->run(job);
 }
 
 void CThreadManage::terminateAll()
 {
-    assert(m_threadPool != NULL);
+    assert(m_threadPool.use_count() != 0);
     m_threadPool->terminateAll();
 }
