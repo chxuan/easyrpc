@@ -60,7 +60,7 @@ flags = [
 '-x',
 'c++',
 
-#c、c++ include path
+# c/c++ include path
 '-isystem',
 '/usr/include',
 '-isystem',
@@ -68,7 +68,7 @@ flags = [
 '-isystem',
 '/usr/local/include',
 
-#3rdParty include path
+# 3rdParty include path
 '-isystem',
 '/usr/local/3rdParty/boost/include',
 '-isystem',
@@ -84,7 +84,7 @@ flags = [
 '-isystem',
 '/usr/local/3rdParty/uuid/include',
 
-#project include path
+# project include path
 '-isystem',
 './include',
 '-isystem',
