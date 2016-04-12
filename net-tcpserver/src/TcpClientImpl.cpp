@@ -15,8 +15,6 @@
 #include "CThreadManage.h"
 #include "CRealJob.h"
 
-static const unsigned int DefaultNumOfThread = 10;
-
 TcpClientImpl::TcpClientImpl(const std::string &ip, unsigned short port)
     : m_endpoint(boost::asio::ip::address::from_string(ip), port),
       m_tcpSession(m_ioService),
@@ -83,7 +81,7 @@ void TcpClientImpl::setThreadPoolNum(unsigned int num)
     if (m_threadManage.use_count() == 0)
     {
         m_threadManage = std::make_shared<CThreadManage>();
-        m_threadManage->initThreadNum(DefaultNumOfThread);
+        m_threadManage->initThreadNum(num);
     }
 }
 
