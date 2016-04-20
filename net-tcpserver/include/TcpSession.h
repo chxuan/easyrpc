@@ -34,35 +34,19 @@ typedef std::function<void (const std::string&, const std::string&)> OnHandleErr
 /**
 * @brief 会话参数，设置接收消息、错误处理回调函数
 */
-class TcpSessionParam
+struct TcpSessionParam
 {
-public:
-    TcpSessionParam()
-        : m_onRecivedMessage(NULL),
-          m_onHandleError(NULL)
-    {
-        // Do nothing
-    }
-
-    OnReciveMessage m_onRecivedMessage;
-    OnHandleError m_onHandleError;
+    OnReciveMessage m_onRecivedMessage = nullptr;
+    OnHandleError m_onHandleError = nullptr;
 };
 
 /**
 * @brief 消息头部，包含消息体大小、消息类型
 */
-class Header
+struct Header
 {
-public:
-    Header()
-        : m_dataSize(0),
-          m_messageType(0)
-    {
-        // Do nothing
-    }
-
-    unsigned int m_dataSize;
-    unsigned int m_messageType;
+    unsigned int m_dataSize = 0;
+    unsigned int m_messageType = 0;
 };
 
 /**
@@ -189,8 +173,8 @@ private:
     char m_inboundHeader[HeaderLength];
     std::vector<char> m_inboundData;
 
-    OnReciveMessage m_onReciveMessage;
-    OnHandleError m_onHandleError;
+    OnReciveMessage m_onReciveMessage = nullptr;
+    OnHandleError m_onHandleError = nullptr;
 
     std::mutex m_writeMutex;
 };

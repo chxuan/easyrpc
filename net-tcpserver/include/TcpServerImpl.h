@@ -25,22 +25,12 @@ typedef std::function<void (const std::string&)> OnClientDisconnect;
 /**
  * @brief 服务器参数，设置接收消息、错误处理、客户端连接和断开连接回调函数
  */
-class ServerParam
+struct ServerParam
 {
-public:
-    ServerParam()
-        : m_onRecivedMessage(NULL),
-          m_onHandleError(NULL),
-          m_onClientConnect(NULL),
-          m_onClientDisconnect(NULL)
-    {
-        // Do nothing
-    }
-
-    OnReciveMessage m_onRecivedMessage;
-    OnHandleError m_onHandleError;
-    OnClientConnect m_onClientConnect;
-    OnClientDisconnect m_onClientDisconnect;
+    OnReciveMessage m_onRecivedMessage = nullptr;
+    OnHandleError m_onHandleError = nullptr;
+    OnClientConnect m_onClientConnect = nullptr;
+    OnClientDisconnect m_onClientDisconnect = nullptr;
 };
 
 /**
@@ -162,7 +152,7 @@ private:
 
 private:
     std::string m_ip;
-    unsigned short m_port;
+    unsigned short m_port = 0;
     boost::asio::io_service m_ioService;
     boost::asio::ip::tcp::acceptor m_acceptor;
 
@@ -177,10 +167,10 @@ private:
 
     CThreadManagePtr m_threadManage;
 
-    OnReciveMessage m_onRecivedMessage;
-    OnHandleError m_onHandleError;
-    OnClientConnect m_onClientConnect;
-    OnClientDisconnect m_onClientDisconnect;
+    OnReciveMessage m_onRecivedMessage = nullptr;
+    OnHandleError m_onHandleError = nullptr;
+    OnClientConnect m_onClientConnect = nullptr;
+    OnClientDisconnect m_onClientDisconnect = nullptr;
 };
 
 typedef std::shared_ptr<TcpServerImpl> TcpServerImplPtr;

@@ -17,12 +17,9 @@
 
 TcpClientImpl::TcpClientImpl(const std::string &ip, unsigned short port)
     : m_endpoint(boost::asio::ip::address::from_string(ip), port),
-      m_tcpSession(m_ioService),
-      m_onRecivedMessage(NULL),
-      m_onHandleError(NULL)
+      m_tcpSession(m_ioService)
 {
-    m_ioServiceThread.reset();
-    m_threadManage.reset();
+    // Do nothing
 }
 
 TcpClientImpl::~TcpClientImpl()
@@ -87,8 +84,8 @@ void TcpClientImpl::setThreadPoolNum(unsigned int num)
 
 void TcpClientImpl::setClientParam(const ClientParam &param)
 {
-    assert(param.m_onRecivedMessage != NULL);
-    assert(param.m_onHandleError != NULL);
+    assert(param.m_onRecivedMessage);
+    assert(param.m_onHandleError);
 
     m_onHandleError = param.m_onHandleError;
     m_onRecivedMessage = param.m_onRecivedMessage;

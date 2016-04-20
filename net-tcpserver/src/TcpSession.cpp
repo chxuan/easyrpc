@@ -14,17 +14,15 @@
 #include "TcpSession.h"
 
 TcpSession::TcpSession(boost::asio::io_service& ioService)
-    : m_socket(ioService),
-      m_onReciveMessage(NULL),
-      m_onHandleError(NULL)
+    : m_socket(ioService)
 {
     // Do nothing
 }
 
 void TcpSession::setTcpSessionParam(const TcpSessionParam& param)
 {
-    assert(param.m_onRecivedMessage != NULL);
-    assert(param.m_onHandleError != NULL);
+    assert(param.m_onRecivedMessage);
+    assert(param.m_onHandleError);
     m_onReciveMessage = param.m_onRecivedMessage;
     m_onHandleError = param.m_onHandleError;
 }
@@ -92,7 +90,7 @@ void TcpSession::handleReadData(MessagePtr message, const boost::system::error_c
     }
 
     message->m_data = std::string(&m_inboundData[0], m_inboundData.size());
-    if (m_onReciveMessage != NULL)
+    if (m_onReciveMessage)
     {
         m_onReciveMessage(message, remoteAddress());
     }
@@ -102,7 +100,7 @@ void TcpSession::checkError(const boost::system::error_code& error)
 {
     if (error)
     {
-        if (m_onHandleError != NULL)
+        if (m_onHandleError)
         {
             std::string errorString = error.message();
             if (errorString == "End of file")

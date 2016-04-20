@@ -21,14 +21,9 @@ static const unsigned int DefaultNumOfThread = 10;
 TcpServerImpl::TcpServerImpl(const std::string& ip, unsigned short port)
     : m_ip(ip),
       m_port(port),
-      m_acceptor(m_ioService),
-      m_onRecivedMessage(NULL),
-      m_onHandleError(NULL),
-      m_onClientConnect(NULL),
-      m_onClientDisconnect(NULL)
+      m_acceptor(m_ioService)
 {
-    m_ioServiceThread.reset();
-    m_threadManage.reset();
+    // Do nothing
 }
 
 TcpServerImpl::~TcpServerImpl()
@@ -100,10 +95,10 @@ void TcpServerImpl::setThreadPoolNum(unsigned int num)
 
 void TcpServerImpl::setServerParam(const ServerParam &param)
 {
-    assert(param.m_onRecivedMessage != NULL);
-    assert(param.m_onHandleError != NULL);
-    assert(param.m_onClientConnect != NULL);
-    assert(param.m_onClientDisconnect != NULL);
+    assert(param.m_onRecivedMessage);
+    assert(param.m_onHandleError);
+    assert(param.m_onClientConnect);
+    assert(param.m_onClientDisconnect);
 
     m_onRecivedMessage = param.m_onRecivedMessage;
     m_onHandleError = param.m_onHandleError;

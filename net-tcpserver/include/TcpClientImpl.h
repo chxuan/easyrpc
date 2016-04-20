@@ -22,18 +22,10 @@ typedef std::shared_ptr<CThreadManage> CThreadManagePtr;
 /**
 * @brief 客户端参数，设置接收消息、错误处理回调函数
 */
-class ClientParam
+struct ClientParam
 {
-public:
-    ClientParam()
-        : m_onRecivedMessage(NULL),
-          m_onHandleError(NULL)
-    {
-        // Do nothing
-    }
-
-    OnReciveMessage m_onRecivedMessage;
-    OnHandleError m_onHandleError;
+    OnReciveMessage m_onRecivedMessage = nullptr;
+    OnHandleError m_onHandleError = nullptr;
 };
 
 class TcpClientImpl
@@ -115,8 +107,8 @@ private:
 
     CThreadManagePtr m_threadManage;
 
-    OnReciveMessage m_onRecivedMessage;
-    OnHandleError m_onHandleError;
+    OnReciveMessage m_onRecivedMessage = nullptr;
+    OnHandleError m_onHandleError = nullptr;
 };
 
 typedef std::shared_ptr<TcpClientImpl> TcpClientImplPtr;
