@@ -21,8 +21,6 @@
 #define MAX_BACKUP_LOGFILE_COUNT    (30)                            // 默认保存历史日志数量
 
 LogImpl::LogImpl()
-    : m_root(NULL),
-    m_isInitSuccess(false)
 {
     m_isInitSuccess = init();
     if (!m_isInitSuccess)

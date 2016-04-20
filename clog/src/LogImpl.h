@@ -28,6 +28,9 @@
 class LogImpl
 {
 public:
+    LogImpl(const LogImpl& var) = delete;
+    LogImpl& operator = (const LogImpl& var) = delete;
+
     /**
     * @brief getInstance 得到日志实现类指针
     *
@@ -44,6 +47,10 @@ public:
     * @return 成功返回true，否则返回false
     */
     bool logPrint(unsigned int priorityLevel, const std::string& logContent);
+
+private:
+    LogImpl();
+    ~LogImpl();
 
 private:
     /**
@@ -75,14 +82,8 @@ private:
     bool initLogCore(const std::string& logFileName);
 
 private:
-    LogImpl();
-    ~LogImpl();
-    LogImpl(const LogImpl& var);
-    LogImpl& operator = (const LogImpl& var);
-
-private:
-    log4cpp::Category* m_root;             ///< 日志类别指针
-    bool m_isInitSuccess;                  ///< 日志框架是否初始化成功
+    log4cpp::Category* m_root = nullptr;             ///< 日志类别指针
+    bool m_isInitSuccess = false;                    ///< 日志框架是否初始化成功
 };
 
 #endif
