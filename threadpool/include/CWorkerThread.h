@@ -32,7 +32,6 @@ class CWorkerThread
 {
 public:
     CWorkerThread();
-    virtual ~CWorkerThread();
 
     /**
     * @brief run 实现run函数，在run函数里面等待并执行job

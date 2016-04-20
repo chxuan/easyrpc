@@ -18,18 +18,13 @@ CRealJob::CRealJob(OnDoTask func, void* jobData)
     : CJob(),
       m_jobData(jobData)
 {
-    assert(func != NULL);
+    assert(func);
     m_doTask = func;
-}
-
-CRealJob::~CRealJob()
-{
-    // Do nothing
 }
 
 void CRealJob::run()
 {
-    if (m_doTask != NULL)
+    if (m_doTask)
     {
         m_doTask(m_jobData);
     }

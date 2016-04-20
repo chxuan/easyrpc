@@ -26,7 +26,6 @@ class CRealJob : public CJob
 {
 public:
     CRealJob(OnDoTask func, void* jobData);
-    virtual ~CRealJob();
 
     /**
     * @brief run 执行任务
@@ -34,8 +33,8 @@ public:
     virtual void run();
 
 private:
-    OnDoTask m_doTask;
-    void* m_jobData;
+    OnDoTask m_doTask = nullptr;
+    void* m_jobData = nullptr;
 };
 
 typedef std::shared_ptr<CRealJob> CRealJobPtr;
