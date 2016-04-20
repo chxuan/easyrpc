@@ -26,11 +26,6 @@ class CThread
 public:
     typedef std::shared_ptr<std::thread> ThreadPtr;
 
-    CThread()
-    {
-        m_thread.reset();
-    }
-
     virtual ~CThread()
     {
         if (m_thread.use_count() != 0)

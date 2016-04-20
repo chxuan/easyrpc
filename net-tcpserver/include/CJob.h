@@ -23,16 +23,7 @@
 class CJob
 {
 public:
-    CJob()
-        : m_jobNo(0)
-    {
-        // Do nothing
-    }
-
-    virtual ~CJob()
-    {
-        // Do nothing
-    }
+    virtual ~CJob() = default;
 
     /**
     * @brief run 执行任务
@@ -47,7 +38,7 @@ public:
     void setJobName(const std::string& jobName) { m_jobName = jobName; }
 
 private:
-    int m_jobNo;
+    int m_jobNo = 0;
     std::string m_jobName;
 };
 

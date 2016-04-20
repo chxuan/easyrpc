@@ -19,11 +19,6 @@ CWorkerThread::CWorkerThread()
     : CThread(),
       m_isStopWorkThread(false)
 {
-    m_threadPool.reset();
-}
-
-CWorkerThread::~CWorkerThread()
-{
     // Do nothing
 }
 

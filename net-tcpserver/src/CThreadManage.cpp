@@ -17,7 +17,6 @@
 
 CThreadManage::CThreadManage()
 {
-    m_threadPool.reset();
     if (m_threadPool.use_count() == 0)
     {
         m_threadPool = std::make_shared<CThreadPool>();
