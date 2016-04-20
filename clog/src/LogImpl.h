@@ -28,6 +28,8 @@
 class LogImpl
 {
 public:
+    LogImpl();
+    ~LogImpl();
     LogImpl(const LogImpl& var) = delete;
     LogImpl& operator = (const LogImpl& var) = delete;
 
@@ -47,10 +49,6 @@ public:
     * @return 成功返回true，否则返回false
     */
     bool logPrint(unsigned int priorityLevel, const std::string& logContent);
-
-private:
-    LogImpl();
-    ~LogImpl();
 
 private:
     /**
