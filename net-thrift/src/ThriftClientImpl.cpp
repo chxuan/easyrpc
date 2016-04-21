@@ -32,20 +32,6 @@
 #include "ThriftClientImpl.h"
 #include "Message.h"
 
-#define CONNECT_MSEC_TIMEOUT        3000            // 默认连接超时时间，单位：毫秒
-#define SEND_MSEC_TIMEOUT           10000           // 默认发送超时时间，单位：毫秒
-#define RECIVED_MSEC_TIMEOUT        10000           // 默认接收超时时间，单位：毫秒
-
-ThriftClientImpl::ThriftClientImpl()
-    : m_ip("127.0.0.1"),
-    m_port(9090),
-    m_connectMsecTimeout(CONNECT_MSEC_TIMEOUT),
-    m_sendMsecTimeout(SEND_MSEC_TIMEOUT),
-    m_recivedMsecTimeout(RECIVED_MSEC_TIMEOUT)
-{
-    // Do nothing.
-}
-
 ThriftClientImpl::~ThriftClientImpl()
 {
     deinit();
@@ -64,7 +50,7 @@ void ThriftClientImpl::deinit()
 
 bool ThriftClientImpl::sendMessage(Message* message, Message* retMessage)
 {
-    if (message == NULL || retMessage == NULL)
+    if (message == nullptr || retMessage == nullptr)
     {
         std::cout << "message or retMessage is NULL" << std::endl;
         return false;
@@ -72,7 +58,7 @@ bool ThriftClientImpl::sendMessage(Message* message, Message* retMessage)
 
     std::string content = message->serializeSelf();
     delete message;
-    message = NULL;
+    message = nullptr;
 
     try 
     {

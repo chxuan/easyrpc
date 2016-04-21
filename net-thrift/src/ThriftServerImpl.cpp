@@ -26,7 +26,7 @@ public:
     {
         // Your initialization goes here
 
-        assert(thriftServer != NULL);
+        assert(thriftServer);
         m_thriftServer = thriftServer;
     }
 
@@ -34,7 +34,7 @@ public:
     {
         // Your implementation goes here
        
-        assert(m_thriftServer->m_messageCallback != NULL);
+        assert(m_thriftServer->m_messageCallback);
 
         Message* msg = new Message;
         msg->deserializeSelf(message);
@@ -42,32 +42,23 @@ public:
         Message* retMsg = new Message;
         retMsg->m_messageType = msg->m_messageType;
         m_thriftServer->m_messageCallback(msg, retMsg);
-        if (retMsg != NULL)
+        if (retMsg)
         {
             _return = retMsg->serializeSelf();
             delete retMsg;
-            retMsg = NULL;
+            retMsg = nullptr;
         }
 
-        if (msg != NULL)
+        if (msg)
         {
             delete msg;
-            msg = NULL;
+            msg = nullptr;
         }
     }
 
 private:
     ThriftServerImpl*       m_thriftServer;
 };
-
-ThriftServerImpl::ThriftServerImpl()
-    : m_messageCallback(NULL),
-    m_threadedServer(NULL),
-    m_thread(NULL),
-    m_port(9090)
-{
-    // Do nothing.
-}
 
 ThriftServerImpl::~ThriftServerImpl()
 {
@@ -84,7 +75,7 @@ bool ThriftServerImpl::start()
 {
     try
     {
-        if (m_thread == NULL)
+        if (m_thread.use_count() == 0)
         {
             m_thread = std::make_shared<std::thread>(serverStart, this);
         }
@@ -102,11 +93,11 @@ bool ThriftServerImpl::stop()
 {
     try
     {
-        if (m_threadedServer != NULL)
+        if (m_threadedServer.use_count() != 0)
         {
             m_threadedServer->stop();
 
-            if (m_thread != NULL)
+            if (m_thread.use_count() != 0)
             {
                 if (m_thread->joinable())
                 {
@@ -151,7 +142,7 @@ void ThriftServerImpl::serverStart(ThriftServerImpl* server)
 
 void ThriftServerImpl::setMessageCallback(MESSAGE_CALLBACK func)
 {
-    if (func != NULL)
+    if (func)
     {
         m_messageCallback = func;
     }

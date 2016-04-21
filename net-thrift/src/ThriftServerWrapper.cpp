@@ -15,22 +15,16 @@
 #include "ThriftServerImpl.h"
 
 ThriftServerWrapper::ThriftServerWrapper()
-    : m_impl(NULL)
 {
-    if (m_impl == NULL)
+    if (m_impl.use_count() == 0)
     {
         m_impl = std::make_shared<ThriftServerImpl>();
     }
 }
 
-ThriftServerWrapper::~ThriftServerWrapper()
-{
-    // Do nothing
-}
-
 void ThriftServerWrapper::init(unsigned int port)
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         m_impl->init(port);
     }
@@ -38,7 +32,7 @@ void ThriftServerWrapper::init(unsigned int port)
 
 bool ThriftServerWrapper::start()
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         return m_impl->start();
     }
@@ -48,7 +42,7 @@ bool ThriftServerWrapper::start()
 
 bool ThriftServerWrapper::stop()
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         return m_impl->stop();
     }
@@ -58,7 +52,7 @@ bool ThriftServerWrapper::stop()
 
 void ThriftServerWrapper::deinit()
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         m_impl->deinit();
     }
@@ -66,7 +60,7 @@ void ThriftServerWrapper::deinit()
 
 void ThriftServerWrapper::setMessageCallback(MESSAGE_CALLBACK func)
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         m_impl->setMessageCallback(func);
     }
