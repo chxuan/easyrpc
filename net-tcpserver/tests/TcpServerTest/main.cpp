@@ -58,6 +58,7 @@ public:
 
     void handleError(const std::string& errorString, const std::string& remoteAddress)
     {
+        (void)remoteAddress;
         std::cout << "Tcp server handle error: " << errorString << std::endl;
     }
 
