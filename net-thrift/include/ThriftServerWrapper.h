@@ -31,7 +31,6 @@ class ThriftServerWrapper
 {
 public:
     ThriftServerWrapper();
-    ~ThriftServerWrapper();
 
     /**
     * @brief init 初始化thrift服务器端

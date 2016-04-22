@@ -27,7 +27,6 @@ class ThriftClientWrapper
 {
 public:
     ThriftClientWrapper();
-    ~ThriftClientWrapper();
 
     /**
     * @brief init 初始化thrift客户端

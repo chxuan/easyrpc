@@ -26,13 +26,16 @@ using namespace apache::thrift::transport;
 
 class Message;
 
+#define CONNECT_MSEC_TIMEOUT        3000            // 默认连接超时时间，单位：毫秒
+#define SEND_MSEC_TIMEOUT           10000           // 默认发送超时时间，单位：毫秒
+#define RECIVED_MSEC_TIMEOUT        10000           // 默认接收超时时间，单位：毫秒
+
 /**
 * @brief thrift客户端实现类
 */
 class ThriftClientImpl
 {
 public:
-    ThriftClientImpl();
     ~ThriftClientImpl();
 
     /**
@@ -80,11 +83,11 @@ public:
     void setRecivedMsecTimeoutOnce(unsigned int recivedMsecTimeout);
 
 private:
-    std::string m_ip;                        ///< 服务器ip地址
-    unsigned int m_port;                     ///< 服务器端口号
-    unsigned int m_connectMsecTimeout;       ///< 连接超时
-    unsigned int m_sendMsecTimeout;          ///< 发送超时
-    unsigned int m_recivedMsecTimeout;       ///< 接收超时
+    std::string m_ip;                                               ///< 服务器ip地址
+    unsigned int m_port = 0;                                        ///< 服务器端口号
+    unsigned int m_connectMsecTimeout = CONNECT_MSEC_TIMEOUT;       ///< 连接超时
+    unsigned int m_sendMsecTimeout = SEND_MSEC_TIMEOUT;             ///< 发送超时
+    unsigned int m_recivedMsecTimeout = RECIVED_MSEC_TIMEOUT;       ///< 接收超时
 };
 
 #endif

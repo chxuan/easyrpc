@@ -38,7 +38,6 @@ using boost::shared_ptr;
 class ThriftServerImpl
 {
 public:
-    ThriftServerImpl();
     ~ThriftServerImpl();
 
     /**
@@ -83,7 +82,7 @@ private:
     static void serverStart(ThriftServerImpl* server);
 
 public:
-    MESSAGE_CALLBACK m_messageCallback;     ///< 消息回调函数
+    MESSAGE_CALLBACK m_messageCallback = nullptr;     ///< 消息回调函数
 
 private:
     typedef std::shared_ptr<TThreadedServer> TThreadedServerPtr;
@@ -91,7 +90,7 @@ private:
 
     typedef std::shared_ptr<std::thread> ThreadPtr;
     ThreadPtr m_thread;                     ///< 启动服务的线程
-    unsigned int m_port;                    ///< 监听端口
+    unsigned int m_port = 0;                ///< 监听端口
 };
 
 #endif

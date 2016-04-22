@@ -16,22 +16,16 @@
 #include "Message.h"
 
 ThriftClientWrapper::ThriftClientWrapper()
-    : m_impl(NULL)
 {
-    if (m_impl == NULL)
+    if (m_impl.use_count() == 0)
     {
         m_impl = std::make_shared<ThriftClientImpl>();
     }
 }
 
-ThriftClientWrapper::~ThriftClientWrapper()
-{
-    // Do nothing
-}
-
 void ThriftClientWrapper::init(const std::string& ip, unsigned int port)
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         m_impl->init(ip, port);
     }
@@ -39,7 +33,7 @@ void ThriftClientWrapper::init(const std::string& ip, unsigned int port)
 
 bool ThriftClientWrapper::sendMessage(Message* message, Message* retMessage)
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         return m_impl->sendMessage(message, retMessage);
     }
@@ -49,7 +43,7 @@ bool ThriftClientWrapper::sendMessage(Message* message, Message* retMessage)
 
 void ThriftClientWrapper::deinit()
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         m_impl->deinit();
     }
@@ -57,7 +51,7 @@ void ThriftClientWrapper::deinit()
 
 void ThriftClientWrapper::setConnectMsecTimeoutOnce(unsigned int connectMsecTimeout)
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         m_impl->setConnectMsecTimeoutOnce(connectMsecTimeout);
     }
@@ -65,7 +59,7 @@ void ThriftClientWrapper::setConnectMsecTimeoutOnce(unsigned int connectMsecTime
 
 void ThriftClientWrapper::setSendMsecTimeoutOnce(unsigned int sendMsecTimeout)
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         m_impl->setSendMsecTimeoutOnce(sendMsecTimeout);
     }
@@ -73,7 +67,7 @@ void ThriftClientWrapper::setSendMsecTimeoutOnce(unsigned int sendMsecTimeout)
 
 void ThriftClientWrapper::setRecivedMsecTimeoutOnce(unsigned int recivedMsecTimeout)
 {
-    if (m_impl != NULL)
+    if (m_impl.use_count() != 0)
     {
         m_impl->setRecivedMsecTimeoutOnce(recivedMsecTimeout);
     }
