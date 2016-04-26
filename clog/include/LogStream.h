@@ -50,7 +50,7 @@ public:
     template<typename T>
     LogStream& operator << (const T& t)
     {
-        assert(m_buffer != NULL);
+        assert(m_buffer.use_count() != 0);
         (*m_buffer) << t;
         return *this;
     }
@@ -59,7 +59,7 @@ private:
     typedef std::shared_ptr<std::ostringstream> OStringStreamPtr;
     OStringStreamPtr m_buffer;              ///< 字符串输入流对象
 
-    unsigned int m_priorityLevel;           ///< 日志优先级
+    unsigned int m_priorityLevel = 0;      ///< 日志优先级
 };
 
 #endif
