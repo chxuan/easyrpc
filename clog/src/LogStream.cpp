@@ -20,7 +20,6 @@ LogStream::LogStream(const std::string& filePath,
                      unsigned int priorityLevel)
     : m_priorityLevel(priorityLevel)
 {
-    m_buffer.reset();
     if (m_buffer.use_count() == 0)
     {
         m_buffer = std::make_shared<std::ostringstream>();
