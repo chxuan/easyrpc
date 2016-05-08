@@ -14,9 +14,6 @@
 
 int main()
 {
-//    for (int i = 0; i < 100; ++i)
-//    {
-    
     ThriftClientWrapper client;
 
     QueryPeopleInfoMessage queryPeopleInfo;
@@ -51,7 +48,6 @@ int main()
         delete retMessage;
         retMessage = NULL;
     }
-//    }
 
     return 0;
 }

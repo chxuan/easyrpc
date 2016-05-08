@@ -73,7 +73,7 @@ public:
     void setRecivedMsecTimeoutOnce(unsigned int recivedMsecTimeout);
 
 private:
-    typedef std::shared_ptr<ThriftClientImpl> ThriftClientImplPtr;
+    using ThriftClientImplPtr = std::shared_ptr<ThriftClientImpl>;
     ThriftClientImplPtr m_impl;     ///< thrift客户端实现类指针
 };
 

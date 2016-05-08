@@ -85,10 +85,10 @@ public:
     MESSAGE_CALLBACK m_messageCallback = nullptr;     ///< 消息回调函数
 
 private:
-    typedef std::shared_ptr<TThreadedServer> TThreadedServerPtr;
+    using TThreadedServerPtr = std::shared_ptr<TThreadedServer>;
     TThreadedServerPtr m_threadedServer;    ///< thrift服务
 
-    typedef std::shared_ptr<std::thread> ThreadPtr;
+    using ThreadPtr = std::shared_ptr<std::thread>;
     ThreadPtr m_thread;                     ///< 启动服务的线程
     unsigned int m_port = 0;                ///< 监听端口
 };

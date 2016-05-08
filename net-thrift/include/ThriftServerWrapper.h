@@ -21,7 +21,7 @@
 class ThriftServerImpl;
 
 ///  消息回调函数定义
-typedef void (*MESSAGE_CALLBACK) (Message* message, Message* retMessage);
+using MESSAGE_CALLBACK = void (*) (Message* message, Message* retMessage);
 
 
 /**
@@ -66,7 +66,7 @@ public:
     void setMessageCallback(MESSAGE_CALLBACK func);
 
 private:
-    typedef std::shared_ptr<ThriftServerImpl> ThriftServerImplPtr;
+    using ThriftServerImplPtr = std::shared_ptr<ThriftServerImpl>;
     ThriftServerImplPtr m_impl;     ///< thrift服务器实现类指针
 };
 
