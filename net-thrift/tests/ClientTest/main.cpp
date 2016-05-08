@@ -15,6 +15,7 @@
 int main()
 {
     ThriftClientWrapper client;
+    client.init("127.0.0.1", 9090);
 
     QueryPeopleInfoMessage queryPeopleInfo;
     queryPeopleInfo.m_cardId = "1234567890";
