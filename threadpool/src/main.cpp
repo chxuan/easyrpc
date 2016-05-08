@@ -26,7 +26,7 @@ int main()
 
     for (int i = 0; i < 100; ++i)
     {
-        CRealJobPtr job(new CRealJob(std::bind(doTask, std::placeholders::_1), NULL));
+        CRealJobPtr job(new CRealJob(std::bind(doTask, std::placeholders::_1), nullptr));
         manage->run(job);
     }
 
