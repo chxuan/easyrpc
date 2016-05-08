@@ -14,6 +14,7 @@
 
 void doTask(void* jobData)
 {
+    (void)jobData;
     std::cout << "Hello world" << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }

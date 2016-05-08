@@ -17,7 +17,7 @@
 #include "CJob.h"
 #include <functional>
 
-typedef std::function<void (void*)> OnDoTask;
+using OnDoTask = std::function<void (void*)>;
 
 /**
 * @brief 任务类，继承自CJob
@@ -37,6 +37,6 @@ private:
     void* m_jobData = nullptr;
 };
 
-typedef std::shared_ptr<CRealJob> CRealJobPtr;
+using CRealJobPtr = std::shared_ptr<CRealJob>;
 
 #endif

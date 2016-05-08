@@ -37,7 +37,7 @@ void CThreadPool::initThreadNum(unsigned int initNumOfThread)
 
 void CThreadPool::run(CJobPtr job)
 {
-    assert(job != NULL);
+    assert(job.use_count() != 0);
 
     if (m_isStopThreadPool)
     {
