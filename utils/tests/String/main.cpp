@@ -6,8 +6,6 @@
  ************************************************************************/
 
 #include <iostream>
-using namespace std;
-
 #include "Utils.h"
 
 int main()
