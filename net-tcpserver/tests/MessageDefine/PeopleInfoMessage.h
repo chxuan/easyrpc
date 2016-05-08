@@ -28,6 +28,6 @@ public:
     unsigned int m_sex;
 };
 
-typedef std::shared_ptr<PeopleInfoMessage> PeopleInfoMessagePtr;
+using PeopleInfoMessagePtr = std::shared_ptr<PeopleInfoMessage>;
 
 #endif

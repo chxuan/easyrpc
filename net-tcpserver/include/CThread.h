@@ -24,7 +24,7 @@
 class CThread
 {
 public:
-    typedef std::shared_ptr<std::thread> ThreadPtr;
+    using ThreadPtr = std::shared_ptr<std::thread>;
 
     virtual ~CThread()
     {
@@ -88,6 +88,6 @@ private:
     ThreadPtr m_thread;
 };
 
-typedef std::shared_ptr<CThread> CThreadPtr;
+using CThreadPtr = std::shared_ptr<CThread>;
 
 #endif

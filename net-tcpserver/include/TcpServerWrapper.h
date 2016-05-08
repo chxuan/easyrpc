@@ -72,6 +72,6 @@ private:
     TcpServerImplPtr m_impl;
 };
 
-typedef std::shared_ptr<TcpServerWrapper> TcpServerWrapperPtr;
+using TcpServerWrapperPtr = std::shared_ptr<TcpServerWrapper>;
 
 #endif

@@ -18,8 +18,8 @@
 #include <functional>
 
 class Message;
-typedef std::shared_ptr<Message> MessagePtr;
-typedef std::function<void (MessagePtr, const std::string&)> OnReciveMessage;
+using MessagePtr = std::shared_ptr<Message>;
+using OnReciveMessage = std::function<void (MessagePtr, const std::string&)>;
 
 /**
 * @brief 任务类，继承自CJob
@@ -36,11 +36,11 @@ public:
     virtual void run();
 
 private:
-    OnReciveMessage m_onReciveMessage;
+    OnReciveMessage m_onReciveMessage = nullptr;
     MessagePtr m_message;
     std::string m_remoteAddress;
 };
 
-typedef std::shared_ptr<CRealJob> CRealJobPtr;
+using CRealJobPtr = std::shared_ptr<CRealJob>;
 
 #endif

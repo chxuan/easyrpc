@@ -20,8 +20,8 @@
 class CThreadPool;
 class CJob;
 
-typedef std::shared_ptr<CThreadPool> CThreadPoolPtr;
-typedef std::shared_ptr<CJob> CJobPtr;
+using CThreadPoolPtr = std::shared_ptr<CThreadPool>;
+using CJobPtr = std::shared_ptr<CJob>;
 
 /**
 * @brief 工作线程类，继承自CThread，执行具体的job
@@ -58,6 +58,6 @@ private:
     std::atomic<bool> m_isStopWorkThread;
 };
 
-typedef std::shared_ptr<CWorkerThread> CWorkerThreadPtr;
+using CWorkerThreadPtr = std::shared_ptr<CWorkerThread>;
 
 #endif

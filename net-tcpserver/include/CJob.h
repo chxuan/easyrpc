@@ -42,6 +42,6 @@ private:
     std::string m_jobName;
 };
 
-typedef std::shared_ptr<CJob> CJobPtr;
+using CJobPtr = std::shared_ptr<CJob>;
 
 #endif

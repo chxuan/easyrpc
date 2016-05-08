@@ -40,6 +40,6 @@ public:
     std::string m_data;
 };
 
-typedef std::shared_ptr<Message> MessagePtr;
+using MessagePtr = std::shared_ptr<Message>;
 
 #endif

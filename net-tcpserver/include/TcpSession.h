@@ -28,8 +28,8 @@
 #include <boost/bind.hpp>
 #include "Message.h"
 
-typedef std::function<void (MessagePtr, const std::string&)> OnReciveMessage;
-typedef std::function<void (const std::string&, const std::string&)> OnHandleError;
+using OnReciveMessage =  std::function<void (MessagePtr, const std::string&)>;
+using OnHandleError =  std::function<void (const std::string&, const std::string&)>;
 
 /**
 * @brief 会话参数，设置接收消息、错误处理回调函数
@@ -179,6 +179,6 @@ private:
     std::mutex m_writeMutex;
 };
 
-typedef std::shared_ptr<TcpSession> TcpSessionPtr;
+using TcpSessionPtr = std::shared_ptr<TcpSession>;
 
 #endif

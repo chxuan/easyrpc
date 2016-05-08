@@ -25,8 +25,8 @@ class CJob;
 class CThreadManage
 {
 public:
-    typedef std::shared_ptr<CThreadPool> CThreadPoolPtr;
-    typedef std::shared_ptr<CJob> CJobPtr;
+    using CThreadPoolPtr = std::shared_ptr<CThreadPool>;
+    using CJobPtr = std::shared_ptr<CJob>;
 
     CThreadManage();
     ~CThreadManage();
@@ -55,6 +55,6 @@ private:
     CThreadPoolPtr m_threadPool;
 };
 
-typedef std::shared_ptr<CThreadManage> CThreadManagePtr;
+using CThreadManagePtr = std::shared_ptr<CThreadManage>;
 
 #endif

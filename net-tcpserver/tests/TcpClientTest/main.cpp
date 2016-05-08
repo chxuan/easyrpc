@@ -68,7 +68,7 @@ private:
     }
 };
 
-typedef std::shared_ptr<TcpClientMessageHandler> TcpClientMessageHandlerPtr;
+using TcpClientMessageHandlerPtr = std::shared_ptr<TcpClientMessageHandler>;
 
 int main()
 {

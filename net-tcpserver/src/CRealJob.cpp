@@ -19,7 +19,7 @@ CRealJob::CRealJob(OnReciveMessage func, MessagePtr message, const std::string& 
       m_message(message),
       m_remoteAddress(remoteAddress)
 {
-    assert(func != NULL);
+    assert(func);
     m_onReciveMessage = func;
 }
 
@@ -30,7 +30,7 @@ CRealJob::~CRealJob()
 
 void CRealJob::run()
 {
-    if (m_onReciveMessage != NULL)
+    if (m_onReciveMessage != nullptr)
     {
         m_onReciveMessage(m_message, m_remoteAddress);
     }

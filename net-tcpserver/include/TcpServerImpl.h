@@ -17,10 +17,10 @@
 #include "TcpSession.h"
 
 class CThreadManage;
-typedef std::shared_ptr<CThreadManage> CThreadManagePtr;
+using CThreadManagePtr = std::shared_ptr<CThreadManage>;
 
-typedef std::function<void (const std::string&)> OnClientConnect;
-typedef std::function<void (const std::string&)> OnClientDisconnect;
+using OnClientConnect = std::function<void (const std::string&)>;
+using OnClientDisconnect = std::function<void (const std::string&)>;
 
 /**
  * @brief 服务器参数，设置接收消息、错误处理、客户端连接和断开连接回调函数
@@ -156,13 +156,13 @@ private:
     boost::asio::io_service m_ioService;
     boost::asio::ip::tcp::acceptor m_acceptor;
 
-    typedef std::shared_ptr<std::thread> ThreadPtr;
+    using ThreadPtr = std::shared_ptr<std::thread>;
     ThreadPtr m_ioServiceThread;
 
     std::mutex m_sessionMapMutex;
 
     // key: ip:port(127.0.0.1:8888)
-    typedef std::unordered_map<std::string, TcpSessionPtr> TcpSessionMap;
+    using TcpSessionMap = std::unordered_map<std::string, TcpSessionPtr>;
     TcpSessionMap m_tcpSessionMap;
 
     CThreadManagePtr m_threadManage;
@@ -173,6 +173,6 @@ private:
     OnClientDisconnect m_onClientDisconnect = nullptr;
 };
 
-typedef std::shared_ptr<TcpServerImpl> TcpServerImplPtr;
+using TcpServerImplPtr = std::shared_ptr<TcpServerImpl>;
 
 #endif

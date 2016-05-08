@@ -70,6 +70,6 @@ private:
     TcpClientImplPtr m_impl;
 };
 
-typedef std::shared_ptr<TcpClientWrapper> TcpClientWrapperPtr;
+using TcpClientWrapperPtr = std::shared_ptr<TcpClientWrapper>;
 
 #endif

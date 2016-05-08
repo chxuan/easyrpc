@@ -96,7 +96,7 @@ private:
     TcpServerWrapperPtr m_server;
 };
 
-typedef std::shared_ptr<TcpServerMessageHandler> TcpServerMessageHandlerPtr;
+using TcpServerMessageHandlerPtr = std::shared_ptr<TcpServerMessageHandler>;
 
 int main()
 {
