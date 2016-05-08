@@ -56,7 +56,7 @@ public:
     }
 
 private:
-    typedef std::shared_ptr<std::ostringstream> OStringStreamPtr;
+    using OStringStreamPtr = std::shared_ptr<std::ostringstream>;
     OStringStreamPtr m_buffer;              ///< 字符串输入流对象
 
     unsigned int m_priorityLevel = 0;      ///< 日志优先级
