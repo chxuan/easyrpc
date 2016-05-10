@@ -25,7 +25,7 @@ using OnDoTask = std::function<void (void*)>;
 class CRealJob : public CJob
 {
 public:
-    CRealJob(OnDoTask func, void* jobData);
+    CRealJob(const OnDoTask& func, void* jobData);
 
     /**
     * @brief run 执行任务

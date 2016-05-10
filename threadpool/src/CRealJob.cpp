@@ -14,7 +14,7 @@
 #include "CRealJob.h"
 #include <assert.h>
 
-CRealJob::CRealJob(OnDoTask func, void* jobData)
+CRealJob::CRealJob(const OnDoTask& func, void* jobData)
     : CJob(),
       m_jobData(jobData)
 {
