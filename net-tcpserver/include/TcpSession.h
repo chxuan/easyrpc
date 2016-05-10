@@ -28,8 +28,8 @@
 #include <boost/bind.hpp>
 #include "Message.h"
 
-using OnReciveMessage =  std::function<void (MessagePtr, const std::string&)>;
-using OnHandleError =  std::function<void (const std::string&, const std::string&)>;
+using OnReciveMessage = std::function<void (MessagePtr, const std::string&)>;
+using OnHandleError = std::function<void (const std::string&, const std::string&)>;
 
 /**
 * @brief 会话参数，设置接收消息、错误处理回调函数

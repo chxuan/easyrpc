@@ -27,7 +27,7 @@ using OnReciveMessage = std::function<void (MessagePtr, const std::string&)>;
 class CRealJob : public CJob
 {
 public:
-    CRealJob(OnReciveMessage func, MessagePtr message, const std::string& remoteAddress);
+    CRealJob(const OnReciveMessage& func, MessagePtr message, const std::string& remoteAddress);
     virtual ~CRealJob();
 
     /**
