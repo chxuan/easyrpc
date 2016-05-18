@@ -151,7 +151,7 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
             std::lock_guard<std::mutex> locker(m_sessionMapMutex);
             m_tcpSessionMap.insert(std::make_pair(remoteAddress, tcpSession));
         }
-        if (m_onClientConnect != NULL)
+        if (m_onClientConnect != nullptr)
         {
             m_onClientConnect(remoteAddress);
         }
@@ -161,7 +161,7 @@ void TcpServerImpl::handleAccept(TcpSessionPtr tcpSession,
     else
     {
         std::cout << "Tcp server accept failed: " << error.message() << std::endl;
-        if (m_onHandleError != NULL)
+        if (m_onHandleError != nullptr)
         {
             m_onHandleError(error.message(), "");
         }
@@ -220,14 +220,14 @@ void TcpServerImpl::handleError(const std::string &errorString, const std::strin
     if (errorString == "End of file")
     {
         closeTcpSession(remoteAddress);
-        if (m_onClientDisconnect != NULL)
+        if (m_onClientDisconnect != nullptr)
         {
             m_onClientDisconnect(remoteAddress);
         }
     }
     else
     {
-        if (m_onHandleError != NULL)
+        if (m_onHandleError != nullptr)
         {
             m_onHandleError(errorString, remoteAddress);
         }
