@@ -23,7 +23,9 @@
 #include <openssl/md5.h>
 #include <openssl/sha.h>
 
-std::string utils::System::uuid()
+namespace utils
+{
+std::string System::uuid()
 {
     uuid_t uuid;
     uuid_generate(uuid);
@@ -34,7 +36,7 @@ std::string utils::System::uuid()
     return buf;
 }
 
-std::string utils::System::md5(const std::string& str)
+std::string System::md5(const std::string& str)
 {
     MD5_CTX hashCtx;
     unsigned char hashRet[MD5_DIGEST_LENGTH];
@@ -79,7 +81,7 @@ std::string utils::System::md5(const std::string& str)
     return md5Text;
 }
 
-std::string utils::System::sha1(const std::string& str)
+std::string System::sha1(const std::string& str)
 {
     SHA_CTX hashCtx;
     unsigned char hashRet[SHA_DIGEST_LENGTH];
@@ -117,7 +119,7 @@ std::string utils::System::sha1(const std::string& str)
     return sha1Text;
 }
 
-unsigned long utils::System::totalMemery()
+unsigned long System::totalMemery()
 {
     struct sysinfo info;
     int ret = sysinfo(&info);
@@ -125,10 +127,11 @@ unsigned long utils::System::totalMemery()
     return ret == -1 ? 0 : info.totalram;
 }
 
-unsigned long utils::System::freeMemery()
+unsigned long System::freeMemery()
 {
     struct sysinfo info;
     int ret = sysinfo(&info);
 
     return ret == -1 ? 0 : info.freeram;
+}
 }

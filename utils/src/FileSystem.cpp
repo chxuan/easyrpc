@@ -25,7 +25,9 @@
 #define PATH_MAX        1024        // 默认最大路径长度
 #endif
 
-std::string utils::FileSystem::currentWorkPath()
+namespace utils
+{
+std::string FileSystem::currentWorkPath()
 {
     char buf[PATH_MAX] = {'\0'};
     if (getcwd(buf, sizeof (buf) - 1) != NULL)
@@ -36,13 +38,13 @@ std::string utils::FileSystem::currentWorkPath()
     return "";
 }
 
-bool utils::FileSystem::setCurrentWorkPath(const std::string& path)
+bool FileSystem::setCurrentWorkPath(const std::string& path)
 {
     int ret = chdir(path.c_str());
     return ret == -1 ? false : true;
 }
 
-std::string utils::FileSystem::currentExePath()
+std::string FileSystem::currentExePath()
 {
     char buf[PATH_MAX] = {'\0'};
 
@@ -64,7 +66,7 @@ std::string utils::FileSystem::currentExePath()
     return path;
 }
 
-std::string utils::FileSystem::currentExeName()
+std::string FileSystem::currentExeName()
 {
     char buf[PATH_MAX] = {'\0'};
 
@@ -86,21 +88,21 @@ std::string utils::FileSystem::currentExeName()
     return path;
 }
 
-bool utils::FileSystem::isExists(const std::string& path)
+bool FileSystem::isExists(const std::string& path)
 {
     // F_OK 用于判断文件是否存在
     int ret = access(path.c_str(), F_OK);
     return ret == -1 ? false : true;
 }
 
-bool utils::FileSystem::mkdir(const std::string& path)
+bool FileSystem::mkdir(const std::string& path)
 {
     if (path.empty())
     {
         return false;
     }
 
-    if (utils::FileSystem::isExists(path))
+    if (FileSystem::isExists(path))
     {
         return true;
     }
@@ -121,7 +123,7 @@ bool utils::FileSystem::mkdir(const std::string& path)
             }
 
             std::string tempPath = dirPath.substr(0, i);
-            if (!utils::FileSystem::isExists(tempPath))
+            if (!FileSystem::isExists(tempPath))
             {
                 if (::mkdir(tempPath.c_str(), 0755) == -1)
                 {
@@ -134,18 +136,19 @@ bool utils::FileSystem::mkdir(const std::string& path)
     return true;
 }
 
-bool utils::FileSystem::remove(const std::string& path)
+bool FileSystem::remove(const std::string& path)
 {
     if (path.empty())
     {
         return false;
     }
 
-    if (!utils::FileSystem::isExists(path))
+    if (!FileSystem::isExists(path))
     {
         return false;
     }
 
     int ret = ::remove(path.c_str());
     return ret == -1 ? false : true;
+}
 }

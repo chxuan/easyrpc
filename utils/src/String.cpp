@@ -17,37 +17,39 @@
 #include <stdlib.h>
 #include <string.h>
 
-std::string utils::String::int32ToString(int n)
+namespace utils
+{
+std::string String::int32ToString(int n)
 {
     return tToString(n);
 }
 
-std::string utils::String::uint32ToString(unsigned int n)
+std::string String::uint32ToString(unsigned int n)
 {
     return tToString(n);
 }
 
-std::string utils::String::int64ToString(long long n)
+std::string String::int64ToString(long long n)
 {
     return tToString(n);
 }
 
-std::string utils::String::uint64ToString(unsigned long long n)
+std::string String::uint64ToString(unsigned long long n)
 {
     return tToString(n);
 }
 
-std::string utils::String::floatToString(float n)
+std::string String::floatToString(float n)
 {
     return tToString(n);
 }
 
-std::string utils::String::doubleToString(double n)
+std::string String::doubleToString(double n)
 {
     return tToString(n);
 }
 
-std::string utils::String::time_tToString(time_t n)
+std::string String::time_tToString(time_t n)
 {
     struct tm* p;
     p = localtime(&n);
@@ -67,37 +69,37 @@ std::string utils::String::time_tToString(time_t n)
     return time;
 }
 
-bool utils::String::stringToInt32(const std::string& str, int& n)
+bool String::stringToInt32(const std::string& str, int& n)
 {
     return stringToT(str, n);
 }
 
-bool utils::String::stringToUint32(const std::string& str, unsigned int& n)
+bool String::stringToUint32(const std::string& str, unsigned int& n)
 {
     return stringToT(str, n);
 }
 
-bool utils::String::stringToInt64(const std::string& str, long long& n)
+bool String::stringToInt64(const std::string& str, long long& n)
 {
     return stringToT(str, n);
 }
 
-bool utils::String::stringToUint64(const std::string& str, unsigned long long& n)
+bool String::stringToUint64(const std::string& str, unsigned long long& n)
 {
     return stringToT(str, n);
 }
 
-bool utils::String::stringToFloat(const std::string& str, float& n)
+bool String::stringToFloat(const std::string& str, float& n)
 {
     return stringToT(str, n);
 }
 
-bool utils::String::stringToDouble(const std::string& str, double& n)
+bool String::stringToDouble(const std::string& str, double& n)
 {
     return stringToT(str, n);
 }
 
-time_t utils::String::stringToTime_t(const std::string& time)
+time_t String::stringToTime_t(const std::string& time)
 {
     struct tm stTm;
 
@@ -114,4 +116,5 @@ time_t utils::String::stringToTime_t(const std::string& time)
     stTm.tm_isdst = -1;
 
     return mktime(&stTm);
+}
 }
