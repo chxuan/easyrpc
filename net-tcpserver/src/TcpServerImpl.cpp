@@ -17,8 +17,6 @@
 #include <unistd.h>
 #include <iostream>
 
-static const unsigned int DefaultNumOfThread = 10;
-
 TcpServerImpl::TcpServerImpl(const std::string& ip, unsigned short port)
     : m_ip(ip),
       m_port(port),

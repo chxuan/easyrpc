@@ -14,6 +14,7 @@
 #include "TcpClientImpl.h"
 #include "CThreadManage.h"
 #include "CRealJob.h"
+#include <unistd.h>
 
 TcpClientImpl::TcpClientImpl(const std::string &ip, unsigned short port)
     : m_endpoint(boost::asio::ip::address::from_string(ip), port),
