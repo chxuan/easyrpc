@@ -157,7 +157,7 @@ private:
     boost::asio::ip::tcp::acceptor m_acceptor;
 
     using ThreadPtr = std::shared_ptr<std::thread>;
-    ThreadPtr m_ioServiceThread;
+    std::vector<ThreadPtr> m_ioServiceThreadVec;
 
     std::mutex m_sessionMapMutex;
 

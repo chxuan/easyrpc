@@ -31,12 +31,19 @@ bool TcpClientImpl::start()
 {
     connect();
 
-    if (m_ioServiceThread.use_count() == 0)
+    // 获取cpu数量
+    unsigned int cpuNum = sysconf(_SC_NPROCESSORS_CONF);
+
+    if (m_ioServiceThreadVec.size() == 0)
     {
         try
         {
-            m_ioServiceThread = std::make_shared<std::thread>
-                    (boost::bind(&boost::asio::io_service::run, &m_ioService));
+            // 用线程池来run ioservice
+            for (unsigned int i = 0; i < cpuNum; ++i)
+            {
+                ThreadPtr thread(new std::thread(boost::bind(&boost::asio::io_service::run, &m_ioService)));
+                m_ioServiceThreadVec.push_back(thread);
+            }
         }
         catch (std::exception& e)
         {
@@ -60,11 +67,14 @@ bool TcpClientImpl::stop()
         std::cout << "Error: " << e.what() << std::endl;
     }
 
-    if (m_ioServiceThread.use_count() != 0)
+    if (m_ioServiceThreadVec.size() != 0)
     {
-        if (m_ioServiceThread->joinable())
+        for (auto& iter : m_ioServiceThreadVec)
         {
-            m_ioServiceThread->join();
+            if (iter->joinable())
+            {
+                iter->join();
+            }
         }
     }
 

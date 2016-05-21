@@ -101,7 +101,7 @@ private:
     boost::asio::ip::tcp::endpoint m_endpoint;
 
     using ThreadPtr = std::shared_ptr<std::thread>;
-    ThreadPtr m_ioServiceThread;
+    std::vector<ThreadPtr> m_ioServiceThreadVec;
 
     TcpSession m_tcpSession;
 
