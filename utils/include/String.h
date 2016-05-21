@@ -163,39 +163,26 @@ public:
     static time_t stringToTime_t(const std::string& time);
 
 private:
-    /**
-     * @brief tToString 其他类型转换成string类型
-     *
-     * @tparam T 其他类型
-     * @param t 其他类型
-     *
-     * @return string类型
-     */
     template<typename T>
-        static std::string tToString(T t)
-        {
-            std::stringstream ss;
-            ss << t;
-            return ss.str();
-        }
+    static typename std::enable_if<std::is_arithmetic<T>::value, std::string>::type tToString(T t)
+    {
+        return std::to_string(t);
+    }
 
-    /**
-     * @brief stringToT string类型转换成其他类型
-     *
-     * @tparam T 其他类型
-     * @param str string类型
-     * @param t 其他类型
-     *
-     * @return 成功返回true，否则返回false
-     */
     template<typename T>
-        static bool stringToT(const std::string& str, T& t)
-        {
-            std::stringstream ss;
-            ss << str;
-            ss >> t;
-            return !ss.good();
-        }
+    static typename std::enable_if<std::is_same<T, std::string>::value, std::string>::type tToString(T t)
+    {
+        return t;
+    }
+
+    template<typename T>
+    static bool stringToT(const std::string& str, T& t)
+    {
+        std::stringstream ss;
+        ss << str;
+        ss >> t;
+        return !ss.good();
+    }
 };
 }
 
