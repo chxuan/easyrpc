@@ -53,7 +53,7 @@ void LogMessage::logPrintImpl(const std::string& filePath,
                               unsigned int priorityLevel,
                               const std::string& content)
 {
-    std::string logContent = createLogContent(filePath, function, line, priorityLevel, content);
+    std::string logContent = createLogContent(filePath, function, line, content);
     bool ok = LogImpl::getInstance()->logPrint(priorityLevel, logContent);
     if (!ok)
     {
@@ -64,7 +64,6 @@ void LogMessage::logPrintImpl(const std::string& filePath,
 std::string LogMessage::createLogContent(const std::string& filePath,
                                          const std::string& function,
                                          unsigned long line,
-                                         unsigned int priorityLevel,
                                          const std::string& content)
 {
     std::string strLine = utils::String::uint64ToString(line);

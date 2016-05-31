@@ -31,7 +31,7 @@ public:
     LogImpl();
     ~LogImpl();
     LogImpl(const LogImpl& var) = delete;
-    LogImpl& operator = (const LogImpl& var) = delete;
+    LogImpl& operator=(const LogImpl& var) = delete;
 
     /**
     * @brief getInstance 得到日志实现类指针

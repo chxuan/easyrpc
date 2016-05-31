@@ -73,7 +73,6 @@ private:
     * @param filePath 文件路径
     * @param function 函数名
     * @param line 代码行数
-    * @param priorityLevel 日志优先级
     * @param content 日志输入文本
     *
     * @return 一个带有日志定为功能的日志文本
@@ -81,7 +80,6 @@ private:
     std::string createLogContent(const std::string& filePath,
                                  const std::string& function,
                                  unsigned long line,
-                                 unsigned int priorityLevel,
                                  const std::string& content);
 
 private:
