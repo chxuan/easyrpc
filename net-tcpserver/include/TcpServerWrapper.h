@@ -62,7 +62,7 @@ public:
     * @param remoteAddress 客户端地址（地址格式：127.0.0.1:8888）
     */
     template<typename T>
-    void write(const T t, const std::string& remoteAddress)
+    void write(const T& t, const std::string& remoteAddress)
     {
         assert(m_impl.use_count() != 0);
         m_impl->write(t, remoteAddress);

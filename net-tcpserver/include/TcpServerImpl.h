@@ -80,7 +80,7 @@ public:
     * @param remoteAddress 客户端地址（地址格式：127.0.0.1:8888）
     */
     template<typename T>
-    void write(const T t, const std::string& remoteAddress)
+    void write(const T& t, const std::string& remoteAddress)
     {
         TcpSessionPtr session = tcpSession(remoteAddress);
         if (session.use_count() != 0)

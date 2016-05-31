@@ -104,7 +104,7 @@ public:
     * @param t 消息结构
     */
     template<typename T>
-    void write(const T t)
+    void write(const T& t)
     {
         std::lock_guard<std::mutex> locker(m_writeMutex);
 

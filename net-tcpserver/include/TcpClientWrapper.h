@@ -60,7 +60,7 @@ public:
     * @param t 消息结构
     */
     template<typename T>
-    void write(const T t)
+    void write(const T& t)
     {
         assert(m_impl.use_count() != 0);
         m_impl->write(t);
