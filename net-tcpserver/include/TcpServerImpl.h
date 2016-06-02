@@ -39,7 +39,7 @@ struct ServerParam
 class TcpServerImpl
 {
 public:
-    TcpServerImpl(const std::string& ip, unsigned short port);
+    TcpServerImpl(unsigned short port);
     ~TcpServerImpl();
 
     /**
@@ -151,7 +151,6 @@ private:
     bool closeTcpSession(const std::string& remoteAddress);
 
 private:
-    std::string m_ip;
     unsigned short m_port = 0;
     boost::asio::io_service m_ioService;
     boost::asio::ip::tcp::acceptor m_acceptor;
