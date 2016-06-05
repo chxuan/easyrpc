@@ -39,7 +39,7 @@ void LogMessage::log(const char* msg, ...)
     vsprintf(buf, msg, args);
     va_end(args);
 
-    logPrintImpl(m_filePath, m_function, m_line, m_priorityLevel, std::string(buf));
+    logPrintImpl(m_filePath, m_function, m_line, m_priorityLevel, buf);
 }
 
 LogStream LogMessage::log() const
