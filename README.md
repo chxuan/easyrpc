@@ -27,24 +27,26 @@ framework set
 
 [developmentkit](https://github.com/chxuan/developmentkit)是该框架集合所依赖的三方库以及三方库的源代码仓库，使用git将[developmentkit](https://github.com/chxuan/developmentkit)克隆到本地计算机，并将这些三方库拷贝到/usr/local下，并在/etc/bashrc添加环境变量。
 
-> **/etc/bashrc:**
-
-> - export BOOST_INCLUDE_PATH="/usr/local/3rdParty/boost/include"
-> - export BOOST_LIB_PATH="/usr/local/3rdParty/boost/lib"
-> - export THRIFT_INCLUDE_PATH="/usr/local/3rdParty/thrift/include"
-> - export THRIFT_LIB_PATH="/usr/local/3rdParty/thrift/lib"
-> - export UUID_INCLUDE_PATH="/usr/local/3rdParty/uuid/include"
-> - export UUID_LIB_PATH="/usr/local/3rdParty/uuid/lib"
-> - export OPENSSL_INCLUDE_PATH="/usr/local/3rdParty/ssl/include"
-> - export OPENSSL_LIB_PATH="/usr/local/3rdParty/ssl/lib"
-> - export LOG4CPP_INCLUDE_PATH="/usr/local/3rdParty/log4cpp/include"
-> - export LOG4CPP_LIB_PATH="/usr/local/3rdParty/log4cpp/lib"
-> - export RCF_INCLUDE_PATH="/usr/local/3rdParty/RCF/include"
-> - export RCF_LIB_PATH="/usr/local/3rdParty/RCF/lib"
-> - export LD_LIBRARY_PATH="$RCF_LIB_PATH:$LOG4CPP_LIB_PATH:$OPENSSL_LIB_PATH:$UUID_LIB_PATH:$THRIFT_LIB_PATH:$BOOST_LIB_PATH:$LD_LIBRARY_PATH"
+```bash
+export BOOST_INCLUDE_PATH="/usr/local/3rdParty/boost/include"
+export BOOST_LIB_PATH="/usr/local/3rdParty/boost/lib"
+export THRIFT_INCLUDE_PATH="/usr/local/3rdParty/thrift/include"
+export THRIFT_LIB_PATH="/usr/local/3rdParty/thrift/lib"
+export UUID_INCLUDE_PATH="/usr/local/3rdParty/uuid/include"
+export UUID_LIB_PATH="/usr/local/3rdParty/uuid/lib"
+export OPENSSL_INCLUDE_PATH="/usr/local/3rdParty/ssl/include"
+export OPENSSL_LIB_PATH="/usr/local/3rdParty/ssl/lib"
+export LOG4CPP_INCLUDE_PATH="/usr/local/3rdParty/log4cpp/include"
+export LOG4CPP_LIB_PATH="/usr/local/3rdParty/log4cpp/lib"
+export RCF_INCLUDE_PATH="/usr/local/3rdParty/RCF/include"
+export RCF_LIB_PATH="/usr/local/3rdParty/RCF/lib"
+export LD_LIBRARY_PATH="$RCF_LIB_PATH:$LOG4CPP_LIB_PATH:$OPENSSL_LIB_PATH:$UUID_LIB_PATH:$THRIFT_LIB_PATH:$BOOST_LIB_PATH:$LD_LIBRARY_PATH"
+```
 
 编辑完/etc/bashrc后执行以下命令，让更改立即生效。
-> sudo source /etc/bashrc
+```bash
+sudo source /etc/bashrc
+```
 
 
 编译framework
