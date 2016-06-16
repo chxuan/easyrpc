@@ -62,7 +62,7 @@ framework set
 -------------
 
 ###1.使用clog
-```
+```c++
 //main.cpp
 #include <iostream>
 #include <string>
@@ -102,7 +102,7 @@ net-rcf是基于RCF（Remote Call Framework by Delta V Software）的库，其�
 
 ####使用RPC通信方式
 要使用RPC，首先要定义客户端和服务器端的通信协议。
-```
+```c++
 //RPCProtocolDefine.h
 #include <RCF/RCF.hpp>
 #include "PeopleInfoMessage.h"
@@ -112,7 +112,7 @@ RCF_BEGIN(I_RPCMessageHandler, "I_RPCMessageHandler")
 RCF_END(I_RPCMessageHandler)
 ```
 其中queryPeopleInfoByID函数就是客户端向服务器发起请求用户信息的函数，下面是服务器端的代码。
-```
+```c++
 //Server.cpp
 #include <assert.h>
 #include <iostream>
@@ -153,7 +153,7 @@ int main()
 }
 ```
 其中RCFMessageHandler类是服务器端进行消息处理的类，接下来是客户端的代码。
-```
+```c++
 //Client.cpp
 #include <iostream>
 #include "RPCProtocolDefine.h"
@@ -185,7 +185,7 @@ int main()
 ```
 ####使用发布/订阅通信方式
 要使用发布/订阅通信方式，首先也要定义发布端和订阅端的通信协议。
-```
+```c++
 //PubSubProtocolDefine.h
 #include <RCF/RCF.hpp>
 #include <string>
@@ -195,7 +195,7 @@ RCF_BEGIN(I_PubSubMessageHandler, "I_PubSubMessageHandler")
 RCF_END(I_PubSubMessageHandler)
 ```
 发布端调用pushNews将news发送到订阅端，下面是发布端的代码。
-```
+```c++
 //Publisher.cpp
 #include <assert.h>
 #include <iostream>
@@ -241,7 +241,7 @@ int main()
 }
 ```
 发布端创建了“news“主题，订阅端也将订阅该主题，接下来是订阅端的代码。
-```
+```c++
 //Subscriber.cpp
 #include <assert.h>
 #include <iostream>
@@ -280,7 +280,7 @@ int main()
 ```
 
 ###3.使用threadpool
-```
+```c++
 //main.cpp
 #include <iostream>
 #include "CThreadManage.h"
