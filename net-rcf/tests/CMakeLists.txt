@@ -1,5 +1,0 @@
-add_subdirectory(${PROJECT_SOURCE_DIR}/tests/CenterNetServerTest)
-add_subdirectory(${PROJECT_SOURCE_DIR}/tests/DBServerTest)
-add_subdirectory(${PROJECT_SOURCE_DIR}/tests/ClientTest)
-add_subdirectory(${PROJECT_SOURCE_DIR}/tests/PublisherTest)
-add_subdirectory(${PROJECT_SOURCE_DIR}/tests/SubscriberTest)
