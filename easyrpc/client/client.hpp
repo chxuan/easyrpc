@@ -76,7 +76,7 @@ public:
     }
 
     template<typename Protocol, typename... Args>
-    typename std::enable_if<std::is_void<typename Protocol::return_type_t>::value, typename Protocol::return_type_t>::type
+    typename std::enable_if<std::is_void<typename Protocol::return_type>::value, typename Protocol::return_type>::type
     call(const Protocol& protocol, Args&&... args)
     {
         connect();
@@ -87,7 +87,7 @@ public:
     }
 
     template<typename Protocol, typename... Args>
-    typename std::enable_if<!std::is_void<typename Protocol::return_type_t>::value, typename Protocol::return_type_t>::type
+    typename std::enable_if<!std::is_void<typename Protocol::return_type>::value, typename Protocol::return_type>::type
     call(const Protocol& protocol, Args&&... args)
     {
         connect();

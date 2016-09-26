@@ -18,7 +18,7 @@ template<typename Return, typename... Args>
 class protocol_define<Return(Args...)>
 {
 public:
-    using return_type_t = typename function_traits<Return(Args...)>::return_type;
+    using return_type = typename function_traits<Return(Args...)>::return_type;
     explicit protocol_define(std::string name) : _name(std::move(name)) {}
 
     std::string pack(Args... args) const
@@ -28,10 +28,10 @@ public:
         return p.get_string();
     }
 
-    return_type_t unpack(const std::string& text) const
+    return_type unpack(const std::string& text) const
     {
         easypack::unpack up(text);
-        return_type_t ret;
+        return_type ret;
         up.unpack_args(ret);
         return ret;
     }

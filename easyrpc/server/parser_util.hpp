@@ -27,8 +27,8 @@ public:
     template<typename T>
     typename std::decay<T>::type get()
     {
-        using return_type_t = typename std::decay<T>::type;
-        return_type_t t;
+        using return_type = typename std::decay<T>::type;
+        return_type t;
         _up.unpack_top(t);
         return t;
     }
