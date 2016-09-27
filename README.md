@@ -80,7 +80,7 @@ A RPC framework written in Modern C++
     }
     ```
     
-正如你所看到的，客户端像调用本地函数一样就能够完成与服务端的通信，一切都那么简洁方便，easyrpc目前只支持短连接调用，短连接的好处就是不用担心各个server的启动顺序、调用方便以及不用维护心跳，由于每次call都会去connect，所以没有长连接高效，后期可能会考虑增加长连接call，easyrpc使用boost.asio来作为网络底层，效率自然高效，boost.serialization作为序列化框架，可以用类对象、STL（vector、map等）作为函数参数。
+正如你所看到的，客户端像调用本地函数一样就能够完成与服务端的通信，一切都那么简洁方便，easyrpc目前只支持短连接调用，短连接的好处就是不用担心各个server的启动顺序、调用方便以及不用维护心跳，由于每次call都会去connect，所以没有长连接高效，后期可能会考虑增加长连接call。
 
 * **User-define classes**
     ```cpp
