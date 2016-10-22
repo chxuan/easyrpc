@@ -8,7 +8,7 @@
 #include <type_traits>
 #include "base/header.hpp"
 #include "base/function_traits.hpp"
-#include "base/threadpool.hpp"
+#include "base/thread_pool.hpp"
 #include "base/logger.hpp"
 #include "parser_util.hpp"
 
@@ -395,7 +395,7 @@ private:
     }
 
 private:
-    threadpool _threadpool;
+    thread_pool _threadpool;
     std::unordered_map<std::string, invoker_function> _invoker_map;
     std::unordered_map<std::string, invoker_function_raw> _invoker_raw_map;
 };

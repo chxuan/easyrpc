@@ -17,15 +17,15 @@ namespace easyrpc
 static const std::size_t max_task_quque_size = 100000;
 static const std::size_t max_thread_size = 30;
 
-class threadpool
+class thread_pool
 {
 public:
     using work_thread_ptr = std::shared_ptr<std::thread>;
     using task_t = std::function<void()>; 
 
-    explicit threadpool() : _is_stop_threadpool(false) {}
+    explicit thread_pool() : _is_stop_threadpool(false) {}
 
-    ~threadpool()
+    ~thread_pool()
     {
         stop();
     }
@@ -40,7 +40,7 @@ public:
 
         for (std::size_t i = 0; i < num; ++i)
         {
-            work_thread_ptr t = std::make_shared<std::thread>(std::bind(&threadpool::run_task, this));
+            work_thread_ptr t = std::make_shared<std::thread>(std::bind(&thread_pool::run_task, this));
             _thread_vec.emplace_back(t);
         }
     }
