@@ -86,7 +86,7 @@ flags = [
 
 # 3rdParty include path
 '-isystem',
-'/usr/local/3rdParty/boost/include',
+'/usr/local/3rd-party/boost/include',
 '-isystem',
 './easypack',
 '-isystem',
