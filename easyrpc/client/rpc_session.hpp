@@ -130,8 +130,8 @@ private:
 
     void check_head()
     {
-        memcpy(&_res_head, head_, sizeof(head_));
-        if (_res_head.body_len > max_buffer_len)
+        memcpy(&res_head_, head_, sizeof(head_));
+        if (res_head_.body_len > max_buffer_len)
         {
             throw std::runtime_error("Body len is too big");
         }
@@ -140,7 +140,7 @@ private:
     std::vector<char> read_body()
     {
         body_.clear();
-        body_.resize(_res_head.body_len);
+        body_.resize(res_head_.body_len);
         boost::system::error_code ec;
         boost::asio::read(socket_, boost::asio::buffer(body_), ec); 
         if (ec)
@@ -202,7 +202,7 @@ private:
     boost::asio::ip::tcp::resolver::iterator endpoint_iter_;
     std::unique_ptr<std::thread> thread_;
     char head_[response_header_len];
-    response_header _res_head;
+    response_header res_head_;
     std::vector<char> body_;
     boost::asio::io_service timer_ios_;
     boost::asio::io_service::work timer_work_;
