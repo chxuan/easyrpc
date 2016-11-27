@@ -23,7 +23,7 @@ public:
     using work_thread_ptr = std::shared_ptr<std::thread>;
     using task_t = std::function<void()>; 
 
-    explicit thread_pool() : _is_stop_threadpool(false) {}
+    explicit thread_pool() : is_stop_threadpool_(false) {}
 
     ~thread_pool()
     {
@@ -41,14 +41,14 @@ public:
         for (std::size_t i = 0; i < num; ++i)
         {
             work_thread_ptr t = std::make_shared<std::thread>(std::bind(&thread_pool::run_task, this));
-            _thread_vec.emplace_back(t);
+            thread_vec_.emplace_back(t);
         }
     }
 
     template<typename Function, typename... Args>
     void add_task(const Function& func, Args... args)
     {
-        if (!_is_stop_threadpool)
+        if (!is_stop_threadpool_)
         {
             task_t task = [&func, args...]{ return func(args...); };
             add_task_impl(task);
@@ -58,7 +58,7 @@ public:
     template<typename Function, typename... Args>
     typename std::enable_if<std::is_class<Function>::value>::type add_task(Function& func, Args... args)
     {
-        if (!_is_stop_threadpool)
+        if (!is_stop_threadpool_)
         {
             task_t task = [&func, args...]{ return func(args...); };
             add_task_impl(task);
@@ -68,7 +68,7 @@ public:
     template<typename Function, typename Self, typename... Args>
     void add_task(const Function& func, Self* self, Args... args)
     {
-        if (!_is_stop_threadpool)
+        if (!is_stop_threadpool_)
         {
             task_t task = [&func, &self, args...]{ return (*self.*func)(args...); };
             add_task_impl(task);
@@ -77,31 +77,31 @@ public:
 
     void stop()
     {
-        std::call_once(_call_flag, [this]{ terminate_all(); });
+        std::call_once(call_flag_, [this]{ terminate_all(); });
     }
 
 private:
     void add_task_impl(const task_t& task)
     {
         {
-            std::unique_lock<std::mutex> locker(_task_queue_mutex);
-            while (_task_queue.size() == max_task_quque_size && !_is_stop_threadpool)
+            std::unique_lock<std::mutex> locker(task_queue_mutex_);
+            while (task_queue_.size() == max_task_quque_size && !is_stop_threadpool_)
             {
-                _task_put.wait(locker);
+                task_put_.wait(locker);
             }
 
-            _task_queue.emplace(std::move(task));
+            task_queue_.emplace(std::move(task));
         }
 
-        _task_get.notify_one();
+        task_get_.notify_one();
     }
 
     void terminate_all()
     {
-        _is_stop_threadpool = true;
-        _task_get.notify_all();
+        is_stop_threadpool_ = true;
+        task_get_.notify_all();
 
-        for (auto& iter : _thread_vec)
+        for (auto& iter : thread_vec_)
         {
             if (iter != nullptr)
             {
@@ -111,7 +111,7 @@ private:
                 }
             }
         }
-        _thread_vec.clear();
+        thread_vec_.clear();
 
         clean_task_queue();
     }
@@ -122,49 +122,49 @@ private:
         {
             task_t task = nullptr;
             {
-                std::unique_lock<std::mutex> locker(_task_queue_mutex);
-                while (_task_queue.empty() && !_is_stop_threadpool)
+                std::unique_lock<std::mutex> locker(task_queue_mutex_);
+                while (task_queue_.empty() && !is_stop_threadpool_)
                 {
-                    _task_get.wait(locker);
+                    task_get_.wait(locker);
                 }
 
-                if (_is_stop_threadpool)
+                if (is_stop_threadpool_)
                 {
                     break;
                 }
 
-                if (!_task_queue.empty())
+                if (!task_queue_.empty())
                 {
-                    task = std::move(_task_queue.front());
-                    _task_queue.pop();
+                    task = std::move(task_queue_.front());
+                    task_queue_.pop();
                 }
             }
 
             if (task != nullptr)
             {
                 task();
-                _task_put.notify_one();
+                task_put_.notify_one();
             }
         }
     }
 
     void clean_task_queue()
     {
-        std::lock_guard<std::mutex> locker(_task_queue_mutex);
-        while (!_task_queue.empty())
+        std::lock_guard<std::mutex> locker(task_queue_mutex_);
+        while (!task_queue_.empty())
         {
-            _task_queue.pop();
+            task_queue_.pop();
         }
     }
 
 private:
-    std::vector<work_thread_ptr> _thread_vec;
-    std::condition_variable _task_put;
-    std::condition_variable _task_get;
-    std::mutex _task_queue_mutex;
-    std::queue<task_t> _task_queue;
-    std::atomic<bool> _is_stop_threadpool;
-    std::once_flag _call_flag;
+    std::vector<work_thread_ptr> thread_vec_;
+    std::condition_variable task_put_;
+    std::condition_variable task_get_;
+    std::mutex task_queue_mutex_;
+    std::queue<task_t> task_queue_;
+    std::atomic<bool> is_stop_threadpool_;
+    std::once_flag call_flag_;
 };
 
 }

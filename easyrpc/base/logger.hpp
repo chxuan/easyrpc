@@ -109,7 +109,7 @@ public:
     logger(const logger&) = delete;
     logger& operator=(const logger&) = delete;
     logger(const char* file_path, const char* func_name, unsigned long line, spdlog::level::level_enum level)
-        : _file_path(file_path), _file_name(func_name), _line(line), _level(level) {}
+        : file_path_(file_path), file_name_(func_name), line_(line), level_(level) {}
 
     template<typename... Args>
     void log(const std::string& fmt, Args&&... args)
@@ -121,27 +121,27 @@ public:
     void log(const char* fmt, Args&&... args)
     {
         const std::string& content = make_content(fmt);
-        logger_impl::instance().get_console_logger()->log(_level, content.c_str(), std::forward<Args>(args)...);
-        logger_impl::instance().get_file_logger()->log(_level, content.c_str(), std::forward<Args>(args)...);
+        logger_impl::instance().get_console_logger()->log(level_, content.c_str(), std::forward<Args>(args)...);
+        logger_impl::instance().get_file_logger()->log(level_, content.c_str(), std::forward<Args>(args)...);
     }
 
 private:
     std::string make_content(const std::string& fmt)
     {
 #ifdef _WIN32
-        int pos = _file_path.find_last_of("\\");
+        int pos = file_path_.find_last_of("\\");
 #else
-        int pos = _file_path.find_last_of("/");
+        int pos = file_path_.find_last_of("/");
 #endif
-        std::string content = _file_path.substr(pos + 1) + " " + _file_name + "(" + std::to_string(_line) + ") " + fmt;
+        std::string content = file_path_.substr(pos + 1) + " " + file_name_ + "(" + std::to_string(line_) + ") " + fmt;
         return content;
     }
 
 private:
-    std::string _file_path;
-    std::string _file_name;
-    unsigned long _line;
-    spdlog::level::level_enum _level;
+    std::string file_path_;
+    std::string file_name_;
+    unsigned long line_;
+    spdlog::level::level_enum level_;
 };
 
 #define LOCATION       __FILE__, __FUNCTION__, __LINE__

@@ -14,31 +14,31 @@ public:
     scope_guard(const scope_guard&) = delete;
     scope_guard& operator=(const scope_guard&) = delete;
 
-    explicit scope_guard(T&& func) : _func(std::move(func)) {}
-    explicit scope_guard(const T& func) : _func(func) {}
+    explicit scope_guard(T&& func) : func_(std::move(func)) {}
+    explicit scope_guard(const T& func) : func_(func) {}
 
     ~scope_guard()
     {
-        if (!_dismiss)
+        if (!dismiss_)
         {
-            _func();
+            func_();
         }
     }
 
     scope_guard(scope_guard&& other)
-        : _func(std::move(other._func))
+        : func_(std::move(other.func_))
     {
         other.dismiss();
     }
 
     void dismiss()
     {
-        _dismiss = true;
+        dismiss_ = true;
     }
 
 private:
-    T _func;
-    bool _dismiss = false;
+    T func_;
+    bool dismiss_ = false;
 };
 
 template<typename T>

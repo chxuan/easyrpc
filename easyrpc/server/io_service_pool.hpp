@@ -28,18 +28,17 @@ public:
         {
             io_service_ptr ios = std::make_shared<boost::asio::io_service>();
             work_ptr work = std::make_shared<boost::asio::io_service::work>(*ios);
-            _ios_vec.emplace_back(ios);
-            _work_vec.emplace_back(work);
+            ios_vec_.emplace_back(ios);
+            work_vec_.emplace_back(work);
         }
     }
 
     void run()
     {
-        for (std::size_t i = 0; i < _ios_vec.size(); ++i)
+        for (std::size_t i = 0; i < ios_vec_.size(); ++i)
         {
-            std::shared_ptr<std::thread> t = 
-                std::make_shared<std::thread>(boost::bind(&boost::asio::io_service::run, _ios_vec[i]));
-            _thread_vec.emplace_back(t);
+            thread_ptr t = std::make_shared<std::thread>(boost::bind(&boost::asio::io_service::run, ios_vec_[i]));
+            thread_vec_.emplace_back(t);
         }
     }
 
@@ -51,11 +50,11 @@ public:
 
     boost::asio::io_service& get_io_service()
     {
-        boost::asio::io_service& ios = *_ios_vec[_next_io_service];
-        ++_next_io_service;
-        if (_next_io_service == _ios_vec.size())
+        boost::asio::io_service& ios = *ios_vec_[next_io_service_];
+        ++next_io_service_;
+        if (next_io_service_ == ios_vec_.size())
         {
-            _next_io_service = 0;
+            next_io_service_ = 0;
         }
         return ios;
     }
@@ -63,7 +62,7 @@ public:
 private:
     void stop_io_services()
     {
-        for (auto& iter : _ios_vec)
+        for (auto& iter : ios_vec_)
         {
             if (iter != nullptr)
             {
@@ -74,7 +73,7 @@ private:
 
     void stop_threads()
     {
-        for (auto& iter : _thread_vec)
+        for (auto& iter : thread_vec_)
         {
             if (iter != nullptr)
             {
@@ -89,10 +88,11 @@ private:
 private:
     using io_service_ptr = std::shared_ptr<boost::asio::io_service>;
     using work_ptr = std::shared_ptr<boost::asio::io_service::work>;
-    std::vector<io_service_ptr> _ios_vec;
-    std::vector<work_ptr> _work_vec;
-    std::vector<std::shared_ptr<std::thread>> _thread_vec; 
-    std::size_t _next_io_service = 0;
+    using thread_ptr = std::shared_ptr<std::thread>;
+    std::vector<io_service_ptr> ios_vec_;
+    std::vector<work_ptr> work_vec_;
+    std::vector<thread_ptr> thread_vec_; 
+    std::size_t next_io_service_ = 0;
 };
 
 }

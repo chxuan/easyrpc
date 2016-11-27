@@ -19,7 +19,7 @@ class protocol_define<Return(Args...)>
 {
 public:
     using return_type = typename function_traits<Return(Args...)>::return_type;
-    explicit protocol_define(std::string name) : _name(std::move(name)) {}
+    explicit protocol_define(std::string name) : name_(std::move(name)) {}
 
     std::string pack(Args... args) const
     {
@@ -38,11 +38,11 @@ public:
 
     const std::string& name() const
     {
-        return _name;
+        return name_;
     }
     
 private:
-    std::string _name;
+    std::string name_;
 };
 
 }

@@ -95,12 +95,12 @@ public:
 
     void multithreaded(std::size_t num)
     {
-        _threadpool.init_thread_num(num);
+        threadpool_.init_thread_num(num);
     }
 
     void stop()
     {
-        _threadpool.stop();
+        threadpool_.stop();
     }
 
     template<typename Function>
@@ -117,13 +117,13 @@ public:
 
     void unbind(const std::string& protocol)
     {
-        _invoker_map.erase(protocol);
+        invoker_map_.erase(protocol);
     }
 
     bool is_bind(const std::string& protocol)
     {
-        auto iter = _invoker_map.find(protocol);
-        if (iter != _invoker_map.end())
+        auto iter = invoker_map_.find(protocol);
+        if (iter != invoker_map_.end())
         {
             return true;
         }
@@ -144,13 +144,13 @@ public:
 
     void unbind_raw(const std::string& protocol)
     {
-        _invoker_raw_map.erase(protocol);
+        invoker_raw_map_.erase(protocol);
     }
 
     bool is_bind_raw(const std::string& protocol)
     {
-        auto iter = _invoker_raw_map.find(protocol);
-        if (iter != _invoker_raw_map.end())
+        auto iter = invoker_raw_map_.find(protocol);
+        if (iter != invoker_raw_map_.end())
         {
             return true;
         }
@@ -162,23 +162,23 @@ public:
     {
         if (mode == call_mode::non_raw)
         {
-            auto iter = _invoker_map.find(protocol);
-            if (iter == _invoker_map.end())
+            auto iter = invoker_map_.find(protocol);
+            if (iter == invoker_map_.end())
             {
                 return false;
             }
 
-            _threadpool.add_task(iter->second, body, conn);
+            threadpool_.add_task(iter->second, body, conn);
         }
         else if (mode == call_mode::raw)
         {
-            auto iter = _invoker_raw_map.find(protocol);
-            if (iter == _invoker_raw_map.end())
+            auto iter = invoker_raw_map_.find(protocol);
+            if (iter == invoker_raw_map_.end())
             {
                 return false;
             }
 
-            _threadpool.add_task(iter->second, body, conn);           
+            threadpool_.add_task(iter->second, body, conn);           
         }
         else
         {
@@ -369,35 +369,35 @@ private:
     template<typename Function>
     void bind_non_member_func(const std::string& protocol, const Function& func)
     {
-        _invoker_map[protocol] = { std::bind(&invoker<Function>::template apply<std::tuple<>>, func, std::tuple<>(), 
+        invoker_map_[protocol] = { std::bind(&invoker<Function>::template apply<std::tuple<>>, func, std::tuple<>(), 
                                              std::placeholders::_1, std::placeholders::_2), function_traits<Function>::arity };
     }
 
     template<typename Function, typename Self>
     void bind_member_func(const std::string& protocol, const Function& func, Self* self)
     {
-        _invoker_map[protocol] = { std::bind(&invoker<Function>::template apply_member<std::tuple<>, Self>, func, self, std::tuple<>(), 
+        invoker_map_[protocol] = { std::bind(&invoker<Function>::template apply_member<std::tuple<>, Self>, func, self, std::tuple<>(), 
                                              std::placeholders::_1, std::placeholders::_2), function_traits<Function>::arity };
     }
 
     template<typename Function>
     void bind_non_member_func_raw(const std::string& protocol, const Function& func)
     {
-        _invoker_raw_map[protocol] = { std::bind(&invoker_raw<Function>::apply, func, 
+        invoker_raw_map_[protocol] = { std::bind(&invoker_raw<Function>::apply, func, 
                                                 std::placeholders::_1, std::placeholders::_2) };
     }
 
     template<typename Function, typename Self>
     void bind_member_func_raw(const std::string& protocol, const Function& func, Self* self)
     {
-        _invoker_raw_map[protocol] = { std::bind(&invoker_raw<Function>::template apply_member<Self>, func, self, 
+        invoker_raw_map_[protocol] = { std::bind(&invoker_raw<Function>::template apply_member<Self>, func, self, 
                                                 std::placeholders::_1, std::placeholders::_2) };
     }
 
 private:
-    thread_pool _threadpool;
-    std::unordered_map<std::string, invoker_function> _invoker_map;
-    std::unordered_map<std::string, invoker_function_raw> _invoker_raw_map;
+    thread_pool threadpool_;
+    std::unordered_map<std::string, invoker_function> invoker_map_;
+    std::unordered_map<std::string, invoker_function_raw> invoker_raw_map_;
 };
 
 }

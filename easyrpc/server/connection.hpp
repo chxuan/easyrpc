@@ -22,7 +22,7 @@ public:
     connection(const connection&) = delete;
     connection& operator=(const connection&) = delete;
     connection(boost::asio::io_service& ios, std::size_t timeout_milli = 0)
-        : _socket(ios), _timer(ios), _timeout_milli(timeout_milli) {}
+        : socket_(ios), timer_(ios), timeout_milli_(timeout_milli) {}
 
     ~connection()
     {
@@ -38,7 +38,7 @@ public:
 
     boost::asio::ip::tcp::socket& socket()
     {
-        return _socket;
+        return socket_;
     }
 
     void write(const std::string& body)
@@ -55,11 +55,11 @@ public:
 
     void disconnect()
     {
-        if (_socket.is_open())
+        if (socket_.is_open())
         {
             boost::system::error_code ignore_ec;
-            _socket.shutdown(boost::asio::socket_base::shutdown_both, ignore_ec);
-            _socket.close(ignore_ec);
+            socket_.shutdown(boost::asio::socket_base::shutdown_both, ignore_ec);
+            socket_.close(ignore_ec);
         }
     }
 
@@ -68,11 +68,11 @@ private:
     {
         start_timer();
         auto self(this->shared_from_this());
-        boost::asio::async_read(_socket, boost::asio::buffer(_head), 
+        boost::asio::async_read(socket_, boost::asio::buffer(head_), 
                                 [this, self](boost::system::error_code ec, std::size_t)
         {
             auto guard = make_guard([this, self]{ stop_timer(); disconnect(); });
-            if (!_socket.is_open())
+            if (!socket_.is_open())
             {
                 log_warn("Socket is not open");
                 return;
@@ -94,21 +94,21 @@ private:
 
     bool check_head()
     {
-        memcpy(&_req_head, _head, sizeof(_head));
-        unsigned int len = _req_head.protocol_len + _req_head.body_len;
+        memcpy(&req_head_, head_, sizeof(head_));
+        unsigned int len = req_head_.protocol_len + req_head_.body_len;
         return (len > 0 && len < max_buffer_len) ? true : false;
     }
 
     void read_protocol_and_body()
     {
-        _protocol_and_body.clear();
-        _protocol_and_body.resize(_req_head.protocol_len + _req_head.body_len);
+        protocol_and_body_.clear();
+        protocol_and_body_.resize(req_head_.protocol_len + req_head_.body_len);
         auto self(this->shared_from_this());
-        boost::asio::async_read(_socket, boost::asio::buffer(_protocol_and_body), 
+        boost::asio::async_read(socket_, boost::asio::buffer(protocol_and_body_), 
                                 [this, self](boost::system::error_code ec, std::size_t)
         {
             stop_timer();
-            if (!_socket.is_open())
+            if (!socket_.is_open())
             {
                 log_warn("Socket is not open");
                 return;
@@ -121,9 +121,9 @@ private:
                 return;
             }
 
-            bool ok = router::instance().route(std::string(&_protocol_and_body[0], _req_head.protocol_len), 
-                                               std::string(&_protocol_and_body[_req_head.protocol_len], _req_head.body_len), 
-                                               _req_head.mode, self);
+            bool ok = router::instance().route(std::string(&protocol_and_body_[0], req_head_.protocol_len), 
+                                               std::string(&protocol_and_body_[req_head_.protocol_len], req_head_.body_len), 
+                                               req_head_.mode, self);
             if (!ok)
             {
                 log_warn("Router failed");
@@ -137,29 +137,29 @@ private:
     {
         boost::asio::ip::tcp::no_delay option(true);
         boost::system::error_code ec;
-        _socket.set_option(option, ec);
+        socket_.set_option(option, ec);
     }
 
     void start_timer()
     {
-        if (_timeout_milli == 0)
+        if (timeout_milli_ == 0)
         {
             return;
         }
 
         auto self(this->shared_from_this());
-        _timer.bind([this, self]{ disconnect(); });
-        _timer.set_single_shot(true);
-        _timer.start(_timeout_milli);
+        timer_.bind([this, self]{ disconnect(); });
+        timer_.set_single_shot(true);
+        timer_.start(timeout_milli_);
     }
 
     void stop_timer()
     {
-        if (_timeout_milli == 0)
+        if (timeout_milli_ == 0)
         {
             return;
         }
-        _timer.stop();
+        timer_.stop();
     }
 
     std::vector<boost::asio::const_buffer> get_buffer(const response_header& head, const std::string& body)
@@ -173,7 +173,7 @@ private:
     void write_impl(const std::vector<boost::asio::const_buffer>& buffer)
     {
         boost::system::error_code ec;
-        boost::asio::write(_socket, buffer, ec);
+        boost::asio::write(socket_, buffer, ec);
         if (ec)
         {
             throw std::runtime_error(ec.message());
@@ -181,12 +181,12 @@ private:
     }
 
 private:
-    boost::asio::ip::tcp::socket _socket;
-    char _head[request_header_len];
-    request_header _req_head;
-    std::vector<char> _protocol_and_body;
-    atimer<> _timer;
-    std::size_t _timeout_milli = 0;
+    boost::asio::ip::tcp::socket socket_;
+    char head_[request_header_len];
+    request_header req_head_;
+    std::vector<char> protocol_and_body_;
+    atimer<> timer_;
+    std::size_t timeout_milli_ = 0;
 };
 
 }

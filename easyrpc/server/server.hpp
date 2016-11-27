@@ -14,8 +14,8 @@ class server
 public:
     server(const server&) = delete;
     server& operator=(const server&) = delete;
-    server() : _ios_pool(std::thread::hardware_concurrency()), 
-    _acceptor(_ios_pool.get_io_service()) {}
+    server() : ios_pool_(std::thread::hardware_concurrency()), 
+    acceptor_(ios_pool_.get_io_service()) {}
 
     ~server()
     {
@@ -53,34 +53,34 @@ public:
 
     server& listen(const std::string& ip, unsigned short port)
     {
-        _ip = ip;
-        _port = port;
+        ip_ = ip;
+        port_ = port;
         return *this;
     }
 
     server& timeout(std::size_t timeout_milli)
     {
-        _timeout_milli = timeout_milli;
+        timeout_milli_ = timeout_milli;
         return *this;
     }
 
     server& multithreaded(std::size_t num)
     {
-        _thread_num = num;
+        thread_num_ = num;
         return *this;
     }
 
     void run()
     {
-        router::instance().multithreaded(_thread_num);
+        router::instance().multithreaded(thread_num_);
         listen();
         accept();
-        _ios_pool.run();
+        ios_pool_.run();
     }
 
     void stop()
     {
-        _ios_pool.stop();
+        ios_pool_.stop();
     }
 
     template<typename Function>
@@ -130,18 +130,18 @@ public:
 private:
     void listen()
     {
-        boost::asio::ip::tcp::endpoint ep(boost::asio::ip::address_v4::from_string(_ip), _port);
-        _acceptor.open(ep.protocol());
-        _acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
-        _acceptor.bind(ep);
-        _acceptor.listen();
+        boost::asio::ip::tcp::endpoint ep(boost::asio::ip::address_v4::from_string(ip_), port_);
+        acceptor_.open(ep.protocol());
+        acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+        acceptor_.bind(ep);
+        acceptor_.listen();
     }
 
     void accept()
     {
         std::shared_ptr<connection> conn = 
-            std::make_shared<connection>(_ios_pool.get_io_service(), _timeout_milli);
-        _acceptor.async_accept(conn->socket(), [this, conn](boost::system::error_code ec)
+            std::make_shared<connection>(ios_pool_.get_io_service(), timeout_milli_);
+        acceptor_.async_accept(conn->socket(), [this, conn](boost::system::error_code ec)
         {
             if (!ec)
             {
@@ -152,12 +152,12 @@ private:
     }
 
 private:
-    io_service_pool _ios_pool;
-    boost::asio::ip::tcp::acceptor _acceptor;
-    std::string _ip = "0.0.0.0";
-    unsigned short _port = 50051;
-    std::size_t _timeout_milli = 0;
-    std::size_t _thread_num = 1;
+    io_service_pool ios_pool_;
+    boost::asio::ip::tcp::acceptor acceptor_;
+    std::string ip_ = "0.0.0.0";
+    unsigned short port_ = 50051;
+    std::size_t timeout_milli_ = 0;
+    std::size_t thread_num_ = 1;
 };
 
 }

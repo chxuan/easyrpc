@@ -23,8 +23,8 @@ class client
 public:
     client(const client&) = delete;
     client& operator=(const client&) = delete;
-    client() : _work(_ios), _socket(_ios), 
-    _timer_work(_timer_ios), _timer(_timer_ios) {}
+    client() : work_(ios_), socket_(ios_), 
+    timer_work_(timer_ios_), timer_(timer_ios_) {}
 
     ~client()
     {
@@ -48,24 +48,24 @@ public:
 
     client& connect(const std::string& ip, const std::string& port)
     {
-        boost::asio::ip::tcp::resolver resolver(_ios);
+        boost::asio::ip::tcp::resolver resolver(ios_);
         boost::asio::ip::tcp::resolver::query query(boost::asio::ip::tcp::v4(), ip, port);
-        _endpoint_iter = resolver.resolve(query);
+        endpoint_iter_ = resolver.resolve(query);
         return *this;
     }
 
     client& timeout(std::size_t timeout_milli)
     {
-        _timeout_milli = timeout_milli;
+        timeout_milli_ = timeout_milli;
         return *this;
     }
 
     void run()
     {
-        _thread = std::make_unique<std::thread>([this]{ _ios.run(); });
-        if (_timeout_milli != 0)
+        thread_ = std::make_unique<std::thread>([this]{ ios_.run(); });
+        if (timeout_milli_ != 0)
         {
-            _timer_thread = std::make_unique<std::thread>([this]{ _timer_ios.run(); });
+            timer_thread_ = std::make_unique<std::thread>([this]{ timer_ios_.run(); });
         }
     }
 
@@ -93,7 +93,7 @@ public:
         connect();
         auto guard = make_guard([this]{ disconnect(); });
         call_impl(protocol.name(), call_mode::non_raw, protocol.pack(std::forward<Args>(args)...));
-        return protocol.unpack(std::string(&_body[0], _body.size()));
+        return protocol.unpack(std::string(&body_[0], body_.size()));
     }
 
     template<typename ReturnType>
@@ -112,22 +112,22 @@ public:
         connect();
         auto guard = make_guard([this]{ disconnect(); });
         call_impl(protocol, call_mode::raw, body);
-        return std::string(&_body[0], _body.size());
+        return std::string(&body_[0], body_.size());
     }
 
 private:
     void connect()
     {
-        boost::asio::connect(_socket, _endpoint_iter);
+        boost::asio::connect(socket_, endpoint_iter_);
     }
 
     void disconnect()
     {
-        if (_socket.is_open())
+        if (socket_.is_open())
         {
             boost::system::error_code ignore_ec;
-            _socket.shutdown(boost::asio::socket_base::shutdown_both, ignore_ec);
-            _socket.close(ignore_ec);
+            socket_.shutdown(boost::asio::socket_base::shutdown_both, ignore_ec);
+            socket_.close(ignore_ec);
         }
     }
 
@@ -164,7 +164,7 @@ private:
     void write_impl(const std::vector<boost::asio::const_buffer>& buffer)
     {
         boost::system::error_code ec;
-        boost::asio::write(_socket, buffer, ec);
+        boost::asio::write(socket_, buffer, ec);
         if (ec)
         {
             throw std::runtime_error(ec.message());
@@ -183,7 +183,7 @@ private:
     void read_head()
     {
         boost::system::error_code ec;
-        boost::asio::read(_socket, boost::asio::buffer(_head), ec);
+        boost::asio::read(socket_, boost::asio::buffer(head_), ec);
         if (ec)
         {
             throw std::runtime_error(ec.message());
@@ -192,7 +192,7 @@ private:
 
     void check_head()
     {
-        memcpy(&_res_head, _head, sizeof(_head));
+        memcpy(&_res_head, head_, sizeof(head_));
         if (_res_head.body_len > max_buffer_len)
         {
             throw std::runtime_error("Body len is too big");
@@ -201,10 +201,10 @@ private:
 
     void read_body()
     {
-        _body.clear();
-        _body.resize(_res_head.body_len);
+        body_.clear();
+        body_.resize(_res_head.body_len);
         boost::system::error_code ec;
-        boost::asio::read(_socket, boost::asio::buffer(_body), ec); 
+        boost::asio::read(socket_, boost::asio::buffer(body_), ec); 
         if (ec)
         {
             throw std::runtime_error(ec.message());
@@ -213,63 +213,63 @@ private:
 
     void start_timer()
     {
-        if (_timeout_milli == 0)
+        if (timeout_milli_ == 0)
         {
             return;
         }
 
-        _timer.bind([this]{ disconnect(); });
-        _timer.set_single_shot(true);
-        _timer.start(_timeout_milli);
+        timer_.bind([this]{ disconnect(); });
+        timer_.set_single_shot(true);
+        timer_.start(timeout_milli_);
     }
 
     void stop_timer()
     {
-        if (_timeout_milli == 0)
+        if (timeout_milli_ == 0)
         {
             return;
         }
-        _timer.stop();
+        timer_.stop();
     }
 
     void stop_ios_thread()
     {
-        _ios.stop();
-        if (_thread != nullptr)
+        ios_.stop();
+        if (thread_ != nullptr)
         {
-            if (_thread->joinable())
+            if (thread_->joinable())
             {
-                _thread->join();
+                thread_->join();
             }
         }
     }
 
     void stop_timer_thread()
     {
-        _timer_ios.stop();
-        if (_timer_thread != nullptr)
+        timer_ios_.stop();
+        if (timer_thread_ != nullptr)
         {
-            if (_timer_thread->joinable())
+            if (timer_thread_->joinable())
             {
-                _timer_thread->join();
+                timer_thread_->join();
             }
         }
     }
 
 private:
-    boost::asio::io_service _ios;
-    boost::asio::io_service::work _work;
-    boost::asio::ip::tcp::socket _socket;
-    boost::asio::ip::tcp::resolver::iterator _endpoint_iter;
-    std::unique_ptr<std::thread> _thread;
-    char _head[response_header_len];
+    boost::asio::io_service ios_;
+    boost::asio::io_service::work work_;
+    boost::asio::ip::tcp::socket socket_;
+    boost::asio::ip::tcp::resolver::iterator endpoint_iter_;
+    std::unique_ptr<std::thread> thread_;
+    char head_[response_header_len];
     response_header _res_head;
-    std::vector<char> _body;
-    boost::asio::io_service _timer_ios;
-    boost::asio::io_service::work _timer_work;
-    std::unique_ptr<std::thread> _timer_thread;
-    atimer<> _timer;
-    std::size_t _timeout_milli = 0;
+    std::vector<char> body_;
+    boost::asio::io_service timer_ios_;
+    boost::asio::io_service::work timer_work_;
+    std::unique_ptr<std::thread> timer_thread_;
+    atimer<> timer_;
+    std::size_t timeout_milli_ = 0;
 };
 
 }
