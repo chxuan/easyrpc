@@ -20,7 +20,7 @@ class invoker_function
 public:
     using function_t = std::function<void(parser_util& parser, std::string& result)>;
     invoker_function() = default;
-    invoker_function(const function_t& func, std::size_t param_size) : _func(func), _param_size(param_size) {}
+    invoker_function(const function_t& func, std::size_t param_size) : func_(func), param_size_(param_size) {}
 
     template<typename T>
     void operator()(const std::string& body, T conn)
@@ -29,7 +29,7 @@ public:
         {
             parser_util parser(body);
             std::string result;
-            _func(parser, result);
+            func_(parser, result);
             conn->write(result);
         }
         catch (std::exception& e)
@@ -41,12 +41,12 @@ public:
 
     std::size_t param_size() const
     {
-        return _param_size;
+        return param_size_;
     }
 
 private:
-    function_t _func = nullptr;
-    std::size_t _param_size = 0;
+    function_t func_ = nullptr;
+    std::size_t param_size_ = 0;
 };
 
 class invoker_function_raw
@@ -54,7 +54,7 @@ class invoker_function_raw
 public:
     using function_t = std::function<void(const std::string& body, std::string& result)>;
     invoker_function_raw() = default;
-    invoker_function_raw(const function_t& func) : _func(func) {}
+    invoker_function_raw(const function_t& func) : func_(func) {}
 
     template<typename T>
     void operator()(const std::string& body, T conn)
@@ -62,7 +62,7 @@ public:
         try
         {
             std::string result;
-            _func(body, result);
+            func_(body, result);
             conn->write(result);
         }
         catch (std::exception& e)
@@ -73,7 +73,7 @@ public:
     }
 
 private:
-    function_t _func = nullptr;
+    function_t func_ = nullptr;
 };
 
 class router
