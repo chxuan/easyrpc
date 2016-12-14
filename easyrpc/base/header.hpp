@@ -6,7 +6,7 @@
 namespace easyrpc
 {
 
-const int max_buffer_len = 8192;
+constexpr const int max_buffer_len = 8 * 1024 * 1024;
 const int request_header_len = 12;
 const int response_header_len = 4;
 
