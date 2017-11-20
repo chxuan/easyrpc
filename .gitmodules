@@ -1,9 +1,0 @@
-[submodule "easypack"]
-	path = easypack
-	url = https://github.com/chxuan/easypack.git
-[submodule "spdlog"]
-	path = spdlog
-	url = https://github.com/gabime/spdlog
-[submodule "test/googletest"]
-	path = test/googletest
-	url = https://github.com/google/googletest
