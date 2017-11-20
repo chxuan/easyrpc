@@ -1,5 +1,6 @@
 #include "listen_address.h"
 #include "easyrpc/utility/logger.h"
+#include "easyrpc/core/codec/server_codec.h"
 #include "easyrpc/core/net/io_service_pool.h"
 #include "easyrpc/core/net/tcp_session.h"
 
@@ -31,16 +32,15 @@ bool listen_address::listen(const std::string& ip, unsigned short port)
 
 void listen_address::accept()
 {
-#if 0
-        auto new_conn = std::make_shared<connection>(io_service_pool::singleton::get()->get_io_service(), 
-                                                     route_, handle_error_, client_connect_notify_, client_disconnect_notify_);
-        acceptor_.async_accept(new_conn->socket(), [this, new_conn](boost::system::error_code ec)
+    std::shared_ptr<codec> codec = std::make_shared<server_codec>();
+    /* codec_->set_decode_data_callback(std::bind(&rpc_client::decode_data_callback, this, std::placeholders::_1)); */
+    auto session = std::make_shared<tcp_session>(codec, pool_->get_io_service());
+    acceptor_.async_accept(session->get_socket(), [this, session](boost::system::error_code ec)
+    {
+        if (!ec)
         {
-            if (!ec)
-            {
-                new_conn->start();
-            }
-            accept();
-        });
-#endif
+            session->run();
+        }
+        accept();
+    });
 }
