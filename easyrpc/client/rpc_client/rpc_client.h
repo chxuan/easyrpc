@@ -20,14 +20,14 @@ public:
 
     virtual bool run();
     virtual void stop();
-    unsigned int call(const std::string& func_name, 
-                      const std::shared_ptr<google::protobuf::Message>& message, 
-                      const std::function<void(const std::shared_ptr<result>&)>& func);
+    int call(int func_id,
+             const std::shared_ptr<google::protobuf::Message>& message, 
+             const std::function<void(const std::shared_ptr<result>&)>& func);
 
 private:
     auto make_recv_handler(const std::function<void(const std::shared_ptr<result>&)>& func);
-    unsigned int make_serial_num();
-    void decode_data_callback(const response_content& body);
+    int make_serial_num();
+    void decode_data_callback(const response_body& body);
 
 private:
     std::shared_ptr<task_dispatcher> dispatcher_ = nullptr;

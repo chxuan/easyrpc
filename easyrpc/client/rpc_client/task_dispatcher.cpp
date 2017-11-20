@@ -14,24 +14,24 @@ task_dispatcher::~task_dispatcher()
     stop();
 }
 
-void task_dispatcher::add_recv_handler(unsigned int serial_num, const recv_handler& handler)
+void task_dispatcher::add_recv_handler(int serial_num, const recv_handler& handler)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     tasks_.emplace(serial_num, task{ handler, time(nullptr) });
 }
 
-void task_dispatcher::dispatch(const response_content& content)
+void task_dispatcher::dispatch(const response_body& body)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    auto iter = tasks_.find(content.call_id);
+    auto iter = tasks_.find(body.serial_num);
     if (iter != tasks_.end())
     {
-        threadpool_.add_task(iter->second.handler, content);
-        tasks_.erase(content.call_id);
+        threadpool_.add_task(iter->second.handler, body);
+        tasks_.erase(body.serial_num);
     }
     else
     {
-        log_warn() << "dispatch failed, serial num: " << content.call_id << ", message name: " << content.message_name;
+        log_warn() << "dispatch failed, serial num: " << body.serial_num << ", message name: " << body.message_name;
     }
 }
 
@@ -58,9 +58,9 @@ void task_dispatcher::check_request_timeout()
     {
         if (current_time - begin->second.begin_time >= request_timeout_)
         {
-            response_content content;
-            content.code = rpc_error_code::request_timeout;
-            threadpool_.add_task(begin->second.handler, content);
+            response_body body;
+            body.code = rpc_error_code::request_timeout;
+            threadpool_.add_task(begin->second.handler, body);
             begin = tasks_.erase(begin);
         }
         else

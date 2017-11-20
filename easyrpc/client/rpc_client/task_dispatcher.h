@@ -19,8 +19,8 @@ public:
     task_dispatcher(time_t request_timeout);
     ~task_dispatcher();
 
-    void add_recv_handler(unsigned int serial_num, const recv_handler& handler);
-    void dispatch(const response_content& content);
+    void add_recv_handler(int serial_num, const recv_handler& handler);
+    void dispatch(const response_body& body);
     void clear();
     void stop();
 
@@ -29,7 +29,7 @@ private:
 
 private:
     time_t request_timeout_;
-    std::unordered_map<unsigned int, task> tasks_;
+    std::unordered_map<int, task> tasks_;
     std::mutex mutex_;
     atimer<boost::posix_time::seconds> timer_;
     thread_pool threadpool_;

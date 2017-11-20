@@ -14,9 +14,16 @@ class server_codec : public codec
 public:
     server_codec();
     virtual ~server_codec();
+
     virtual void decode(const std::vector<char>& buffer);
     virtual void reset();
 
 private:
+    void decode_header(const std::vector<char>& buffer);
+    void decode_body(const std::vector<char>& buffer);
 
+private:
+    request_header header_;
+    request_body body_;
+    std::function<void(const request_body&)> decode_data_callback_;
 };

@@ -31,7 +31,7 @@ int main()
     message->set_age(20);
 
 #if 1
-    client->call("request_person_info", message, [](const std::shared_ptr<result>& ret)
+    client->call(0x0001, message, [](const std::shared_ptr<result>& ret)
     {
         if (ret->error())
         {
@@ -43,7 +43,7 @@ int main()
 #else
     for (int i = 0; i < 10; ++i)
     {
-        client->call("request_person_info", message, [](const std::shared_ptr<result>& ret)
+        client->call(0x0001, message, [](const std::shared_ptr<result>& ret)
         {
             if (ret->error())
             {

@@ -15,12 +15,12 @@ class codec
 {
 public:
     virtual ~codec();
-    virtual std::shared_ptr<std::string> encode(unsigned int serial_num, 
-                                                const std::string& func_name, 
+    virtual std::shared_ptr<std::string> encode(int serial_num, 
+                                                int func_id,
                                                 const std::shared_ptr<google::protobuf::Message>& message);
     virtual void decode(const std::vector<char>& buffer) = 0;
     virtual void reset() = 0;
-    virtual void set_decode_data_callback(const std::function<void(const response_content&)>& func);
+    virtual void set_decode_data_callback(const std::function<void(const response_body&)>& func);
     std::size_t get_next_recv_bytes();
 
 protected:

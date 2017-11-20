@@ -10,7 +10,7 @@
 #include <functional>
 #include "easyrpc/core/protocol/protocol_define.h"
 
-using recv_handler = std::function<void(const response_content&)>; 
+using recv_handler = std::function<void(const response_body&)>; 
 
 struct task
 {
