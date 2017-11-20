@@ -7,8 +7,8 @@
  */
 #pragma once
 
-#include "crpc/core/net/tcp_client.h"
-#include "crpc/client/rpc_client/result.h"
+#include "easyrpc/core/net/tcp_client.h"
+#include "easyrpc/client/rpc_client/result.h"
 
 class task_dispatcher;
 

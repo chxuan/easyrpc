@@ -1,6 +1,6 @@
 #include "tcp_session.h"
-#include "crpc/utility/logger.h"
-#include "crpc/core/codec/codec.h"
+#include "easyrpc/utility/logger.h"
+#include "easyrpc/core/codec/codec.h"
 
 tcp_session::tcp_session(std::shared_ptr<codec>& dec, boost::asio::io_service& ios) 
     : codec_(dec), 

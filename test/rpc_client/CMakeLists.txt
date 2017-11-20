@@ -13,7 +13,7 @@ else()
 endif()
 
 # 遍历主目录源文件，删除cmake自动生成的main源文件
-file(GLOB_RECURSE  SOURCE_FILES "*.cpp" "../proto/code/*.cc" "../../crpc/*.cpp")
+file(GLOB_RECURSE  SOURCE_FILES "*.cpp" "../proto/code/*.cc" "../../easyrpc/*.cpp")
 file(GLOB_RECURSE  DEBUG_REMOVE_FILE "debug/*")
 file(GLOB_RECURSE  RELEASE_REMOVE_FILE "release/*")
 list(REMOVE_ITEM SOURCE_FILES ${DEBUG_REMOVE_FILE} ${RELEASE_REMOVE_FILE})

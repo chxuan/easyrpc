@@ -8,8 +8,8 @@
 #pragma once
 
 #include <functional>
-#include "crpc/core/protocol/protocol_define.h"
-#include "crpc/utility/protobuf_serialize.h"
+#include "easyrpc/core/protocol/protocol_define.h"
+#include "easyrpc/utility/protobuf_serialize.h"
 
 class codec
 {
