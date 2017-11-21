@@ -17,9 +17,9 @@ class tcp_client
 public:
     virtual ~tcp_client();
 
-    tcp_client& connect(const std::string& connect_address);
-    tcp_client& connect_timeout(time_t connect_timeout);
-    tcp_client& request_timeout(time_t request_timeout);
+    tcp_client& connect(const std::string& address);
+    tcp_client& connect_timeout(time_t seconds);
+    tcp_client& request_timeout(time_t seconds);
     tcp_client& resend(bool resend);
 
     virtual bool run();
@@ -28,6 +28,7 @@ public:
     void set_session_status_callback(const std::function<void(session_status, const std::string&)>& func);
 
 private:
+    void create_io_service_pool();
     bool parse_network_address();
     bool connect(boost::asio::ip::tcp::socket& socket);
     void reconnect();

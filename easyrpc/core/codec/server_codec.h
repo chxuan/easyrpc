@@ -21,6 +21,8 @@ public:
 private:
     void decode_header(const std::vector<char>& buffer);
     void decode_body(const std::vector<char>& buffer);
+    void prepare_decode_header();
+    void prepare_decode_body();
 
 private:
     request_header header_;

@@ -9,21 +9,21 @@ tcp_client::~tcp_client()
     stop();
 }
 
-tcp_client& tcp_client::connect(const std::string& connect_address)
+tcp_client& tcp_client::connect(const std::string& address)
 {
-    connect_address_ = connect_address;
+    connect_address_ = address;
     return *this;
 }
 
-tcp_client& tcp_client::connect_timeout(time_t connect_timeout)
+tcp_client& tcp_client::connect_timeout(time_t seconds)
 {
-    connect_timeout_ = connect_timeout;
+    connect_timeout_ = seconds;
     return *this;
 }
 
-tcp_client& tcp_client::request_timeout(time_t request_timeout)
+tcp_client& tcp_client::request_timeout(time_t seconds)
 {
-    request_timeout_ = request_timeout;
+    request_timeout_ = seconds;
     return *this;
 }
 
@@ -35,9 +35,7 @@ tcp_client& tcp_client::resend(bool resend)
 
 bool tcp_client::run()
 {
-    pool_ = std::make_shared<io_service_pool>();
-    pool_->init_pool_size(1);
-    pool_->run();
+    create_io_service_pool();
 
     if (!parse_network_address())
     {
@@ -72,6 +70,13 @@ void tcp_client::set_session_status_callback(const std::function<void(session_st
     session_status_callback_ = func;
 }
 
+void tcp_client::create_io_service_pool()
+{
+    pool_ = std::make_shared<io_service_pool>();
+    pool_->init_pool_size(1);
+    pool_->run();
+}
+
 bool tcp_client::parse_network_address()
 {
     std::string ip;
@@ -90,7 +95,6 @@ bool tcp_client::parse_network_address()
 
 bool tcp_client::connect(boost::asio::ip::tcp::socket& socket)
 {
-    static const time_t connect_timeout = 3;
     time_t begin_time = time(nullptr);
     while (true)
     {
@@ -102,7 +106,7 @@ bool tcp_client::connect(boost::asio::ip::tcp::socket& socket)
         catch (std::exception& e)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
-            if (time(nullptr) - begin_time >= connect_timeout)
+            if (time(nullptr) - begin_time >= connect_timeout_)
             {
                 return false;
             }

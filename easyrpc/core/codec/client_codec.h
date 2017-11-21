@@ -30,6 +30,8 @@ private:
     std::shared_ptr<std::string> make_network_data(const request_header& header, const request_body& body);
     void decode_header(const std::vector<char>& buffer);
     void decode_body(const std::vector<char>& buffer);
+    void prepare_decode_header();
+    void prepare_decode_body();
     
 private:
     response_header header_;
