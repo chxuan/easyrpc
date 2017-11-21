@@ -19,7 +19,7 @@ int main()
     auto client = std::make_shared<rpc_client>();
     client->set_session_status_callback(std::bind(session_status_callback, 
                                                   std::placeholders::_1, std::placeholders::_2));
-    bool success = client->connect("127.0.0.1:50051").connect_timeout(3).request_timeout(10).run();
+    bool success = client->connect("127.0.0.1:8888").connect_timeout(3).request_timeout(10).run();
     if (!success)
     {
         log_error() << "connect server failed";

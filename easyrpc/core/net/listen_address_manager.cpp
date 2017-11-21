@@ -21,9 +21,7 @@ void listen_address_manager::init_ios_threads(std::size_t num)
 
 bool listen_address_manager::start_listen()
 {
-    pool_ = std::make_shared<io_service_pool>();
-    pool_->init_pool_size(ios_threads_);
-    pool_->run();
+    create_io_service_pool();
 
     if (listen())
     {
@@ -32,6 +30,13 @@ bool listen_address_manager::start_listen()
     }
 
     return false;
+}
+
+void listen_address_manager::create_io_service_pool()
+{
+    pool_ = std::make_shared<io_service_pool>();
+    pool_->init_pool_size(ios_threads_);
+    pool_->run();
 }
 
 bool listen_address_manager::listen()

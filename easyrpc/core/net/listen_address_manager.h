@@ -23,6 +23,7 @@ public:
     bool start_listen();
 
 private:
+    void create_io_service_pool();
     bool listen();
     void accept();
 
