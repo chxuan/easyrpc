@@ -82,7 +82,7 @@ void client_codec::decode_header(const std::vector<char>& buffer)
 
 void client_codec::decode_body(const std::vector<char>& buffer)
 {
-    std::size_t pos = 0;
+    int pos = 0;
 
     copy_from_buffer(body_.serial_num, pos, buffer);
     copy_from_buffer(body_.code, pos, buffer);
@@ -102,6 +102,6 @@ void client_codec::prepare_decode_header()
 void client_codec::prepare_decode_body()
 {
     decode_header_ = false;
-    next_recv_bytes_ = sizeof(std::size_t) + sizeof(rpc_error_code) + 
+    next_recv_bytes_ = sizeof(int) + sizeof(rpc_error_code) + 
         header_.message_name_len + header_.message_data_len;
 }

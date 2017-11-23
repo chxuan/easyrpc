@@ -7,10 +7,11 @@
  */
 #pragma once
 
-#include "easyrpc/core/net/tcp_session.h"
+#include <boost/asio.hpp>
 
 class codec;
 class io_service_pool;
+class tcp_session;
 
 class tcp_client
 {
@@ -21,18 +22,18 @@ public:
     tcp_client& connect_timeout(time_t seconds);
     tcp_client& request_timeout(time_t seconds);
     tcp_client& resend(bool resend);
+    void set_session_status_callback(const std::function<void(bool, const std::string&)>& func);
 
     virtual bool run();
     virtual void stop();
     void async_write(const std::shared_ptr<std::string>& network_data);
-    void set_session_status_callback(const std::function<void(session_status, const std::string&)>& func);
 
 private:
     void create_io_service_pool();
     bool parse_network_address();
     bool connect(boost::asio::ip::tcp::socket& socket);
     void reconnect();
-    void session_status_callback(session_status status, const std::string& session_id);
+    void session_status_callback(bool established, const std::string& session_id);
 
 protected:
     std::shared_ptr<codec> codec_;
@@ -44,7 +45,6 @@ private:
     std::shared_ptr<io_service_pool> pool_;
     std::shared_ptr<tcp_session> session_;
     std::atomic<bool> resend_{ false };
-    std::function<void()> closed_callback_;
     boost::asio::ip::tcp::resolver::iterator endpoint_iter_;
-    std::function<void(session_status, const std::string&)> session_status_callback_ = nullptr;
+    std::function<void(bool, const std::string&)> session_status_callback_ = nullptr;
 };

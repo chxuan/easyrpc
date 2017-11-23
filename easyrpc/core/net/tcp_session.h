@@ -12,12 +12,6 @@
 
 class codec;
 
-enum class session_status
-{
-    established,
-    closed
-};
-
 class tcp_session : public std::enable_shared_from_this<tcp_session>
 {
 public:
@@ -25,7 +19,7 @@ public:
     ~tcp_session();
 
     void run();
-    void set_session_status_callback(const std::function<void(session_status, const std::string&)>& func);
+    void set_session_status_callback(const std::function<void(bool, const std::string&)>& func);
     boost::asio::io_service& get_io_service();
     boost::asio::ip::tcp::socket& get_socket();
     void close();
@@ -45,7 +39,7 @@ private:
     boost::asio::ip::tcp::socket socket_;
     threadsafe_list<std::shared_ptr<std::string>> send_queue_;
     std::vector<char> buffer_;
-    std::atomic<session_status> session_status_{ session_status::closed };
-    std::function<void(session_status, const std::string&)> session_status_callback_;
+    std::atomic<bool> established_{ false };
+    std::function<void(bool, const std::string&)> session_status_callback_;
     std::string session_id_;
 };

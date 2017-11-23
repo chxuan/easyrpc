@@ -25,15 +25,15 @@ public:
 
 protected:
     template<typename T>
-    void copy_from_buffer(T& t, std::size_t& pos, const std::vector<char>& buffer)
+    void copy_from_buffer(T& t, int& pos, const std::vector<char>& buffer)
     {
         memcpy(&t, &buffer[pos], sizeof(t));
         pos += sizeof(t);
     }
 
-    void copy_from_buffer(std::string& str, std::size_t& pos, std::size_t len, const std::vector<char>& buffer);
+    void copy_from_buffer(std::string& str, int& pos, int len, const std::vector<char>& buffer);
 
 protected:
-    std::size_t next_recv_bytes_ = 0;
+    int next_recv_bytes_ = 0;
     bool decode_header_ = true;
 };

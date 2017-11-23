@@ -35,7 +35,7 @@ void server_codec::decode_header(const std::vector<char>& buffer)
 
 void server_codec::decode_body(const std::vector<char>& buffer)
 {
-    std::size_t pos = 0;
+    int pos = 0;
 
     copy_from_buffer(body_.serial_num, pos, buffer);
     copy_from_buffer(body_.func_id, pos, buffer);
@@ -55,5 +55,5 @@ void server_codec::prepare_decode_header()
 void server_codec::prepare_decode_body()
 {
     decode_header_ = false;
-    next_recv_bytes_ = 2 * sizeof(std::size_t) + header_.message_name_len + header_.message_data_len;
+    next_recv_bytes_ = 2 * sizeof(int) + header_.message_name_len + header_.message_data_len;
 }

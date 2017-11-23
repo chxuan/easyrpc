@@ -2,13 +2,13 @@
 #include "easyrpc/easyrpc.h"
 #include "../proto/code/proto_message.pb.h"
 
-void session_status_callback(session_status status, const std::string& session_id)
+void session_status_callback(bool established, const std::string& session_id)
 {
-    if (status == session_status::established)
+    if (established)
     {
         log_info() << "session established, session id: " << session_id;
     }
-    else if (status == session_status::closed)
+    else 
     {
         log_info() << "session closed, session id: " << session_id;
     }

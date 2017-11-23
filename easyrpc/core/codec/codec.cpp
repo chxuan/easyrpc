@@ -25,7 +25,7 @@ std::size_t codec::get_next_recv_bytes()
     return next_recv_bytes_;
 }
 
-void codec::copy_from_buffer(std::string& str, std::size_t& pos, std::size_t len, const std::vector<char>& buffer)
+void codec::copy_from_buffer(std::string& str, int& pos, int len, const std::vector<char>& buffer)
 {
     str.assign(&buffer[pos], len);
     pos += len;

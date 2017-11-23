@@ -4,6 +4,8 @@
 tcp_server::tcp_server()
 {
     address_manager_ = std::make_shared<listen_address_manager>();
+    address_manager_->set_session_status_callback(std::bind(&tcp_server::session_status_callback, this, 
+                                                            std::placeholders::_1, std::placeholders::_2));
 }
 
 tcp_server::~tcp_server()
@@ -35,6 +37,11 @@ tcp_server& tcp_server::work_threads(std::size_t num)
     return *this;
 }
 
+void tcp_server::set_session_status_callback(const std::function<void(bool, const std::string&)>& func)
+{
+    session_status_callback_ = func;
+}
+
 bool tcp_server::run()
 {
     return address_manager_->start_listen();
@@ -44,3 +51,10 @@ void tcp_server::stop()
 {
 }
 
+void tcp_server::session_status_callback(bool established, const std::string& session_id)
+{
+    if (session_status_callback_)
+    {
+        session_status_callback_(established, session_id);
+    }
+}

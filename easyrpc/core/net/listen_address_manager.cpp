@@ -32,6 +32,16 @@ bool listen_address_manager::start_listen()
     return false;
 }
 
+void listen_address_manager::set_session_status_callback(const std::function<void(bool, const std::string&)>& func)
+{
+    session_status_callback_ = func;
+}
+
+void listen_address_manager::session_status_callback(bool established, const std::string& session_id)
+{
+    session_status_callback_(established, session_id);
+}
+
 void listen_address_manager::create_io_service_pool()
 {
     pool_ = std::make_shared<io_service_pool>();
@@ -51,7 +61,7 @@ bool listen_address_manager::listen()
             return false;
         }
 
-        auto address = std::make_shared<listen_address>(pool_);
+        auto address = std::make_shared<listen_address>(pool_, this);
         if (!address->listen(ip, port))
         {
             return false;

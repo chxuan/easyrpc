@@ -3,6 +3,7 @@
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/core/codec/codec.h"
 #include "easyrpc/core/net/io_service_pool.h"
+#include "easyrpc/core/net/tcp_session.h"
 
 tcp_client::~tcp_client()
 {
@@ -31,6 +32,11 @@ tcp_client& tcp_client::resend(bool resend)
 {
     resend_ = resend;
     return *this;
+}
+
+void tcp_client::set_session_status_callback(const std::function<void(bool, const std::string&)>& func)
+{
+    session_status_callback_ = func;
 }
 
 bool tcp_client::run()
@@ -63,11 +69,6 @@ void tcp_client::stop()
 void tcp_client::async_write(const std::shared_ptr<std::string>& network_data)
 {
     session_->async_write(network_data);
-}
-
-void tcp_client::set_session_status_callback(const std::function<void(session_status, const std::string&)>& func)
-{
-    session_status_callback_ = func;
 }
 
 void tcp_client::create_io_service_pool()
@@ -132,14 +133,14 @@ void tcp_client::reconnect()
     });
 }
 
-void tcp_client::session_status_callback(session_status status, const std::string& session_id)
+void tcp_client::session_status_callback(bool established, const std::string& session_id)
 {
     if (session_status_callback_)
     {
-        session_status_callback_(status, session_id);
+        session_status_callback_(established, session_id);
     }
 
-    if (status == session_status::closed)
+    if (!established)
     {
         reconnect();
     }

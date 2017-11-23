@@ -19,11 +19,11 @@ void tcp_session::run()
 {
     set_no_delay();
     async_read();
-    session_status_ = session_status::established;
-    session_status_callback_(session_status_, get_session_id());
+    established_ = true;
+    session_status_callback_(established_, get_session_id());
 }
 
-void tcp_session::set_session_status_callback(const std::function<void(session_status, const std::string&)>& func)
+void tcp_session::set_session_status_callback(const std::function<void(bool, const std::string&)>& func)
 {
     session_status_callback_ = func;
 }
@@ -40,7 +40,7 @@ boost::asio::ip::tcp::socket& tcp_session::get_socket()
 
 void tcp_session::close()
 {
-    session_status_ = session_status::closed;
+    established_ = false;
     if (socket_.is_open())
     {
         boost::system::error_code ignore_ec;
@@ -97,8 +97,7 @@ void tcp_session::async_read()
             codec_->decode(buffer_);
             async_read();
         }
-        else if (session_status_ == session_status::established 
-                 && ec != boost::asio::error::operation_aborted)
+        else if (established_ && ec != boost::asio::error::operation_aborted)
         {
             log_warn() << ec.message();
             handle_session_closed();
@@ -121,7 +120,7 @@ void tcp_session::resize_buffer(std::size_t size)
 void tcp_session::handle_session_closed()
 {
     close();
-    session_status_callback_(session_status_, get_session_id());
+    session_status_callback_(established_, get_session_id());
 }
 
 std::string tcp_session::get_session_id()
