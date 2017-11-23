@@ -68,6 +68,7 @@ std::shared_ptr<std::string> client_codec::make_network_data(const request_heade
     auto network_data = std::make_shared<std::string>();
     network_data->append(reinterpret_cast<const char*>(&header), sizeof(header));
     network_data->append(reinterpret_cast<const char*>(&body.serial_num), sizeof(body.serial_num));
+    network_data->append(reinterpret_cast<const char*>(&body.func_id), sizeof(body.func_id));
     network_data->append(body.message_name);
     network_data->append(body.message_data);
 

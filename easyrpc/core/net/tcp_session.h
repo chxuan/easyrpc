@@ -29,7 +29,7 @@ private:
     void async_write_loop();
     void async_read();
     void set_no_delay();
-    void resize_buffer(std::size_t size);
+    void resize_buffer(int size);
     void handle_session_closed();
     std::string get_session_id();
 

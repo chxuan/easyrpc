@@ -112,7 +112,7 @@ void tcp_session::set_no_delay()
     socket_.set_option(option, ec);
 }
 
-void tcp_session::resize_buffer(std::size_t size)
+void tcp_session::resize_buffer(int size)
 {
     buffer_.resize(size);
 }

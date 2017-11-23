@@ -43,7 +43,11 @@ void server_codec::decode_body(const std::vector<char>& buffer)
     copy_from_buffer(body_.message_data, pos, header_.message_data_len, buffer);
 
     prepare_decode_header();
-    decode_data_callback_(body_);
+    /* decode_data_callback_(body_); */
+    std::cout << "serial_num: " << body_.serial_num << std::endl;
+    std::cout << "func_id: " << body_.func_id << std::endl;
+    std::cout << "message_name: " << body_.message_name << std::endl;
+    std::cout << "message_data_len: " << body_.message_data.size() << std::endl;
 }
 
 void server_codec::prepare_decode_header()
