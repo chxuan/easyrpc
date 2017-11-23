@@ -7,8 +7,8 @@ const int response_header_len = 4 + 4;
 
 struct request_header
 {
-    std::size_t message_name_len;
-    std::size_t message_data_len;
+    int message_name_len;
+    int message_data_len;
 };
 
 struct request_body

@@ -21,7 +21,7 @@ enum class session_status
 class tcp_session : public std::enable_shared_from_this<tcp_session>
 {
 public:
-    tcp_session(std::shared_ptr<codec>& dec, boost::asio::io_service& ios);
+    tcp_session(const std::shared_ptr<codec>& dec, boost::asio::io_service& ios);
     ~tcp_session();
 
     void run();
@@ -40,7 +40,7 @@ private:
     std::string get_session_id();
 
 private:
-    std::shared_ptr<codec>& codec_;
+    std::shared_ptr<codec> codec_;
     boost::asio::io_service& ios_;
     boost::asio::ip::tcp::socket socket_;
     threadsafe_list<std::shared_ptr<std::string>> send_queue_;

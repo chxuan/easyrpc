@@ -2,7 +2,7 @@
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/core/codec/codec.h"
 
-tcp_session::tcp_session(std::shared_ptr<codec>& dec, boost::asio::io_service& ios) 
+tcp_session::tcp_session(const std::shared_ptr<codec>& dec, boost::asio::io_service& ios) 
     : codec_(dec), 
     ios_(ios), 
     socket_(ios)
@@ -51,7 +51,8 @@ void tcp_session::close()
 
 void tcp_session::async_write(const std::shared_ptr<std::string>& network_data)
 {
-    ios_.post([this, network_data]
+    auto self(shared_from_this());
+    ios_.post([this, self, network_data]
     {
         bool empty = send_queue_.empty();
         send_queue_.emplace_back(network_data);
@@ -64,8 +65,9 @@ void tcp_session::async_write(const std::shared_ptr<std::string>& network_data)
 
 void tcp_session::async_write_loop()
 {
+    auto self(shared_from_this());
     boost::asio::async_write(socket_, boost::asio::buffer(*send_queue_.front()), 
-                             [this](boost::system::error_code ec, std::size_t)
+                             [this, self](boost::system::error_code ec, std::size_t)
     {
         if (!ec)
         {
@@ -86,8 +88,9 @@ void tcp_session::async_write_loop()
 void tcp_session::async_read()
 {
     resize_buffer(codec_->get_next_recv_bytes());
+    auto self(shared_from_this());
     boost::asio::async_read(socket_, boost::asio::buffer(buffer_), 
-                            [this](boost::system::error_code ec, std::size_t)
+                            [this, self](boost::system::error_code ec, std::size_t)
     {
         if (!ec)
         {
