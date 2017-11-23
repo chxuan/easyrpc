@@ -99,7 +99,6 @@ void tcp_session::async_read()
         }
         else if (established_ && ec != boost::asio::error::operation_aborted)
         {
-            log_warn() << ec.message();
             handle_session_closed();
         }
     });

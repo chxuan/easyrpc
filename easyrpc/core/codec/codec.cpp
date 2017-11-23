@@ -31,3 +31,7 @@ void codec::copy_from_buffer(std::string& str, int& pos, int len, const std::vec
     pos += len;
 }
 
+void codec::copy_to_buffer(const std::string& str, std::shared_ptr<std::string>& buffer)
+{
+    buffer->append(str);
+}

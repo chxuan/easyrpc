@@ -66,18 +66,19 @@ request_body client_codec::encode_body(int serial_num,
 std::shared_ptr<std::string> client_codec::make_network_data(const request_header& header, const request_body& body)
 {
     auto network_data = std::make_shared<std::string>();
-    network_data->append(reinterpret_cast<const char*>(&header), sizeof(header));
-    network_data->append(reinterpret_cast<const char*>(&body.serial_num), sizeof(body.serial_num));
-    network_data->append(reinterpret_cast<const char*>(&body.func_id), sizeof(body.func_id));
-    network_data->append(body.message_name);
-    network_data->append(body.message_data);
+
+    copy_to_buffer(header, network_data);
+    copy_to_buffer(body.serial_num, network_data);
+    copy_to_buffer(body.func_id, network_data);
+    copy_to_buffer(body.message_name, network_data);
+    copy_to_buffer(body.message_data, network_data);
 
     return network_data;
 }
 
 void client_codec::decode_header(const std::vector<char>& buffer)
 {
-    memcpy(&header_, &buffer[0], sizeof(header_));
+    copy_from_buffer(header_, buffer);
     prepare_decode_body();
 }
 

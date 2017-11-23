@@ -31,7 +31,21 @@ protected:
         pos += sizeof(t);
     }
 
+    template<typename T>
+    void copy_from_buffer(T& t, const std::vector<char>& buffer)
+    {
+        memcpy(&t, &buffer[0], sizeof(t));
+    }
+
     void copy_from_buffer(std::string& str, int& pos, int len, const std::vector<char>& buffer);
+
+    template<typename T>
+    void copy_to_buffer(T& t, std::shared_ptr<std::string>& buffer)
+    {
+        buffer->append(reinterpret_cast<const char*>(&t), sizeof(t));
+    }
+
+    void copy_to_buffer(const std::string& str, std::shared_ptr<std::string>& buffer);
 
 protected:
     int next_recv_bytes_ = 0;

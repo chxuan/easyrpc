@@ -29,7 +29,7 @@ void server_codec::reset()
 
 void server_codec::decode_header(const std::vector<char>& buffer)
 {
-    memcpy(&header_, &buffer[0], sizeof(header_));
+    copy_from_buffer(header_, buffer);
     prepare_decode_body();
 }
 

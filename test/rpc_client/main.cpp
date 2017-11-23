@@ -10,7 +10,7 @@ void session_status_callback(bool established, const std::string& session_id)
     }
     else 
     {
-        log_info() << "session closed, session id: " << session_id;
+        log_warn() << "session closed, session id: " << session_id;
     }
 }
 
