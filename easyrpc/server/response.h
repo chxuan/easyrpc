@@ -7,10 +7,19 @@
  */
 #pragma once
 
+#include <memory>
+#include <google/protobuf/message.h>
+
+class tcp_session;
+
 class response
 {
 public:
+    response(const std::shared_ptr<tcp_session>& session, int serial_num);
+
+    void set_response(const std::shared_ptr<google::protobuf::Message>& message);
 
 private:
-
+    std::shared_ptr<tcp_session> session_;
+    int serial_num_;
 };
