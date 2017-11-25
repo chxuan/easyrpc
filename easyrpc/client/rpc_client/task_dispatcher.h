@@ -24,7 +24,6 @@ public:
     void clear();
     void stop();
 
-
 private:
     void check_request_timeout();
 
