@@ -8,8 +8,8 @@
 
 tcp_client::tcp_client()
 {
-    qt_connect(sig_session_status, std::bind(&tcp_client::handle_session_status, 
-                                             this, std::placeholders::_1, std::placeholders::_2));
+    qt_connect(session_status_changed, std::bind(&tcp_client::handle_session_status_changed,
+                                                 this, std::placeholders::_1, std::placeholders::_2));
 }
 
 tcp_client::~tcp_client()
@@ -138,7 +138,7 @@ void tcp_client::reconnect()
     });
 }
 
-void tcp_client::handle_session_status(bool established, const std::string& session_id)
+void tcp_client::handle_session_status_changed(bool established, const std::string& session_id)
 {
     if (session_status_callback_)
     {

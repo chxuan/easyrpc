@@ -9,4 +9,4 @@
 
 #include "easyrpc/utility/qt_connect.h"
 
-extern qt_signal<bool, std::string> sig_session_status;
+extern qt_signal<bool, std::string> session_status_changed;

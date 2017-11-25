@@ -21,7 +21,7 @@ void tcp_session::run()
     set_no_delay();
     async_read();
     established_ = true;
-    emit sig_session_status(established_, get_session_id());
+    emit session_status_changed(established_, get_session_id());
 }
 
 boost::asio::io_service& tcp_session::get_io_service()
@@ -115,7 +115,7 @@ void tcp_session::resize_buffer(int size)
 void tcp_session::handle_session_closed()
 {
     close();
-    emit sig_session_status(established_, get_session_id());
+    emit session_status_changed(established_, get_session_id());
 }
 
 std::string tcp_session::get_session_id()

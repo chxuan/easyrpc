@@ -30,7 +30,7 @@ public:
     virtual void stop();
 
 public slots:
-    void handle_session_status(bool established, const std::string& session_id);
+    void handle_session_status_changed(bool established, const std::string& session_id);
 
 private:
     std::size_t work_threads_ = 4;

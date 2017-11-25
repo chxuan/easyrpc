@@ -31,7 +31,7 @@ public:
     void async_write(const std::shared_ptr<std::string>& network_data);
 
 public slots:
-    void handle_session_status(bool established, const std::string& session_id);
+    void handle_session_status_changed(bool established, const std::string& session_id);
 
 private:
     void create_io_service_pool();
