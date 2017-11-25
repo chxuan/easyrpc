@@ -1,6 +1,6 @@
 /**
  * @file error_code.h
- * @brief crpc内部错误码定义
+ * @brief easyrpc内部错误码定义
  * @author chxuan, 787280310@qq.com
  * @version 1.0.0
  * @date 2017-11-05

@@ -8,6 +8,7 @@
 #pragma once
 
 #include <boost/asio.hpp>
+#include "easyrpc/utility/qt_connect.h"
 
 class codec;
 class io_service_pool;
@@ -16,6 +17,7 @@ class tcp_session;
 class tcp_client
 {
 public:
+    tcp_client();
     virtual ~tcp_client();
 
     tcp_client& connect(const std::string& address);
@@ -28,12 +30,14 @@ public:
     virtual void stop();
     void async_write(const std::shared_ptr<std::string>& network_data);
 
+public slots:
+    void handle_session_status(bool established, const std::string& session_id);
+
 private:
     void create_io_service_pool();
     bool parse_network_address();
     bool connect(boost::asio::ip::tcp::socket& socket);
     void reconnect();
-    void session_status_callback(bool established, const std::string& session_id);
 
 protected:
     std::shared_ptr<codec> codec_;

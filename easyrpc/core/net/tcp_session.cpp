@@ -1,5 +1,6 @@
 #include "tcp_session.h"
 #include "easyrpc/utility/logger.h"
+#include "easyrpc/core/protocol/sig.h"
 #include "easyrpc/core/codec/codec.h"
 
 tcp_session::tcp_session(const std::shared_ptr<codec>& dec, boost::asio::io_service& ios) 
@@ -20,12 +21,7 @@ void tcp_session::run()
     set_no_delay();
     async_read();
     established_ = true;
-    session_status_callback_(established_, get_session_id());
-}
-
-void tcp_session::set_session_status_callback(const std::function<void(bool, const std::string&)>& func)
-{
-    session_status_callback_ = func;
+    emit sig_session_status(established_, get_session_id());
 }
 
 boost::asio::io_service& tcp_session::get_io_service()
@@ -119,7 +115,7 @@ void tcp_session::resize_buffer(int size)
 void tcp_session::handle_session_closed()
 {
     close();
-    session_status_callback_(established_, get_session_id());
+    emit sig_session_status(established_, get_session_id());
 }
 
 std::string tcp_session::get_session_id()

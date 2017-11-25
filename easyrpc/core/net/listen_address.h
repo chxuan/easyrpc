@@ -10,17 +10,15 @@
 #include <boost/asio.hpp>
 
 class io_service_pool;
-class listen_address_manager;
 
 class listen_address
 {
 public:
-    listen_address(std::shared_ptr<io_service_pool>& pool, listen_address_manager* manager);
+    listen_address(std::shared_ptr<io_service_pool>& pool);
     bool listen(const std::string& ip, unsigned short port);
     void accept();
 
 private:
     std::shared_ptr<io_service_pool>& pool_;
     boost::asio::ip::tcp::acceptor acceptor_;
-    listen_address_manager* address_manager_;
 };

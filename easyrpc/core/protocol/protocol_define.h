@@ -1,3 +1,10 @@
+/**
+ * @file protocol_define.h
+ * @brief easyrpc内部消息格式
+ * @author chxuan, 787280310@qq.com
+ * @version 1.0.0
+ * @date 2017-11-25
+ */
 #pragma once
 
 #include "easyrpc/core/protocol/error_code.h"

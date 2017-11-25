@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include "easyrpc/utility/utiltiy.h"
+#include "easyrpc/utility/qt_connect.h"
 
 class listen_address_manager;
 
@@ -28,8 +29,8 @@ public:
     virtual bool run();
     virtual void stop();
 
-private:
-    void session_status_callback(bool established, const std::string& session_id);
+public slots:
+    void handle_session_status(bool established, const std::string& session_id);
 
 private:
     std::size_t work_threads_ = 4;

@@ -1,11 +1,12 @@
 #include "tcp_server.h"
+#include "easyrpc/core/protocol/sig.h"
 #include "easyrpc/core/net/listen_address_manager.h"
 
 tcp_server::tcp_server()
 {
     address_manager_ = std::make_shared<listen_address_manager>();
-    address_manager_->set_session_status_callback(std::bind(&tcp_server::session_status_callback, this, 
-                                                            std::placeholders::_1, std::placeholders::_2));
+    qt_connect(sig_session_status, std::bind(&tcp_server::handle_session_status, 
+                                             this, std::placeholders::_1, std::placeholders::_2));
 }
 
 tcp_server::~tcp_server()
@@ -51,7 +52,7 @@ void tcp_server::stop()
 {
 }
 
-void tcp_server::session_status_callback(bool established, const std::string& session_id)
+void tcp_server::handle_session_status(bool established, const std::string& session_id)
 {
     if (session_status_callback_)
     {

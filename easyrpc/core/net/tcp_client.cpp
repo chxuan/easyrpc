@@ -2,8 +2,15 @@
 #include "easyrpc/utility/utiltiy.h"
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/core/codec/codec.h"
+#include "easyrpc/core/protocol/sig.h"
 #include "easyrpc/core/net/io_service_pool.h"
 #include "easyrpc/core/net/tcp_session.h"
+
+tcp_client::tcp_client()
+{
+    qt_connect(sig_session_status, std::bind(&tcp_client::handle_session_status, 
+                                             this, std::placeholders::_1, std::placeholders::_2));
+}
 
 tcp_client::~tcp_client()
 {
@@ -49,8 +56,6 @@ bool tcp_client::run()
     }
 
     session_ = std::make_shared<tcp_session>(codec_, pool_->get_io_service());
-    session_->set_session_status_callback(std::bind(&tcp_client::session_status_callback, this, 
-                                                    std::placeholders::_1, std::placeholders::_2));
     if (connect(session_->get_socket()))
     {
         session_->run();
@@ -133,7 +138,7 @@ void tcp_client::reconnect()
     });
 }
 
-void tcp_client::session_status_callback(bool established, const std::string& session_id)
+void tcp_client::handle_session_status(bool established, const std::string& session_id)
 {
     if (session_status_callback_)
     {
