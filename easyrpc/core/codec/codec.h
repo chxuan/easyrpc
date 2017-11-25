@@ -20,7 +20,6 @@ public:
                                                 const std::shared_ptr<google::protobuf::Message>& message);
     virtual void decode(const std::vector<char>& buffer) = 0;
     virtual void reset() = 0;
-    virtual void set_decode_data_callback(const std::function<void(const response_body&)>& func);
     std::size_t get_next_recv_bytes();
 
 protected:

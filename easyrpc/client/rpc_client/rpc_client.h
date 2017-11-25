@@ -27,7 +27,6 @@ public:
 private:
     auto make_recv_handler(const std::function<void(const std::shared_ptr<result>&)>& func);
     int make_serial_num();
-    void decode_data_callback(const response_body& body);
 
 private:
     std::shared_ptr<task_dispatcher> dispatcher_ = nullptr;

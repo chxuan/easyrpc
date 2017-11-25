@@ -1,4 +1,5 @@
 #include "client_codec.h"
+#include "easyrpc/core/protocol/sig.h"
 
 client_codec::client_codec()
 {
@@ -34,11 +35,6 @@ void client_codec::decode(const std::vector<char>& buffer)
 void client_codec::reset()
 {
     prepare_decode_header();
-}
-
-void client_codec::set_decode_data_callback(const std::function<void(const response_body&)>& func)
-{
-    decode_data_callback_ = func;
 }
 
 request_header client_codec::encode_header(const request_body& body)
@@ -92,7 +88,7 @@ void client_codec::decode_body(const std::vector<char>& buffer)
     copy_from_buffer(body_.message_data, pos, header_.message_data_len, buffer);
 
     prepare_decode_header();
-    decode_data_callback_(body_);
+    emit complete_client_decode_data(body_);
 }
 
 void client_codec::prepare_decode_header()

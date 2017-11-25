@@ -11,6 +11,7 @@
 #include <mutex>
 #include "easyrpc/utility/atimer.h"
 #include "easyrpc/utility/thread_pool.h"
+#include "easyrpc/utility/qt_connect.h"
 #include "easyrpc/client/rpc_client/task.h"
 
 class task_dispatcher
@@ -20,12 +21,15 @@ public:
     ~task_dispatcher();
 
     void add_recv_handler(int serial_num, const recv_handler& handler);
-    void dispatch(const response_body& body);
     void clear();
     void stop();
 
+
 private:
     void check_request_timeout();
+
+private slots:
+    void handle_complete_client_decode_data(const response_body& body);
 
 private:
     time_t request_timeout_;

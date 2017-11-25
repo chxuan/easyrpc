@@ -1,9 +1,13 @@
 #include "task_dispatcher.h"
 #include "easyrpc/utility/logger.h"
+#include "easyrpc/core/protocol/sig.h"
 
 task_dispatcher::task_dispatcher(time_t request_timeout)
     : request_timeout_(request_timeout)
 {
+
+    qt_connect(complete_client_decode_data, std::bind(&task_dispatcher::handle_complete_client_decode_data, 
+                                                      this, std::placeholders::_1));
     threadpool_.init_thread_size(1);
     timer_.bind([this]{ check_request_timeout(); });
     timer_.start(1);
@@ -18,21 +22,6 @@ void task_dispatcher::add_recv_handler(int serial_num, const recv_handler& handl
 {
     std::lock_guard<std::mutex> lock(mutex_);
     tasks_.emplace(serial_num, task{ handler, time(nullptr) });
-}
-
-void task_dispatcher::dispatch(const response_body& body)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    auto iter = tasks_.find(body.serial_num);
-    if (iter != tasks_.end())
-    {
-        threadpool_.add_task(iter->second.handler, body);
-        tasks_.erase(body.serial_num);
-    }
-    else
-    {
-        log_warn() << "dispatch failed, serial num: " << body.serial_num << ", message name: " << body.message_name;
-    }
 }
 
 void task_dispatcher::clear()
@@ -67,6 +56,21 @@ void task_dispatcher::check_request_timeout()
         {
             ++begin;
         }
+    }
+}
+
+void task_dispatcher::handle_complete_client_decode_data(const response_body& body)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto iter = tasks_.find(body.serial_num);
+    if (iter != tasks_.end())
+    {
+        threadpool_.add_task(iter->second.handler, body);
+        tasks_.erase(body.serial_num);
+    }
+    else
+    {
+        log_warn() << "dispatch failed, serial num: " << body.serial_num << ", message name: " << body.message_name;
     }
 }
 

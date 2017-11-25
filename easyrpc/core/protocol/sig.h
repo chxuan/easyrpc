@@ -8,5 +8,7 @@
 #pragma once
 
 #include "easyrpc/utility/qt_connect.h"
+#include "easyrpc/core/protocol/protocol_define.h"
 
-extern qt_signal<bool, std::string> session_status_changed;
+extern qt_signal<bool, const std::string&> session_status_changed;
+extern qt_signal<const response_body&> complete_client_decode_data;

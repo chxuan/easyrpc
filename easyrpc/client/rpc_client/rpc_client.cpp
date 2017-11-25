@@ -6,8 +6,6 @@
 rpc_client::rpc_client()
 {
     codec_ = std::make_shared<client_codec>();
-    codec_->set_decode_data_callback(std::bind(&rpc_client::decode_data_callback, 
-                                               this, std::placeholders::_1));
 }
 
 rpc_client::~rpc_client()
@@ -82,9 +80,4 @@ int rpc_client::make_serial_num()
 {
     static std::atomic<int> serial_num {0};
     return ++serial_num;
-}
-
-void rpc_client::decode_data_callback(const response_body& body)
-{
-    dispatcher_->dispatch(body);
 }

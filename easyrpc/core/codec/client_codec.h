@@ -20,7 +20,6 @@ public:
                                                 const std::shared_ptr<google::protobuf::Message>& message); 
     virtual void decode(const std::vector<char>& buffer);
     virtual void reset();
-    virtual void set_decode_data_callback(const std::function<void(const response_body&)>& func);
 
 private:
     request_header encode_header(const request_body& body);
@@ -36,5 +35,4 @@ private:
 private:
     response_header header_;
     response_body body_;
-    std::function<void(const response_body&)> decode_data_callback_;
 };
