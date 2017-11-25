@@ -9,6 +9,8 @@
 
 #include "easyrpc/core/codec/codec.h"
 
+class tcp_session;
+
 class client_codec : public codec
 {
 public:
@@ -18,7 +20,7 @@ public:
     virtual std::shared_ptr<std::string> encode(int serial_num, 
                                                 int func_id,
                                                 const std::shared_ptr<google::protobuf::Message>& message); 
-    virtual void decode(const std::vector<char>& buffer);
+    virtual void decode(const std::vector<char>& buffer, const std::shared_ptr<tcp_session>& session);
     virtual void reset();
 
 private:

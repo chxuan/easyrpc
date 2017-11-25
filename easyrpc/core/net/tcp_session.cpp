@@ -90,7 +90,7 @@ void tcp_session::async_read()
     {
         if (!ec)
         {
-            codec_->decode(buffer_);
+            codec_->decode(buffer_, self);
             async_read();
         }
         else if (established_ && ec != boost::asio::error::operation_aborted)

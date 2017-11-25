@@ -1,5 +1,6 @@
 #include "client_codec.h"
 #include "easyrpc/core/protocol/sig.h"
+#include "easyrpc/core/net/tcp_session.h"
 
 client_codec::client_codec()
 {
@@ -20,8 +21,10 @@ std::shared_ptr<std::string> client_codec::encode(int serial_num,
     return make_network_data(header, body);
 }
 
-void client_codec::decode(const std::vector<char>& buffer)
+void client_codec::decode(const std::vector<char>& buffer, const std::shared_ptr<tcp_session>& session)
 {
+    (void)session;
+
     if (decode_header_)
     {
         decode_header(buffer);

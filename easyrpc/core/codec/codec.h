@@ -11,6 +11,8 @@
 #include "easyrpc/core/protocol/protocol_define.h"
 #include "easyrpc/utility/protobuf_serialize.h"
 
+class tcp_session;
+
 class codec
 {
 public:
@@ -18,9 +20,9 @@ public:
     virtual std::shared_ptr<std::string> encode(int serial_num, 
                                                 int func_id,
                                                 const std::shared_ptr<google::protobuf::Message>& message);
-    virtual void decode(const std::vector<char>& buffer) = 0;
+    virtual void decode(const std::vector<char>& buffer, const std::shared_ptr<tcp_session>& session) = 0;
     virtual void reset() = 0;
-    std::size_t get_next_recv_bytes();
+    int get_next_recv_bytes();
 
 protected:
     template<typename T>

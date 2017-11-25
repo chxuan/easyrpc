@@ -1,4 +1,6 @@
 #include "server_codec.h"
+#include "easyrpc/core/protocol/sig.h"
+#include "easyrpc/core/net/tcp_session.h"
 
 server_codec::server_codec()
 {
@@ -10,7 +12,7 @@ server_codec::~server_codec()
 
 }
 
-void server_codec::decode(const std::vector<char>& buffer)
+void server_codec::decode(const std::vector<char>& buffer, const std::shared_ptr<tcp_session>& session)
 {
     if (decode_header_)
     {
@@ -18,7 +20,7 @@ void server_codec::decode(const std::vector<char>& buffer)
     }
     else
     {
-        decode_body(buffer);
+        decode_body(buffer, session);
     }
 }
 
@@ -33,7 +35,7 @@ void server_codec::decode_header(const std::vector<char>& buffer)
     prepare_decode_body();
 }
 
-void server_codec::decode_body(const std::vector<char>& buffer)
+void server_codec::decode_body(const std::vector<char>& buffer, const std::shared_ptr<tcp_session>& session)
 {
     int pos = 0;
 
@@ -43,7 +45,7 @@ void server_codec::decode_body(const std::vector<char>& buffer)
     copy_from_buffer(body_.message_data, pos, header_.message_data_len, buffer);
 
     prepare_decode_header();
-    /* decode_data_callback_(body_); */
+    emit complete_server_decode_data(body_, session);
     std::cout << "serial_num: " << body_.serial_num << std::endl;
     std::cout << "func_id: " << body_.func_id << std::endl;
     std::cout << "message_name: " << body_.message_name << std::endl;

@@ -14,7 +14,7 @@ class rpc_server : public tcp_server
 {
 public:
     virtual ~rpc_server();
-    void bind(const std::string& id, const function_t& func);
+    void bind(int func_id, const function_t& func);
 
 private:
     router router_;

@@ -5,7 +5,7 @@ rpc_server::~rpc_server()
 
 }
 
-void rpc_server::bind(const std::string& id, const function_t& func)
+void rpc_server::bind(int func_id, const function_t& func)
 {
-    router_.bind(id, func);
+    router_.bind(func_id, func);
 }

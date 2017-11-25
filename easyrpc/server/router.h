@@ -21,9 +21,9 @@ using function_t = std::function<void(const std::shared_ptr<request>&,
 class router
 {
 public:
-    void bind(const std::string& id, const function_t& func);
+    void bind(int func_id, const function_t& func);
 
 private:
-    std::unordered_map<std::string, function_t> route_table_;
+    std::unordered_map<int, function_t> route_table_;
     std::mutex mutex_;
 };
