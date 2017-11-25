@@ -46,10 +46,6 @@ void server_codec::decode_body(const std::vector<char>& buffer, const std::share
 
     prepare_decode_header();
     emit complete_server_decode_data(body_, session);
-    std::cout << "serial_num: " << body_.serial_num << std::endl;
-    std::cout << "func_id: " << body_.func_id << std::endl;
-    std::cout << "message_name: " << body_.message_name << std::endl;
-    std::cout << "message_data_len: " << body_.message_data.size() << std::endl;
 }
 
 void server_codec::prepare_decode_header()

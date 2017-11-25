@@ -29,7 +29,7 @@ public:
     virtual bool run();
     virtual void stop();
 
-public slots:
+private slots:
     void handle_session_status_changed(bool established, const std::string& session_id);
 
 private:

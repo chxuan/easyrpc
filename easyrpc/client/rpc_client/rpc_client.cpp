@@ -78,6 +78,6 @@ int rpc_client::call(int func_id,
 
 int rpc_client::make_serial_num()
 {
-    static std::atomic<int> serial_num {0};
+    static std::atomic<int> serial_num{ 0 };
     return ++serial_num;
 }

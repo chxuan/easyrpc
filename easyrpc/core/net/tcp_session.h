@@ -19,9 +19,10 @@ public:
     ~tcp_session();
 
     void run();
+    void close();
     boost::asio::io_service& get_io_service();
     boost::asio::ip::tcp::socket& get_socket();
-    void close();
+    std::string get_session_id();
     void async_write(const std::shared_ptr<std::string>& network_data);
 
 private:
@@ -30,7 +31,6 @@ private:
     void set_no_delay();
     void resize_buffer(int size);
     void handle_session_closed();
-    std::string get_session_id();
 
 private:
     std::shared_ptr<codec> codec_;

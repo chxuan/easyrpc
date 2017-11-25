@@ -24,6 +24,17 @@ void tcp_session::run()
     emit session_status_changed(established_, get_session_id());
 }
 
+void tcp_session::close()
+{
+    established_ = false;
+    if (socket_.is_open())
+    {
+        boost::system::error_code ignore_ec;
+        socket_.shutdown(boost::asio::socket_base::shutdown_both, ignore_ec);
+        socket_.close(ignore_ec);
+    }
+}
+
 boost::asio::io_service& tcp_session::get_io_service()
 {
     return ios_;
@@ -34,15 +45,26 @@ boost::asio::ip::tcp::socket& tcp_session::get_socket()
     return socket_;
 }
 
-void tcp_session::close()
+std::string tcp_session::get_session_id()
 {
-    established_ = false;
-    if (socket_.is_open())
+    if (session_id_.empty())
     {
-        boost::system::error_code ignore_ec;
-        socket_.shutdown(boost::asio::socket_base::shutdown_both, ignore_ec);
-        socket_.close(ignore_ec);
+        if (socket_.is_open())
+        {
+            boost::system::error_code ec, ec2;
+            auto local_endpoint = socket_.local_endpoint();
+            auto remote_endpoint = socket_.remote_endpoint();
+            if (!ec && !ec2)
+            {
+                session_id_ = local_endpoint.address().to_string() + ":"
+                    + std::to_string(local_endpoint.port()) + "#"
+                    + remote_endpoint.address().to_string() + ":"
+                    + std::to_string(remote_endpoint.port());
+            }
+        }
     }
+
+    return session_id_;
 }
 
 void tcp_session::async_write(const std::shared_ptr<std::string>& network_data)
@@ -118,24 +140,3 @@ void tcp_session::handle_session_closed()
     emit session_status_changed(established_, get_session_id());
 }
 
-std::string tcp_session::get_session_id()
-{
-    if (session_id_.empty())
-    {
-        if (socket_.is_open())
-        {
-            boost::system::error_code ec, ec2;
-            auto local_endpoint = socket_.local_endpoint();
-            auto remote_endpoint = socket_.remote_endpoint();
-            if (!ec && !ec2)
-            {
-                session_id_ = local_endpoint.address().to_string() + ":"
-                    + std::to_string(local_endpoint.port()) + "#"
-                    + remote_endpoint.address().to_string() + ":"
-                    + std::to_string(remote_endpoint.port());
-            }
-        }
-    }
-
-    return session_id_;
-}

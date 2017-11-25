@@ -24,11 +24,11 @@ public:
     void clear();
     void stop();
 
-private:
-    void check_request_timeout();
-
 private slots:
     void handle_complete_client_decode_data(const response_body& body);
+
+private:
+    void check_request_timeout();
 
 private:
     time_t request_timeout_;

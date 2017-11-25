@@ -36,6 +36,21 @@ void task_dispatcher::stop()
     threadpool_.stop();
 }
 
+void task_dispatcher::handle_complete_client_decode_data(const response_body& body)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto iter = tasks_.find(body.serial_num);
+    if (iter != tasks_.end())
+    {
+        threadpool_.add_task(iter->second.handler, body);
+        tasks_.erase(body.serial_num);
+    }
+    else
+    {
+        log_warn() << "dispatch failed, serial num: " << body.serial_num << ", message name: " << body.message_name;
+    }
+}
+
 void task_dispatcher::check_request_timeout()
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -59,18 +74,4 @@ void task_dispatcher::check_request_timeout()
     }
 }
 
-void task_dispatcher::handle_complete_client_decode_data(const response_body& body)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    auto iter = tasks_.find(body.serial_num);
-    if (iter != tasks_.end())
-    {
-        threadpool_.add_task(iter->second.handler, body);
-        tasks_.erase(body.serial_num);
-    }
-    else
-    {
-        log_warn() << "dispatch failed, serial num: " << body.serial_num << ", message name: " << body.message_name;
-    }
-}
 
