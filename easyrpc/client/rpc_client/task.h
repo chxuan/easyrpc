@@ -8,9 +8,11 @@
 #pragma once
 
 #include <functional>
-#include "easyrpc/core/protocol/protocol_define.h"
+#include <memory>
 
-using recv_handler = std::function<void(const response_body&)>; 
+class result;
+
+using recv_handler = std::function<void(const std::shared_ptr<result>&)>; 
 
 struct task
 {

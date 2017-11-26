@@ -15,8 +15,8 @@ public:
     request(const std::shared_ptr<google::protobuf::Message>& message, 
             const std::string& session_id);
 
-    std::shared_ptr<google::protobuf::Message> get_message();
-    std::string get_session_id();
+    std::shared_ptr<google::protobuf::Message> message() const;
+    std::string session_id() const;
 
 private:
     std::shared_ptr<google::protobuf::Message> message_;

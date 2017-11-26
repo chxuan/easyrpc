@@ -10,6 +10,7 @@
 #include "easyrpc/core/codec/codec.h"
 
 class tcp_session;
+class result;
 
 class client_codec : public codec
 {
@@ -31,6 +32,7 @@ private:
     std::shared_ptr<std::string> make_network_data(const request_header& header, const request_body& body);
     void decode_header(const std::vector<char>& buffer);
     void decode_body(const std::vector<char>& buffer);
+    std::shared_ptr<result> make_result();
     void prepare_decode_header();
     void prepare_decode_body();
     

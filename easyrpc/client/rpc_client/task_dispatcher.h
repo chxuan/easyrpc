@@ -25,9 +25,10 @@ public:
     void stop();
 
 private slots:
-    void handle_complete_client_decode_data(const response_body& body);
+    void handle_complete_client_decode_data(const std::shared_ptr<result>& ret);
 
 private:
+    void dispatch_thread(const std::shared_ptr<result>& ret);
     void check_request_timeout();
 
 private:

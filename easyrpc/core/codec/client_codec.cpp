@@ -1,6 +1,7 @@
 #include "client_codec.h"
 #include "easyrpc/core/protocol/sig.h"
 #include "easyrpc/core/net/tcp_session.h"
+#include "easyrpc/client/rpc_client/result.h"
 
 client_codec::client_codec()
 {
@@ -91,7 +92,21 @@ void client_codec::decode_body(const std::vector<char>& buffer)
     copy_from_buffer(body_.message_data, pos, header_.message_data_len, buffer);
 
     prepare_decode_header();
-    emit complete_client_decode_data(body_);
+    emit complete_client_decode_data(make_result());
+}
+
+std::shared_ptr<result> client_codec::make_result()
+{
+    error_code ec(body_.code);
+    if (ec)
+    {
+        return std::make_shared<result>(ec, body_.serial_num);
+    }
+    else
+    {
+        return std::make_shared<result>(ec, body_.serial_num, 
+                                        protobuf_serialize::unserialize(body_.message_name, body_.message_data));
+    }
 }
 
 void client_codec::prepare_decode_header()

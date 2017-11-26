@@ -8,12 +8,12 @@ request::request(const std::shared_ptr<google::protobuf::Message>& message,
 
 }
 
-std::shared_ptr<google::protobuf::Message> request::get_message() 
+std::shared_ptr<google::protobuf::Message> request::message() const
 {
     return message_;
 }
 
-std::string request::get_session_id()
+std::string request::session_id() const
 {
     return session_id_;
 }

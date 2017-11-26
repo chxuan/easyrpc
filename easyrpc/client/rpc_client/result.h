@@ -14,7 +14,7 @@ class result
 {
 public:
     result(const error_code& ec, 
-           int call_id, 
+           int serial_num, 
            const std::shared_ptr<google::protobuf::Message>& message = nullptr);
 
     std::shared_ptr<google::protobuf::Message> message() const;
@@ -23,7 +23,7 @@ public:
 
 private:
     error_code ec_;
-    int serial_num_ = 0;
-    std::shared_ptr<google::protobuf::Message> message_ = nullptr;
+    int serial_num_;
+    std::shared_ptr<google::protobuf::Message> message_;
 };
 

@@ -35,23 +35,11 @@ void rpc_client::stop()
 
 auto rpc_client::make_recv_handler(const std::function<void(const std::shared_ptr<result>&)>& func)
 {
-    auto recv_handler = [func](const response_body& body)
+    auto recv_handler = [func](const std::shared_ptr<result>& ret)
     {
         try
         {
-            error_code ec(body.code);
-            if (ec)
-            {
-                auto ret = std::make_shared<result>(ec, body.serial_num);
-                func(ret);
-            }
-            else
-            {
-                auto ret = std::make_shared<result>(ec, body.serial_num,
-                                                    protobuf_serialize::unserialize(body.message_name, 
-                                                                                    body.message_data));
-                func(ret);
-            }
+            func(ret);
         }
         catch (std::exception& e)
         {
