@@ -12,10 +12,10 @@
 
 class result;
 
-using recv_handler = std::function<void(const std::shared_ptr<result>&)>; 
+using result_handler = std::function<void(const std::shared_ptr<result>&)>; 
 
 struct task
 {
-    recv_handler handler;
+    result_handler handler;
     time_t begin_time;
 };

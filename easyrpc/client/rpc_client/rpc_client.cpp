@@ -33,7 +33,7 @@ void rpc_client::stop()
     }
 }
 
-auto rpc_client::make_recv_handler(const std::function<void(const std::shared_ptr<result>&)>& func)
+auto rpc_client::make_result_handler(const std::function<void(const std::shared_ptr<result>&)>& func)
 {
     auto recv_handler = [func](const std::shared_ptr<result>& ret)
     {
@@ -55,8 +55,8 @@ int rpc_client::call(int func_id,
                      const std::function<void(const std::shared_ptr<result>&)>& func)
 {
     int serial_num = make_serial_num();
-    auto recv_handler = make_recv_handler(func);
-    dispatcher_->add_recv_handler(serial_num, recv_handler);
+    auto handler = make_result_handler(func);
+    dispatcher_->add_result_handler(serial_num, handler);
 
     auto network_data = codec_->encode(serial_num, func_id, message);
     tcp_client::async_write(network_data);

@@ -19,7 +19,7 @@ task_dispatcher::~task_dispatcher()
     stop();
 }
 
-void task_dispatcher::add_recv_handler(int serial_num, const recv_handler& handler)
+void task_dispatcher::add_result_handler(int serial_num, const result_handler& handler)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     tasks_.emplace(serial_num, task{ handler, time(nullptr) });

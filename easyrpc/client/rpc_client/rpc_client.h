@@ -25,7 +25,7 @@ public:
              const std::function<void(const std::shared_ptr<result>&)>& func);
 
 private:
-    auto make_recv_handler(const std::function<void(const std::shared_ptr<result>&)>& func);
+    auto make_result_handler(const std::function<void(const std::shared_ptr<result>&)>& func);
     int make_serial_num();
 
 private:

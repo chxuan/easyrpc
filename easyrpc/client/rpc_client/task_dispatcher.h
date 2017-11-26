@@ -20,7 +20,7 @@ public:
     task_dispatcher(time_t request_timeout);
     ~task_dispatcher();
 
-    void add_recv_handler(int serial_num, const recv_handler& handler);
+    void add_result_handler(int serial_num, const result_handler& handler);
     void clear();
     void stop();
 
