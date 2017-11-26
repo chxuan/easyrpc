@@ -19,12 +19,12 @@ template<typename... Args>
 class qt_slot
 {
 public:
-    using func_t = std::function<void(Args&&...)>;
+    using func_t = std::function<void(const Args&...)>;
     qt_slot(const func_t& func) : func_(func) {}
 
-    void exec(Args&&... args)
+    void exec(const Args&... args)
     {
-        func_(std::forward<Args>(args)...);
+        func_(args...);
     }
 
 private:
@@ -35,20 +35,20 @@ template<typename... Args>
 class qt_signal
 {
 public:
-    using slot_ptr = std::shared_ptr<qt_slot<Args&&...>>; 
-    using func_t = std::function<void(Args&&...)>;
+    using slot_ptr = std::shared_ptr<qt_slot<Args...>>; 
+    using func_t = std::function<void(const Args&...)>;
 
     void bind(const func_t& func)
     {
-        auto s = std::make_shared<qt_slot<Args&&...>>(func);
+        auto s = std::make_shared<qt_slot<Args...>>(func);
         slots_.emplace_back(s);
     }
 
-    void operator()(Args&&... args)
+    void operator()(const Args&... args)
     {
-        for (auto& iter : slots_)
+        for (auto& s : slots_)
         {
-            iter->exec(std::forward<Args>(args)...);
+            s->exec(args...);
         }
     }
 

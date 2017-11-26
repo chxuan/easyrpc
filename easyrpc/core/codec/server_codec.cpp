@@ -1,6 +1,8 @@
 #include "server_codec.h"
 #include "easyrpc/core/protocol/sig.h"
 #include "easyrpc/core/net/tcp_session.h"
+#include "easyrpc/server/request.h"
+#include "easyrpc/server/response.h"
 
 server_codec::server_codec()
 {
@@ -45,7 +47,11 @@ void server_codec::decode_body(const std::vector<char>& buffer, const std::share
     copy_from_buffer(body_.message_data, pos, header_.message_data_len, buffer);
 
     prepare_decode_header();
-    emit complete_server_decode_data(body_, session);
+
+    auto req = std::make_shared<request>(protobuf_serialize::unserialize(body_.message_name, body_.message_data), 
+                                         session->get_session_id());
+    auto rsp = std::make_shared<response>(session, body_.serial_num);
+    emit complete_server_decode_data(body_.func_id, req, rsp);
 }
 
 void server_codec::prepare_decode_header()
