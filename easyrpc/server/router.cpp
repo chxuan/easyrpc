@@ -52,7 +52,14 @@ void router::router_thread(int func_id,
     auto iter = route_table_.find(func_id);
     if (iter != route_table_.end())
     {
-        iter->second(req, rsp);
+        try
+        {
+            iter->second(req, rsp);
+        }
+        catch (std::exception& e)
+        {
+            log_warn() << e.what();
+        }
     }
     else
     {
