@@ -22,8 +22,8 @@ public:
 
     tcp_server& listen(const std::string& listen_address);
     tcp_server& listen(const std::vector<std::string>& listen_addresses);
-    tcp_server& ios_threads(std::size_t num);
-    tcp_server& work_threads(std::size_t num);
+    tcp_server& ios_threads(int num);
+    tcp_server& work_threads(int num);
     void set_session_status_callback(const std::function<void(bool, const std::string&)>& func);
 
     virtual bool run();
@@ -32,8 +32,10 @@ public:
 private slots:
     void handle_session_status_changed(bool established, const std::string& session_id);
 
+protected:
+    int work_threads_ = 4;
+
 private:
-    std::size_t work_threads_ = 4;
     std::shared_ptr<listen_address_manager> address_manager_;
     std::function<void(bool, const std::string&)> session_status_callback_ = nullptr;
 };

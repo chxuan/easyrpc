@@ -14,7 +14,7 @@ void listen_address_manager::init_network_address(const std::vector<std::string>
     listen_addresses_string_ = listen_addresses;
 }
 
-void listen_address_manager::init_ios_threads(std::size_t num)
+void listen_address_manager::init_ios_threads(int num)
 {
     ios_threads_ = num;
 }
@@ -30,6 +30,13 @@ bool listen_address_manager::start_listen()
     }
 
     return false;
+}
+
+void listen_address_manager::stop_listen()
+{
+    pool_->stop();
+    listen_addresses_string_.clear();
+    listen_addresses_.clear();
 }
 
 void listen_address_manager::create_io_service_pool()

@@ -12,22 +12,47 @@ router::router()
                                                       std::placeholders::_3));
 }
 
-void router::bind(int func_id, const function_t& func)
+router::~router()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    route_table_.emplace(func_id, func);
+    stop();
+}
+
+void router::init_work_threads(int num)
+{
+    threadpool_.init_thread_size(num);
+}
+
+std::size_t router::route_table_size()
+{
+    return route_table_.size();
+}
+
+void router::bind(int func_id, const function_t& handler)
+{
+    route_table_.emplace(func_id, handler);
+}
+
+void router::stop()
+{
+    threadpool_.stop();
+    route_table_.clear();
 }
 
 void router::handle_complete_server_decode_data(int func_id, 
                                                 const std::shared_ptr<request>& req,
                                                 const std::shared_ptr<response>& rsp)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    threadpool_.add_task(std::bind(&router::router_thread, this, func_id, req, rsp));
+}
+
+void router::router_thread(int func_id, 
+                           const std::shared_ptr<request>& req, 
+                           const std::shared_ptr<response>& rsp)
+{
     auto iter = route_table_.find(func_id);
     if (iter != route_table_.end())
     {
-        (void)req;
-        (void)rsp;
+        iter->second(req, rsp);
     }
     else
     {

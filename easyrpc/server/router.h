@@ -8,9 +8,7 @@
 #pragma once
 
 #include <unordered_map>
-#include <mutex>
-#include <functional>
-#include <memory>
+#include "easyrpc/utility/thread_pool.h"
 #include "easyrpc/utility/qt_connect.h"
 
 class request;
@@ -23,7 +21,12 @@ class router
 {
 public:
     router();
-    void bind(int func_id, const function_t& func);
+    ~router();
+
+    void init_work_threads(int num);
+    std::size_t route_table_size();
+    void bind(int func_id, const function_t& handler);
+    void stop();
 
 private slots:
     void handle_complete_server_decode_data(int func_id, 
@@ -31,6 +34,11 @@ private slots:
                                             const std::shared_ptr<response>& rsp);
 
 private:
+    void router_thread(int func_id, 
+                       const std::shared_ptr<request>& req, 
+                       const std::shared_ptr<response>& rsp);
+
+private:
+    thread_pool threadpool_;
     std::unordered_map<int, function_t> route_table_;
-    std::mutex mutex_;
 };

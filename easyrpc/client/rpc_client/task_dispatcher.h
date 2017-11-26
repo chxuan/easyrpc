@@ -21,8 +21,8 @@ public:
     ~task_dispatcher();
 
     void add_result_handler(int serial_num, const result_handler& handler);
-    void clear();
     void stop();
+    void clear();
 
 private slots:
     void handle_complete_client_decode_data(const std::shared_ptr<result>& ret);
@@ -30,6 +30,8 @@ private slots:
 private:
     void dispatch_thread(const std::shared_ptr<result>& ret);
     void check_request_timeout();
+    bool get_task(int serial_num, task& t);
+    void remove_task(int serial_num);
 
 private:
     time_t request_timeout_;

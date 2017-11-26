@@ -17,7 +17,7 @@ class io_service_pool
 {
 public:
     ~io_service_pool();
-    void init_pool_size(std::size_t size);
+    void init_pool_size(int size);
     void run();
     void stop();
     boost::asio::io_service& get_io_service();

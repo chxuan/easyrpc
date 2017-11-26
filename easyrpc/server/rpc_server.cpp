@@ -2,10 +2,32 @@
 
 rpc_server::~rpc_server()
 {
-
+    stop();
 }
 
-void rpc_server::bind(int func_id, const function_t& func)
+bool rpc_server::run()
 {
-    router_.bind(func_id, func);
+    if (router_.route_table_size() == 0)
+    {
+        return false;
+    }
+
+    if (tcp_server::run())
+    {
+        router_.init_work_threads(work_threads_);
+        return true;
+    }
+
+    return false;
+}
+
+void rpc_server::stop()
+{
+    tcp_server::stop();
+    router_.stop();
+}
+
+void rpc_server::bind(int func_id, const function_t& handler)
+{
+    router_.bind(func_id, handler);
 }

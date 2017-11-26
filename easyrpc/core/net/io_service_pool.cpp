@@ -5,9 +5,9 @@ io_service_pool::~io_service_pool()
     stop();
 }
 
-void io_service_pool::init_pool_size(std::size_t size)
+void io_service_pool::init_pool_size(int size)
 {
-    for (std::size_t i = 0; i < size; ++i)
+    for (int i = 0; i < size; ++i)
     {
         auto ios = std::make_shared<boost::asio::io_service>();
         auto work = std::make_shared<boost::asio::io_service::work>(*ios);
@@ -39,6 +39,7 @@ boost::asio::io_service& io_service_pool::get_io_service()
     {
         next_io_service_ = 0;
     }
+
     return ios;
 }
 

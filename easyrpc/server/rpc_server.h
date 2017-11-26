@@ -14,7 +14,11 @@ class rpc_server : public tcp_server
 {
 public:
     virtual ~rpc_server();
-    void bind(int func_id, const function_t& func);
+
+    virtual bool run();
+    virtual void stop();
+
+    void bind(int func_id, const function_t& handler);
 
 private:
     router router_;

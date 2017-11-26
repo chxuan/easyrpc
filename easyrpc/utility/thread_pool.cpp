@@ -5,9 +5,9 @@ thread_pool::~thread_pool()
     stop();
 }
 
-void thread_pool::init_thread_size(std::size_t size)
+void thread_pool::init_thread_size(int size)
 {
-    for (size_t i = 0; i < size; ++i)
+    for (int i = 0; i < size; ++i)
     {
         auto t = std::make_shared<std::thread>(std::bind(&thread_pool::run_task, this));
         threads_.emplace_back(t);

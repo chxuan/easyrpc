@@ -21,7 +21,7 @@ class thread_pool
 {
 public:
     ~thread_pool();
-    void init_thread_size(std::size_t size);
+    void init_thread_size(int size);
     void stop();
     std::size_t size();
 

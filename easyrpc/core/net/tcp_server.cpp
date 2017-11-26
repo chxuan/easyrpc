@@ -26,13 +26,13 @@ tcp_server& tcp_server::listen(const std::vector<std::string>& listen_addresses)
     return *this;
 }
 
-tcp_server& tcp_server::ios_threads(std::size_t num)
+tcp_server& tcp_server::ios_threads(int num)
 {
     address_manager_->init_ios_threads(num);
     return *this;
 }
 
-tcp_server& tcp_server::work_threads(std::size_t num)
+tcp_server& tcp_server::work_threads(int num)
 {
     work_threads_ = num;
     return *this;
@@ -50,6 +50,7 @@ bool tcp_server::run()
 
 void tcp_server::stop()
 {
+    address_manager_->stop_listen();
 }
 
 void tcp_server::handle_session_status_changed(bool established, const std::string& session_id)

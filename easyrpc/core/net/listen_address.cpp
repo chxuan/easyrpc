@@ -33,7 +33,6 @@ bool listen_address::listen(const std::string& ip, unsigned short port)
 void listen_address::accept()
 {
     std::shared_ptr<codec> codec = std::make_shared<server_codec>();
-    /* codec_->set_decode_data_callback(std::bind(&rpc_client::decode_data_callback, this, std::placeholders::_1)); */
     auto session = std::make_shared<tcp_session>(codec, pool_->get_io_service());
     acceptor_.async_accept(session->get_socket(), [this, session](boost::system::error_code ec)
     {
