@@ -45,6 +45,11 @@ boost::asio::ip::tcp::socket& tcp_session::get_socket()
     return socket_;
 }
 
+std::shared_ptr<codec>& tcp_session::get_codec()
+{
+    return codec_;
+}
+
 std::string tcp_session::get_session_id()
 {
     if (session_id_.empty())

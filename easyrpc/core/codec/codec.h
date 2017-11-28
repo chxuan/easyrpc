@@ -20,6 +20,8 @@ public:
     virtual std::shared_ptr<std::string> encode(int serial_num, 
                                                 int func_id,
                                                 const std::shared_ptr<google::protobuf::Message>& message);
+    virtual std::shared_ptr<std::string> encode(int serial_num, 
+                                                const std::shared_ptr<google::protobuf::Message>& message);
     virtual void decode(const std::vector<char>& buffer, const std::shared_ptr<tcp_session>& session) = 0;
     virtual void reset() = 0;
     int get_next_recv_bytes();
