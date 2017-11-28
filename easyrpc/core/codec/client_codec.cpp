@@ -1,4 +1,5 @@
 #include "client_codec.h"
+#include "easyrpc/utility/logger.h"
 #include "easyrpc/core/protocol/sig.h"
 #include "easyrpc/core/net/tcp_session.h"
 #include "easyrpc/client/rpc_client/result.h"
@@ -79,7 +80,16 @@ std::shared_ptr<std::string> client_codec::make_network_data(const request_heade
 void client_codec::decode_header(const std::vector<char>& buffer)
 {
     copy_from_buffer(header_, buffer);
-    prepare_decode_body();
+    if (is_vaild_header(header_.message_name_len, header_.message_data_len))
+    {
+        prepare_decode_body();
+    }
+    else
+    {
+        reset();
+        log_error() << "invaild header, message_name_len: " << header_.message_name_len << 
+            ", message_data_len: " << header_.message_data_len;
+    }
 }
 
 void client_codec::decode_body(const std::vector<char>& buffer)

@@ -40,3 +40,17 @@ void codec::copy_to_buffer(const std::string& str, std::shared_ptr<std::string>&
 {
     buffer->append(str);
 }
+
+bool codec::is_vaild_header(int message_name_len, int message_data_len)
+{
+    static const int max_message_name_len = 256;
+    static const int max_message_data_len = 20 * 1024 * 1024;
+
+    if (message_name_len >= 0 && message_name_len < max_message_name_len && 
+        message_data_len >= 0 && message_data_len < max_message_data_len)
+    {
+        return true;
+    }
+
+    return false;
+}

@@ -50,6 +50,7 @@ protected:
     }
 
     void copy_to_buffer(const std::string& str, std::shared_ptr<std::string>& buffer);
+    bool is_vaild_header(int message_name_len, int message_data_len);
 
 protected:
     int next_recv_bytes_ = 0;
