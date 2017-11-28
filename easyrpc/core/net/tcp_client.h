@@ -41,7 +41,7 @@ private:
 
 protected:
     std::shared_ptr<codec> codec_;
-    time_t request_timeout_ = 10;
+    time_t request_timeout_ = 3;
 
 private:
     std::string connect_address_;

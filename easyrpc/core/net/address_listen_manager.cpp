@@ -34,7 +34,10 @@ bool address_listen_manager::start_listen()
 
 void address_listen_manager::stop_listen()
 {
-    pool_->stop();
+    if (pool_)
+    {
+        pool_->stop();
+    }
     addresses_.clear();
     address_listeners_.clear();
 }

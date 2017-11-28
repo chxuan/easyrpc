@@ -33,5 +33,5 @@ private:
     std::vector<std::string> addresses_;
     std::vector<std::shared_ptr<address_listener>> address_listeners_;
     int ios_threads_ = 4;
-    std::shared_ptr<io_service_pool> pool_;
+    std::shared_ptr<io_service_pool> pool_ = nullptr;
 };
