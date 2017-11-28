@@ -38,7 +38,7 @@ int main()
             log_warn() << ret->error().message();
             return;
         }
-        ret->message()->PrintDebugString();
+        log_info() << ret->message()->DebugString();
     });
 #else
     for (int i = 0; i < 10; ++i)

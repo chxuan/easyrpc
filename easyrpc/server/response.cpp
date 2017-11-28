@@ -13,13 +13,7 @@ void response::set_response(const std::shared_ptr<google::protobuf::Message>& me
 {
     if (message)
     {
-        /* std::string message_name = message->GetDescriptor()->full_name(); */
-        /* std::string body = serialize_util::singleton::get()->serialize(message); */
-        /* if (!message_name.empty() && !body.empty()) */
-        /* { */
-        /*     connect_->async_write(response_content{ call_id_, rpc_error_code::ok, message_name, body }); */
-        /* } */                    
-        auto network_data = session_->get_codec()->encode():
+        auto network_data = session_->get_codec()->encode(serial_num_, rpc_error_code::ok, message);
         session_->async_write(network_data);
     }
 }

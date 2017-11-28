@@ -15,6 +15,16 @@ std::shared_ptr<std::string> codec::encode(int serial_num,
     return nullptr;
 }
 
+std::shared_ptr<std::string> codec::encode(int serial_num, 
+                                           rpc_error_code error_code, 
+                                           const std::shared_ptr<google::protobuf::Message>& message)
+{
+    (void)serial_num;
+    (void)error_code;
+    (void)message;
+    return nullptr;
+}
+
 int codec::get_next_recv_bytes()
 {
     return next_recv_bytes_;
