@@ -1,6 +1,6 @@
 /**
- * @file listen_address_manager.h
- * @brief tcp服务监听地址管理
+ * @file address_listen_manager.h
+ * @brief tcp服务地址监听管理者
  * @author chxuan, 787280310@qq.com
  * @version 1.0.0
  * @date 2017-11-16
@@ -13,13 +13,13 @@
 #include <functional>
 
 class io_service_pool;
-class listen_address;
+class address_listener;
 
-class listen_address_manager
+class address_listen_manager
 {
 public:
-    void init_network_address(const std::string& listen_address);
-    void init_network_address(const std::vector<std::string>& listen_addresses);
+    void init_network_address(const std::string& address);
+    void init_network_address(const std::vector<std::string>& addresses);
     void init_ios_threads(int num);
     bool start_listen();
     void stop_listen();
@@ -30,8 +30,8 @@ private:
     void accept();
 
 private:
-    std::vector<std::string> listen_addresses_string_;
-    std::vector<std::shared_ptr<listen_address>> listen_addresses_;
+    std::vector<std::string> addresses_;
+    std::vector<std::shared_ptr<address_listener>> address_listeners_;
     int ios_threads_ = 4;
     std::shared_ptr<io_service_pool> pool_;
 };

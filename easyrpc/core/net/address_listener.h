@@ -1,6 +1,6 @@
 /**
- * @file listen_address.h
- * @brief tcp服务监听地址
+ * @file address_listener.h
+ * @brief tcp服务地址监听者
  * @author chxuan, 787280310@qq.com
  * @version 1.0.0
  * @date 2017-11-19
@@ -11,10 +11,10 @@
 
 class io_service_pool;
 
-class listen_address
+class address_listener
 {
 public:
-    listen_address(std::shared_ptr<io_service_pool>& pool);
+    address_listener(std::shared_ptr<io_service_pool>& pool);
     bool listen(const std::string& ip, unsigned short port);
     void accept();
 

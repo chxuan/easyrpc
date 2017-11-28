@@ -12,7 +12,7 @@
 #include "easyrpc/utility/utiltiy.h"
 #include "easyrpc/utility/qt_connect.h"
 
-class listen_address_manager;
+class address_listen_manager;
 
 class tcp_server
 {
@@ -20,8 +20,8 @@ public:
     tcp_server();
     virtual ~tcp_server();
 
-    tcp_server& listen(const std::string& listen_address);
-    tcp_server& listen(const std::vector<std::string>& listen_addresses);
+    tcp_server& listen(const std::string& address);
+    tcp_server& listen(const std::vector<std::string>& addresses);
     tcp_server& ios_threads(int num);
     tcp_server& work_threads(int num);
     void set_session_status_callback(const std::function<void(bool, const std::string&)>& func);
@@ -36,6 +36,6 @@ protected:
     int work_threads_ = 4;
 
 private:
-    std::shared_ptr<listen_address_manager> address_manager_;
+    std::shared_ptr<address_listen_manager> listen_manager_;
     std::function<void(bool, const std::string&)> session_status_callback_ = nullptr;
 };
