@@ -75,20 +75,20 @@ std::string logger_stream::make_log()
 
 void logger_stream::print_log(const std::string& log)
 {
-    if (level_ == priority_level::error)
+    switch (level_)
     {
+    case priority_level::error: 
         // red
         printf("\033[31m%s\n\033[0m", log.c_str());
-    }
-    else if (level_ == priority_level::warn)
-    {
+        break;
+    case priority_level::warn: 
         // yellow
         printf("\033[33m%s\n\033[0m", log.c_str());
-    }
-    else
-    {
+        break;
+    default:
         // normal
         printf("%s\n", log.c_str());
+        break;
     }
 }
 
