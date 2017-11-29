@@ -3,12 +3,19 @@
 
 std::string protobuf_serialize::serialize(const std::shared_ptr<google::protobuf::Message>& message)
 {
-    if (is_vaild_message(message))
+    if (message == nullptr)
     {
-        return message->SerializeAsString();
+        log_warn() << "message is nullptr";
+        return "";
     }
 
-    return "";
+    if (!message->IsInitialized())
+    {
+        log_warn() << "message initialized failed";
+        return "";
+    }
+
+    return message->SerializeAsString();
 }
 
 std::shared_ptr<google::protobuf::Message> protobuf_serialize::unserialize(const std::string& message_name, 
@@ -40,23 +47,6 @@ std::shared_ptr<google::protobuf::Message> protobuf_serialize::unserialize(const
     }
 
     return message;
-}
-
-bool protobuf_serialize::is_vaild_message(const std::shared_ptr<google::protobuf::Message>& message)
-{
-    if (message == nullptr)
-    {
-        log_warn() << "message is nullptr";
-        return false;
-    }
-
-    if (!message->IsInitialized())
-    {
-        log_warn() << "message initialized failed";
-        return false;
-    }
-
-    return true;
 }
 
 std::shared_ptr<google::protobuf::Message> protobuf_serialize::create_message(const std::string& message_name)

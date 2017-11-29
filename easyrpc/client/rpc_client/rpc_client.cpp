@@ -59,7 +59,7 @@ int rpc_client::call(int func_id,
     dispatcher_->add_result_handler(serial_num, handler);
 
     auto network_data = codec_->encode(serial_num, func_id, message);
-    tcp_client::async_write(network_data);
+    async_write(network_data);
 
     return serial_num;
 }
