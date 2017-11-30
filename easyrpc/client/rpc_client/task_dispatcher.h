@@ -40,4 +40,5 @@ private:
     std::mutex mutex_;
     atimer<boost::posix_time::seconds> timer_;
     thread_pool threadpool_;
+    sub_handler sub_handler_ = nullptr;
 };
