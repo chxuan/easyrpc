@@ -3,15 +3,10 @@
 #include "easyrpc/core/protocol/sig.h"
 #include "easyrpc/client/rpc_client/result.h"
 
-task_dispatcher::task_dispatcher(time_t request_timeout)
-    : request_timeout_(request_timeout)
+task_dispatcher::task_dispatcher() 
 {
-
     qt_connect(complete_client_decode_data, std::bind(&task_dispatcher::handle_complete_client_decode_data, 
                                                       this, std::placeholders::_1));
-    threadpool_.init_thread_size(1);
-    timer_.bind([this]{ check_request_timeout(); });
-    timer_.start(1);
 }
 
 task_dispatcher::~task_dispatcher()
@@ -19,10 +14,23 @@ task_dispatcher::~task_dispatcher()
     stop();
 }
 
+void task_dispatcher::run(time_t request_timeout)
+{
+    request_timeout_ = request_timeout;
+    threadpool_.init_thread_size(1);
+    timer_.bind([this]{ check_request_timeout(); });
+    timer_.start(1);
+}
+
 void task_dispatcher::add_result_handler(int serial_num, const result_handler& handler)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     tasks_.emplace(serial_num, task{ handler, time(nullptr) });
+}
+
+void task_dispatcher::register_handler(const sub_handler& handler)
+{
+    (void)handler;
 }
 
 void task_dispatcher::stop()

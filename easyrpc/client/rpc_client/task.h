@@ -9,10 +9,12 @@
 
 #include <functional>
 #include <memory>
+#include <google/protobuf/message.h>
 
 class result;
 
 using result_handler = std::function<void(const std::shared_ptr<result>&)>; 
+using sub_handler = std::function<void(const std::shared_ptr<google::protobuf::Message>&)>;
 
 struct task
 {

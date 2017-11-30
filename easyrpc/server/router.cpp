@@ -17,9 +17,9 @@ router::~router()
     stop();
 }
 
-void router::init_work_threads(int num)
+void router::run(int work_threads)
 {
-    threadpool_.init_thread_size(num);
+    threadpool_.init_thread_size(work_threads);
 }
 
 std::size_t router::route_table_size()
@@ -27,7 +27,7 @@ std::size_t router::route_table_size()
     return route_table_.size();
 }
 
-void router::bind(int func_id, const function_t& handler)
+void router::register_handler(int func_id, const function_t& handler)
 {
     route_table_.emplace(func_id, handler);
 }

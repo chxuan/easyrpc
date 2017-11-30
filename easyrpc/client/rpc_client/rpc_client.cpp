@@ -6,6 +6,7 @@
 rpc_client::rpc_client()
 {
     codec_ = std::make_shared<client_codec>();
+    dispatcher_ = std::make_shared<task_dispatcher>();
 }
 
 rpc_client::~rpc_client()
@@ -17,7 +18,7 @@ bool rpc_client::run()
 {
     if (tcp_client::run())
     {
-        dispatcher_ = std::make_shared<task_dispatcher>(request_timeout_);
+        dispatcher_->run(request_timeout_);
         return true;
     }
 
@@ -27,41 +28,25 @@ bool rpc_client::run()
 void rpc_client::stop()
 {
     tcp_client::stop();
-    if (dispatcher_)
-    {
-        dispatcher_->stop();
-    }
-}
-
-auto rpc_client::make_result_handler(const std::function<void(const std::shared_ptr<result>&)>& func)
-{
-    auto recv_handler = [func](const std::shared_ptr<result>& ret)
-    {
-        try
-        {
-            func(ret);
-        }
-        catch (std::exception& e)
-        {
-            log_warn() << e.what();
-        }
-    };
-
-    return recv_handler;
+    dispatcher_->stop();
 }
 
 int rpc_client::call(int func_id,
                      const std::shared_ptr<google::protobuf::Message>& message, 
-                     const std::function<void(const std::shared_ptr<result>&)>& func)
+                     const result_handler& handler)
 {
     int serial_num = make_serial_num();
-    auto handler = make_result_handler(func);
     dispatcher_->add_result_handler(serial_num, handler);
 
     auto network_data = codec_->encode(serial_num, func_id, message);
     async_write(network_data);
 
     return serial_num;
+}
+
+void rpc_client::register_handler(const sub_handler& handler)
+{
+    dispatcher_->register_handler(handler);
 }
 
 int rpc_client::make_serial_num()

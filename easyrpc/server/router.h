@@ -23,9 +23,9 @@ public:
     router();
     ~router();
 
-    void init_work_threads(int num);
+    void run(int work_threads);
     std::size_t route_table_size();
-    void bind(int func_id, const function_t& handler);
+    void register_handler(int func_id, const function_t& handler);
     void stop();
 
 private slots:

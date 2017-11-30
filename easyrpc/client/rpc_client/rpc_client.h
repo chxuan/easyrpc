@@ -9,6 +9,7 @@
 
 #include "easyrpc/core/net/tcp_client.h"
 #include "easyrpc/client/rpc_client/result.h"
+#include "easyrpc/client/rpc_client/task.h"
 
 class task_dispatcher;
 
@@ -22,12 +23,12 @@ public:
     virtual void stop();
     int call(int func_id,
              const std::shared_ptr<google::protobuf::Message>& message, 
-             const std::function<void(const std::shared_ptr<result>&)>& func);
+             const result_handler& handler);
+    void register_handler(const sub_handler& handler);
 
 private:
-    auto make_result_handler(const std::function<void(const std::shared_ptr<result>&)>& func);
     int make_serial_num();
 
 private:
-    std::shared_ptr<task_dispatcher> dispatcher_ = nullptr;
+    std::shared_ptr<task_dispatcher> dispatcher_;
 };

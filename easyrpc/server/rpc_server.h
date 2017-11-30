@@ -18,7 +18,7 @@ public:
     virtual bool run();
     virtual void stop();
 
-    void bind(int func_id, const function_t& handler);
+    void register_handler(int func_id, const function_t& handler);
 
 private:
     router router_;
