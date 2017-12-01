@@ -14,7 +14,7 @@ template<typename T>
 class singletion
 {
 public:
-	static std::shared_ptr<T> get_instance() 
+    static std::shared_ptr<T> get_instance()
     {
         if (inst_ == nullptr) 
         {
