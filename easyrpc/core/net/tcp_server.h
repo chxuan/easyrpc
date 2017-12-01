@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <functional>
+#include <google/protobuf/message.h>
 #include "easyrpc/utility/utiltiy.h"
 #include "easyrpc/utility/qt_connect.h"
 
@@ -25,6 +26,8 @@ public:
     tcp_server& ios_threads(int num);
     tcp_server& work_threads(int num);
     void set_session_status_callback(const std::function<void(bool, const std::string&)>& func);
+    void publish(const std::string& session_id, 
+                 const std::shared_ptr<google::protobuf::Message>& message);
 
     virtual bool run();
     virtual void stop();
