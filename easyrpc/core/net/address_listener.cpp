@@ -1,8 +1,10 @@
 #include "address_listener.h"
 #include "easyrpc/utility/logger.h"
+#include "easyrpc/utility/singletion.h"
 #include "easyrpc/core/codec/server_codec.h"
 #include "easyrpc/core/net/io_service_pool.h"
 #include "easyrpc/core/net/tcp_session.h"
+#include "easyrpc/core/net/tcp_session_manager.h"
 
 address_listener::address_listener(std::shared_ptr<io_service_pool>& pool) 
     : pool_(pool), 
@@ -39,6 +41,7 @@ void address_listener::accept()
         if (!ec)
         {
             session->run();
+            singletion<tcp_session_manager>::get_instance().add_session(session->get_session_id(), session);
         }
         accept();
     });

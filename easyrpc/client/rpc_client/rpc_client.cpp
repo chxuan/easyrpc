@@ -35,13 +35,17 @@ int rpc_client::call(int func_id,
                      const std::shared_ptr<google::protobuf::Message>& message, 
                      const result_handler& handler)
 {
-    int serial_num = make_serial_num();
-    dispatcher_->add_result_handler(serial_num, handler);
+    if (message)
+    {
+        int serial_num = make_serial_num();
+        dispatcher_->add_result_handler(serial_num, handler);
 
-    auto network_data = codec_->encode(serial_num, func_id, message);
-    async_write(network_data);
+        auto network_data = codec_->encode(serial_num, func_id, message);
+        async_write(network_data);
+        return serial_num;
+    }
 
-    return serial_num;
+    return -1;
 }
 
 void rpc_client::register_handler(const sub_handler& handler)
@@ -51,6 +55,11 @@ void rpc_client::register_handler(const sub_handler& handler)
 
 int rpc_client::make_serial_num()
 {
-    static std::atomic<int> serial_num{ 0 };
-    return ++serial_num;
+    static std::atomic<int> serial_num{ -1 };
+    if (++serial_num < 0)
+    {
+        serial_num = 0; 
+    }
+
+    return serial_num;
 }

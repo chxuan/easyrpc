@@ -1,6 +1,10 @@
 #include "tcp_server.h"
+#include "easyrpc/utility/singletion.h"
 #include "easyrpc/core/protocol/sig.h"
+#include "easyrpc/core/codec/codec.h"
 #include "easyrpc/core/net/address_listen_manager.h"
+#include "easyrpc/core/net/tcp_session.h"
+#include "easyrpc/core/net/tcp_session_manager.h"
 
 tcp_server::tcp_server()
 {
@@ -46,8 +50,15 @@ void tcp_server::set_session_status_callback(const std::function<void(bool, cons
 void tcp_server::publish(const std::string& session_id, 
                          const std::shared_ptr<google::protobuf::Message>& message)
 {
-    (void)session_id;
-    (void)message;
+    if (message)
+    {
+        auto session = singletion<tcp_session_manager>::get_instance().get_session(session_id);
+        if (session)
+        {
+            auto network_data = session->get_codec()->encode(-1, rpc_error_code::ok, message);
+            session->async_write(network_data);
+        }
+    }
 }
 
 bool tcp_server::run()
@@ -58,10 +69,16 @@ bool tcp_server::run()
 void tcp_server::stop()
 {
     listen_manager_->stop_listen();
+    singletion<tcp_session_manager>::get_instance().clear();
 }
 
 void tcp_server::handle_session_status_changed(bool established, const std::string& session_id)
 {
+    if (!established)
+    {
+        singletion<tcp_session_manager>::get_instance().remove_session(session_id);
+    }
+
     if (session_status_callback_)
     {
         session_status_callback_(established, session_id);

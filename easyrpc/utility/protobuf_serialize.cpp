@@ -3,12 +3,6 @@
 
 std::string protobuf_serialize::serialize(const std::shared_ptr<google::protobuf::Message>& message)
 {
-    if (message == nullptr)
-    {
-        log_warn() << "message is nullptr";
-        return "";
-    }
-
     if (!message->IsInitialized())
     {
         log_warn() << "message initialized failed";
