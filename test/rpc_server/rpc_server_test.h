@@ -8,6 +8,8 @@
 #pragma once
 
 #include <memory>
+#include <thread>
+#include <atomic>
 
 class rpc_server;
 class request;
@@ -27,4 +29,7 @@ private:
 
 private:
     std::shared_ptr<rpc_server> server_;
+    std::shared_ptr<std::thread> thread_;
+    std::atomic<bool> server_stoped_{ false };
+    std::string client_session_id_;
 };

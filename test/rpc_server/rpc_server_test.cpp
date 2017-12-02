@@ -20,12 +20,16 @@ void rpc_server_test::run()
         return;
     }
 
+    thread_ = std::make_shared<std::thread>(std::bind(&rpc_server_test::pushlish_thread, this));
+
     log_info() << "rpc server start...";
 }
 
 void rpc_server_test::stop()
 {
+    server_stoped_ = true;
     server_->stop();
+    thread_->join();
     log_info() << "rpc server stoped";
 }
 
@@ -33,6 +37,7 @@ void rpc_server_test::session_status_callback(bool established, const std::strin
 {
     if (established)
     {
+        client_session_id_ = session_id;
         log_info() << "session established, session id: " << session_id;
     }
     else 
@@ -49,19 +54,17 @@ void rpc_server_test::echo(const std::shared_ptr<request>& req, const std::share
 
 void rpc_server_test::pushlish_thread()
 {
-#if 0
-    while (!server_stoped)
+    while (!server_stoped_)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-        if (!session_id.empty())
+        if (!client_session_id_.empty())
         {
             auto message = std::make_shared<request_person_info_message>();
             message->set_name("Tom");
             message->set_age(25);
 
-            server->publish(session_id, message);
+            server_->publish(client_session_id_, message);
         }
     }
-#endif
 }
 
