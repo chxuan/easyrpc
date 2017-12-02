@@ -25,11 +25,11 @@ public:
 private:
     void session_status_callback(bool established, const std::string& session_id);
     void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
-    void pushlish_thread();
+    void publish_thread();
 
 private:
     std::shared_ptr<rpc_server> server_;
-    std::shared_ptr<std::thread> thread_;
+    std::shared_ptr<std::thread> pub_thread_;
     std::atomic<bool> server_stoped_{ false };
     std::string client_session_id_;
 };

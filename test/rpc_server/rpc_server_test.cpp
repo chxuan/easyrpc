@@ -7,8 +7,7 @@ rpc_server_test::rpc_server_test()
     server_ = std::make_shared<rpc_server>();
     server_->set_session_status_callback(std::bind(&rpc_server_test::session_status_callback, this,
                                                    std::placeholders::_1, std::placeholders::_2));
-    server_->register_handler(0x0001, std::bind(&rpc_server_test::echo, this, 
-                                                std::placeholders::_1, std::placeholders::_2));
+    server_->register_handler(0x0001, std::bind(&rpc_server_test::echo, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void rpc_server_test::run()
@@ -20,7 +19,7 @@ void rpc_server_test::run()
         return;
     }
 
-    thread_ = std::make_shared<std::thread>(std::bind(&rpc_server_test::pushlish_thread, this));
+    pub_thread_ = std::make_shared<std::thread>(std::bind(&rpc_server_test::publish_thread, this));
 
     log_info() << "rpc server start...";
 }
@@ -29,7 +28,10 @@ void rpc_server_test::stop()
 {
     server_stoped_ = true;
     server_->stop();
-    thread_->join();
+    if (pub_thread_)
+    {
+        pub_thread_->join();
+    }
     log_info() << "rpc server stoped";
 }
 
@@ -52,11 +54,11 @@ void rpc_server_test::echo(const std::shared_ptr<request>& req, const std::share
     rsp->set_response(req->message());
 }
 
-void rpc_server_test::pushlish_thread()
+void rpc_server_test::publish_thread()
 {
     while (!server_stoped_)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         if (!client_session_id_.empty())
         {
             auto message = std::make_shared<request_person_info_message>();
