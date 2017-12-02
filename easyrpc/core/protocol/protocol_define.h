@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#include "easyrpc/core/protocol/error_code.h"
+#include <string>
 
 const int request_header_len = 4 + 4;
 const int response_header_len = 4 + 4;
@@ -31,7 +31,6 @@ using response_header = request_header;
 struct response_body
 {
     int serial_num;
-    rpc_error_code code;
     std::string message_name;
     std::string message_data;
 };

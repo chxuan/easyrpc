@@ -13,16 +13,12 @@
 class result
 {
 public:
-    result(const error_code& ec, 
-           int serial_num, 
-           const std::shared_ptr<google::protobuf::Message>& message = nullptr);
+    result(int serial_num, const std::shared_ptr<google::protobuf::Message>& message);
 
     std::shared_ptr<google::protobuf::Message> message() const;
     int serial_num() const;
-    error_code error() const;
 
 private:
-    error_code ec_;
     int serial_num_;
     std::shared_ptr<google::protobuf::Message> message_;
 };

@@ -1,7 +1,7 @@
 #include "task_dispatcher.h"
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/core/protocol/sig.h"
-#include "easyrpc/client/rpc_client/result.h"
+#include "easyrpc/client/result.h"
 
 task_dispatcher::task_dispatcher() 
 {
@@ -77,8 +77,7 @@ void task_dispatcher::check_request_timeout()
     {
         if (current_time - begin->second.begin_time >= request_timeout_)
         {
-            auto ret = std::make_shared<result>(rpc_error_code::request_timeout, begin->first);
-            threadpool_.add_task(begin->second.handler, ret);
+            log_warn() << "request timeout, serial_num: " << begin->first;
             begin = tasks_.erase(begin);
         }
         else

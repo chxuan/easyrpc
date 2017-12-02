@@ -2,7 +2,7 @@
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/core/protocol/sig.h"
 #include "easyrpc/core/net/tcp_session.h"
-#include "easyrpc/client/rpc_client/result.h"
+#include "easyrpc/client/result.h"
 
 client_codec::client_codec()
 {
@@ -97,26 +97,13 @@ void client_codec::decode_body(const std::vector<char>& buffer)
     int pos = 0;
 
     copy_from_buffer(body_.serial_num, pos, buffer);
-    copy_from_buffer(body_.code, pos, buffer);
     copy_from_buffer(body_.message_name, pos, header_.message_name_len, buffer);
     copy_from_buffer(body_.message_data, pos, header_.message_data_len, buffer);
 
     prepare_decode_header();
-    emit complete_client_decode_data(make_result());
-}
-
-std::shared_ptr<result> client_codec::make_result()
-{
-    error_code ec(body_.code);
-    if (ec)
-    {
-        return std::make_shared<result>(ec, body_.serial_num);
-    }
-    else
-    {
-        return std::make_shared<result>(ec, body_.serial_num, 
+    auto ret = std::make_shared<result>(body_.serial_num, 
                                         protobuf_serialize::unserialize(body_.message_name, body_.message_data));
-    }
+    emit complete_client_decode_data(ret);
 }
 
 void client_codec::prepare_decode_header()
@@ -128,6 +115,5 @@ void client_codec::prepare_decode_header()
 void client_codec::prepare_decode_body()
 {
     decode_header_ = false;
-    next_recv_bytes_ = sizeof(int) + sizeof(rpc_error_code) + 
-        header_.message_name_len + header_.message_data_len;
+    next_recv_bytes_ = sizeof(int) + header_.message_name_len + header_.message_data_len;
 }

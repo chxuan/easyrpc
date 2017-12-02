@@ -1,7 +1,7 @@
 #include "rpc_client.h"
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/core/codec/client_codec.h"
-#include "easyrpc/client/rpc_client/task_dispatcher.h"
+#include "easyrpc/client/task_dispatcher.h"
 
 rpc_client::rpc_client()
 {

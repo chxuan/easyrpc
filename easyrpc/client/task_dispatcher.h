@@ -11,7 +11,7 @@
 #include "easyrpc/utility/atimer.h"
 #include "easyrpc/utility/thread_pool.h"
 #include "easyrpc/utility/qt_connect.h"
-#include "easyrpc/client/rpc_client/task.h"
+#include "easyrpc/client/task.h"
 
 class task_dispatcher
 {

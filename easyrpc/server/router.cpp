@@ -63,6 +63,6 @@ void router::router_thread(int func_id,
     }
     else
     {
-        log_warn() << "Route failed, func id: " << func_id;
+        log_warn() << "route failed, func id: " << func_id;
     }
 }

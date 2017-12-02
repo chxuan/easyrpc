@@ -31,13 +31,8 @@ int main()
     message->set_age(20);
 
 #if 1
-    client->call(0x0001, message, [](const std::shared_ptr<result>& ret)
+    client->call(0x0002, message, [](const std::shared_ptr<result>& ret)
     {
-        if (ret->error())
-        {
-            log_warn() << ret->error().message();
-            return;
-        }
         log_info() << ret->message()->DebugString();
     });
 #else

@@ -16,11 +16,9 @@ std::shared_ptr<std::string> codec::encode(int serial_num,
 }
 
 std::shared_ptr<std::string> codec::encode(int serial_num, 
-                                           rpc_error_code error_code, 
                                            const std::shared_ptr<google::protobuf::Message>& message)
 {
     (void)serial_num;
-    (void)error_code;
     (void)message;
     return nullptr;
 }

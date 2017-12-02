@@ -16,10 +16,9 @@ server_codec::~server_codec()
 }
 
 std::shared_ptr<std::string> server_codec::encode(int serial_num, 
-                                                  rpc_error_code error_code, 
                                                   const std::shared_ptr<google::protobuf::Message>& message)
 {
-    auto body = encode_body(serial_num, error_code, message);
+    auto body = encode_body(serial_num, message);
     auto header = encode_header(body);
     return make_network_data(header, body);
 }
@@ -51,12 +50,10 @@ response_header server_codec::encode_header(const response_body& body)
 }
 
 response_body server_codec::encode_body(int serial_num, 
-                                        rpc_error_code error_code, 
                                         const std::shared_ptr<google::protobuf::Message>& message)
 {
     response_body body;
     body.serial_num = serial_num;
-    body.code = error_code;
     body.message_name = message->GetDescriptor()->full_name();
     body.message_data = protobuf_serialize::serialize(message);
 
@@ -69,7 +66,6 @@ std::shared_ptr<std::string> server_codec::make_network_data(const response_head
 
     copy_to_buffer(header, network_data);
     copy_to_buffer(body.serial_num, network_data);
-    copy_to_buffer(body.code, network_data);
     copy_to_buffer(body.message_name, network_data);
     copy_to_buffer(body.message_data, network_data);
 

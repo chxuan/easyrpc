@@ -55,7 +55,7 @@ void tcp_server::publish(const std::string& session_id,
         auto session = singletion<tcp_session_manager>::get_instance().get_session(session_id);
         if (session)
         {
-            auto network_data = session->get_codec()->encode(-1, rpc_error_code::ok, message);
+            auto network_data = session->get_codec()->encode(-1, message);
             session->async_write(network_data);
         }
     }

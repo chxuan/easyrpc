@@ -18,7 +18,6 @@ public:
     virtual ~server_codec();
 
     virtual std::shared_ptr<std::string> encode(int serial_num, 
-                                                rpc_error_code error_code, 
                                                 const std::shared_ptr<google::protobuf::Message>& message);
     virtual void decode(const std::vector<char>& buffer, const std::shared_ptr<tcp_session>& session);
     virtual void reset();
@@ -26,7 +25,6 @@ public:
 private:
     response_header encode_header(const response_body& body);
     response_body encode_body(int serial_num, 
-                              rpc_error_code error_code, 
                               const std::shared_ptr<google::protobuf::Message>& message); 
     std::shared_ptr<std::string> make_network_data(const response_header& header, const response_body& body);
     void decode_header(const std::vector<char>& buffer);
