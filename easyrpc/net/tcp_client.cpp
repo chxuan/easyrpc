@@ -1,10 +1,10 @@
 #include "tcp_client.h"
 #include "easyrpc/utility/utiltiy.h"
 #include "easyrpc/utility/logger.h"
-#include "easyrpc/core/codec/codec.h"
-#include "easyrpc/core/protocol/sig.h"
-#include "easyrpc/core/net/io_service_pool.h"
-#include "easyrpc/core/net/tcp_session.h"
+#include "easyrpc/codec/codec.h"
+#include "easyrpc/net/sig.h"
+#include "easyrpc/net/io_service_pool.h"
+#include "easyrpc/net/tcp_session.h"
 
 tcp_client::tcp_client()
 {

@@ -1,4 +1,5 @@
 #include "codec.h"
+#include "easyrpc/utility/protobuf_serialize.h"
 #include "easyrpc/utility/logger.h"
 
 codec::codec()
@@ -97,7 +98,6 @@ void codec::decode_body(const std::vector<char>& buffer, const std::shared_ptr<t
     copy_from_buffer(body_.message_data, pos, header_.message_data_len, buffer);
 
     prepare_decode_header();
-
     handle_decode_data(body_, session);
 }
 

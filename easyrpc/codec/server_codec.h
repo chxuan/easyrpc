@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#include "easyrpc/core/codec/codec.h"
+#include "easyrpc/codec/codec.h"
 
 class server_codec : public codec
 {

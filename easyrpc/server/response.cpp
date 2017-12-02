@@ -1,6 +1,6 @@
 #include "response.h"
-#include "easyrpc/core/codec/codec.h"
-#include "easyrpc/core/net/tcp_session.h"
+#include "easyrpc/codec/codec.h"
+#include "easyrpc/net/tcp_session.h"
 
 response::response(const std::shared_ptr<tcp_session>& session, int serial_num)
     : session_(session),

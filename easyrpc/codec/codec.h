@@ -8,8 +8,9 @@
 #pragma once
 
 #include <functional>
-#include "easyrpc/core/protocol/protocol_define.h"
-#include "easyrpc/utility/protobuf_serialize.h"
+#include <memory>
+#include <vector>
+#include <google/protobuf/message.h>
 
 class tcp_session;
 

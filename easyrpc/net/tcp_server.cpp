@@ -1,10 +1,10 @@
 #include "tcp_server.h"
 #include "easyrpc/utility/singletion.h"
-#include "easyrpc/core/protocol/sig.h"
-#include "easyrpc/core/codec/codec.h"
-#include "easyrpc/core/net/address_listen_manager.h"
-#include "easyrpc/core/net/tcp_session.h"
-#include "easyrpc/core/net/tcp_session_manager.h"
+#include "easyrpc/codec/codec.h"
+#include "easyrpc/net/sig.h"
+#include "easyrpc/net/address_listen_manager.h"
+#include "easyrpc/net/tcp_session.h"
+#include "easyrpc/net/tcp_session_manager.h"
 
 tcp_server::tcp_server()
 {

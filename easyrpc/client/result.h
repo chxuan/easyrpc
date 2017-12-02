@@ -8,7 +8,6 @@
 #pragma once
 
 #include <google/protobuf/message.h>
-#include "easyrpc/core/protocol/protocol_define.h"
 
 class result
 {
