@@ -30,6 +30,8 @@ private slots:
 
 private:
     void dispatch_thread(const std::shared_ptr<result>& ret);
+    void deal_rpc_result(const std::shared_ptr<result>& ret);
+    void deal_sub_result(const std::shared_ptr<result>& ret);
     void check_request_timeout();
     bool get_task(int serial_num, task& t);
     void remove_task(int serial_num);

@@ -53,6 +53,18 @@ void task_dispatcher::handle_complete_client_decode_data(const std::shared_ptr<r
 
 void task_dispatcher::dispatch_thread(const std::shared_ptr<result>& ret)
 {
+    if (ret->serial_num() >= 0)
+    {
+        deal_rpc_result(ret);
+    }
+    else
+    {
+        deal_sub_result(ret);
+    }
+}
+
+void task_dispatcher::deal_rpc_result(const std::shared_ptr<result>& ret)
+{
     task t;
     if (get_task(ret->serial_num(), t))
     {
@@ -63,6 +75,14 @@ void task_dispatcher::dispatch_thread(const std::shared_ptr<result>& ret)
     {
         log_warn() << "dispatch failed, serial num: " << ret->serial_num() 
             << ", message name: " << ret->message()->GetDescriptor()->full_name();
+    }
+}
+
+void task_dispatcher::deal_sub_result(const std::shared_ptr<result>& ret)
+{
+    if (sub_handler_)
+    {
+        sub_handler_(ret->message());
     }
 }
 
