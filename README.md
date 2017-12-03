@@ -65,7 +65,7 @@ A modern RPC framework based on protobuf
 
 ## 开发平台
 
-* Ubuntu16.04 LTS gcc5.3.1
+* Ubuntu17.10 gcc7.2.0
 
 ## 依赖性
 
