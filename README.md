@@ -52,7 +52,7 @@ A modern RPC framework based on protobuf
         req->set_echo_str("Hello world");
         req->set_echo_num(100);
 
-        // 3.异步步调用echo函数
+        // 3.异步调用echo函数
         client_->call(0x0001, message, [](const std::shared_ptr<result>& ret)
         {
             log_info() << ret->message()->DebugString();
