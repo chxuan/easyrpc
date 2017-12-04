@@ -24,8 +24,8 @@ A modern RPC framework based on protobuf
         auto server = std::make_shared<rpc_server>();
         // 2.绑定echo函数
         // 0x0001为函数id
-        server->register_handler(0x0001, std::bind(echo, 
-                                                   std::placeholders::_1, std::placeholders::_2));
+        server->bind(0x0001, std::bind(echo, 
+                                       std::placeholders::_1, std::placeholders::_2));
     
         // 3.配置监听参数并启动事件循环（非阻塞）
         // 服务端将采用4个io线程和4个work线程服务

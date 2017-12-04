@@ -21,7 +21,7 @@ public:
 
     void run(time_t request_timeout);
     void add_result_handler(int serial_num, const result_handler& handler);
-    void register_handler(const sub_handler& handler);
+    void bind(const sub_handler& handler);
     void stop();
     void clear();
 

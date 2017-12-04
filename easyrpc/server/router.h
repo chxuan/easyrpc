@@ -25,7 +25,7 @@ public:
 
     void run(int work_threads);
     std::size_t route_table_size();
-    void register_handler(int func_id, const function_t& handler);
+    void bind(int func_id, const function_t& handler);
     void stop();
 
 private slots:

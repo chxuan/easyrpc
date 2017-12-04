@@ -48,9 +48,9 @@ int rpc_client::call(int func_id,
     return -1;
 }
 
-void rpc_client::register_handler(const sub_handler& handler)
+void rpc_client::bind(const sub_handler& handler)
 {
-    dispatcher_->register_handler(handler);
+    dispatcher_->bind(handler);
 }
 
 int rpc_client::make_serial_num()

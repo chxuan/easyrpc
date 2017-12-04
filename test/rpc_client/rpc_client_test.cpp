@@ -7,7 +7,7 @@ rpc_client_test::rpc_client_test()
     client_ = std::make_shared<rpc_client>();
     client_->set_session_status_callback(std::bind(&rpc_client_test::session_status_callback, this,
                                                    std::placeholders::_1, std::placeholders::_2));
-    client_->register_handler(std::bind(&rpc_client_test::received_sub_message, this, std::placeholders::_1));
+    client_->bind(std::bind(&rpc_client_test::received_sub_message, this, std::placeholders::_1));
 }
 
 void rpc_client_test::run()

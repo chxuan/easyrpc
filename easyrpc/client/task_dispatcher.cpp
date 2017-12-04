@@ -28,7 +28,7 @@ void task_dispatcher::add_result_handler(int serial_num, const result_handler& h
     tasks_.emplace(serial_num, task{ handler, time(nullptr) });
 }
 
-void task_dispatcher::register_handler(const sub_handler& handler)
+void task_dispatcher::bind(const sub_handler& handler)
 {
     sub_handler_ = handler;
 }

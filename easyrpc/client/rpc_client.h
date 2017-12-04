@@ -24,7 +24,7 @@ public:
     int call(int func_id,
              const std::shared_ptr<google::protobuf::Message>& message, 
              const result_handler& handler);
-    void register_handler(const sub_handler& handler);
+    void bind(const sub_handler& handler);
 
 private:
     int make_serial_num();

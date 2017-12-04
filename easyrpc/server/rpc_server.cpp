@@ -27,7 +27,7 @@ void rpc_server::stop()
     router_.stop();
 }
 
-void rpc_server::register_handler(int func_id, const function_t& handler)
+void rpc_server::bind(int func_id, const function_t& handler)
 {
-    router_.register_handler(func_id, handler);
+    router_.bind(func_id, handler);
 }

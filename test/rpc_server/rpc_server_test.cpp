@@ -7,7 +7,7 @@ rpc_server_test::rpc_server_test()
     server_ = std::make_shared<rpc_server>();
     server_->set_session_status_callback(std::bind(&rpc_server_test::session_status_callback, this,
                                                    std::placeholders::_1, std::placeholders::_2));
-    server_->register_handler(0x0001, std::bind(&rpc_server_test::echo, this, std::placeholders::_1, std::placeholders::_2));
+    server_->bind(0x0001, std::bind(&rpc_server_test::echo, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void rpc_server_test::run()

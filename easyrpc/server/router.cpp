@@ -27,7 +27,7 @@ std::size_t router::route_table_size()
     return route_table_.size();
 }
 
-void router::register_handler(int func_id, const function_t& handler)
+void router::bind(int func_id, const function_t& handler)
 {
     route_table_.emplace(func_id, handler);
 }
