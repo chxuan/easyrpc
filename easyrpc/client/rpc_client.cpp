@@ -1,11 +1,10 @@
 #include "rpc_client.h"
 #include "easyrpc/utility/logger.h"
-#include "easyrpc/codec/client_codec.h"
+#include "easyrpc/codec/codec.h"
 #include "easyrpc/client/task_dispatcher.h"
 
 rpc_client::rpc_client()
 {
-    codec_ = std::make_shared<client_codec>();
     dispatcher_ = std::make_shared<task_dispatcher>();
 }
 

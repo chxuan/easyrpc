@@ -1,13 +1,14 @@
 #include "tcp_client.h"
 #include "easyrpc/utility/utiltiy.h"
 #include "easyrpc/utility/logger.h"
-#include "easyrpc/codec/codec.h"
+#include "easyrpc/codec/client_codec.h"
 #include "easyrpc/net/sig.h"
 #include "easyrpc/net/io_service_pool.h"
 #include "easyrpc/net/tcp_session.h"
 
 tcp_client::tcp_client()
 {
+    codec_ = std::make_shared<client_codec>();
     qt_connect(session_status_changed, std::bind(&tcp_client::handle_session_status_changed,
                                                  this, std::placeholders::_1, std::placeholders::_2));
 }
@@ -32,12 +33,6 @@ tcp_client& tcp_client::connect_timeout(time_t seconds)
 tcp_client& tcp_client::request_timeout(time_t seconds)
 {
     request_timeout_ = seconds;
-    return *this;
-}
-
-tcp_client& tcp_client::resend(bool resend)
-{
-    resend_ = resend;
     return *this;
 }
 

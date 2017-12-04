@@ -23,7 +23,6 @@ public:
     tcp_client& connect(const std::string& address);
     tcp_client& connect_timeout(time_t seconds);
     tcp_client& request_timeout(time_t seconds);
-    tcp_client& resend(bool resend);
     void set_session_status_callback(const std::function<void(bool, const std::string&)>& func);
 
     virtual bool run();
@@ -48,7 +47,6 @@ private:
     time_t connect_timeout_ = 3;
     std::shared_ptr<io_service_pool> pool_;
     std::shared_ptr<tcp_session> session_;
-    std::atomic<bool> resend_{ false };
     boost::asio::ip::tcp::resolver::iterator endpoint_iter_;
     std::function<void(bool, const std::string&)> session_status_callback_ = nullptr;
 };
