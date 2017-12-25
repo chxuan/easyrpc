@@ -1,9 +1,8 @@
 #include "logger.h"
 
 logger_stream::logger_stream(const std::string& file_path, 
-                             const std::string& func_name, 
                              unsigned long line, 
-                             priority_level level) 
+                             log_level level) 
     : level_(level)
 {
     buffer_ = std::make_shared<std::ostringstream>();
@@ -12,7 +11,7 @@ logger_stream::logger_stream(const std::string& file_path,
 #else
     int pos = file_path.find_last_of("/");
 #endif
-    (*buffer_) << file_path.substr(pos + 1) << " " << func_name << "(" << line << ") ";
+    (*buffer_) << file_path.substr(pos + 1) << ":" << line << " ";
 }
 
 logger_stream::~logger_stream()
@@ -53,10 +52,10 @@ std::string logger_stream::level_enum_to_string()
 {
     switch (level_)
     {
-    case priority_level::error: return "[error]";
-    case priority_level::warn: return "[warn]";
-    case priority_level::info: return "[info]";
-    case priority_level::debug: return "[debug]";
+    case log_level::error: return "[error]";
+    case log_level::warn: return "[warn]";
+    case log_level::info: return "[info]";
+    case log_level::debug: return "[debug]";
     default: return "[debug]";
     }
 }
@@ -77,11 +76,11 @@ void logger_stream::print_log(const std::string& log)
 {
     switch (level_)
     {
-    case priority_level::error: 
+    case log_level::error: 
         // red
         printf("\033[31m%s\n\033[0m", log.c_str());
         break;
-    case priority_level::warn: 
+    case log_level::warn: 
         // yellow
         printf("\033[33m%s\n\033[0m", log.c_str());
         break;
@@ -93,11 +92,9 @@ void logger_stream::print_log(const std::string& log)
 }
 
 logger::logger(const char* file_path, 
-               const char* func_name, 
                unsigned long line, 
-               priority_level level) 
+               log_level level) 
     : file_path_(file_path), 
-    func_name_(func_name), 
     line_(line), 
     level_(level) 
 {
@@ -106,5 +103,5 @@ logger::logger(const char* file_path,
 
 logger_stream logger::log() const
 {
-    return logger_stream(file_path_, func_name_, line_, level_);
+    return logger_stream(file_path_, line_, level_);
 }

@@ -18,7 +18,7 @@
 #include <sstream>
 #include <memory>
 
-enum class priority_level
+enum class log_level
 {
     debug = 0,
     info,
@@ -44,9 +44,8 @@ class logger_stream
 {
 public:
     logger_stream(const std::string& file_path, 
-                  const std::string& func_name, 
                   unsigned long line, 
-                  priority_level level);
+                  log_level level);
     ~logger_stream();
 
     template<typename T>
@@ -64,28 +63,26 @@ private:
 
 private:
     std::shared_ptr<std::ostringstream> buffer_;
-    priority_level level_;      
+    log_level level_;      
 };
 
 class logger
 {
 public:
     logger(const char* file_path, 
-           const char* func_name, 
            unsigned long line, 
-           priority_level level);
+           log_level level);
     logger_stream log() const;
 
 private:
     std::string file_path_;             
-    std::string func_name_;             
     unsigned long line_;          
-    priority_level level_; 
+    log_level level_; 
 };
 
-#define LOCATION_INFO __FILE__, __FUNCTION__, __LINE__
+#define LOCATION_INFO __FILE__, __LINE__
 
-#define log_error       logger(LOCATION_INFO, priority_level::error).log
-#define log_warn        logger(LOCATION_INFO, priority_level::warn).log
-#define log_info        logger(LOCATION_INFO, priority_level::info).log
-#define log_debug       logger(LOCATION_INFO, priority_level::debug).log
+#define log_error       logger(LOCATION_INFO, log_level::error).log
+#define log_warn        logger(LOCATION_INFO, log_level::warn).log
+#define log_info        logger(LOCATION_INFO, log_level::info).log
+#define log_debug       logger(LOCATION_INFO, log_level::debug).log
