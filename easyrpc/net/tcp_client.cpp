@@ -82,7 +82,7 @@ bool tcp_client::parse_network_address()
 {
     std::string ip;
     unsigned short port = 0;
-    if (get_ip_and_port(connect_address_, ip, port))
+    if (utiltiy::get_ip_and_port(connect_address_, ip, port))
     {
         boost::asio::ip::tcp::resolver resolver(pool_->get_io_service());
         boost::asio::ip::tcp::resolver::query query(boost::asio::ip::tcp::v4(), ip, std::to_string(port));
@@ -90,7 +90,7 @@ bool tcp_client::parse_network_address()
         return true;
     }
 
-    log_warn() << "parse address failed, address: " << connect_address_;
+    log_warn << "parse address failed, address: " << connect_address_;
     return false;
 }
 

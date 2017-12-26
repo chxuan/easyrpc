@@ -55,9 +55,9 @@ bool address_listen_manager::listen()
     {
         std::string ip;
         unsigned short port = 0;
-        if (!get_ip_and_port(addr, ip, port))
+        if (!utiltiy::get_ip_and_port(addr, ip, port))
         {
-            log_error() << "parse address failed, address: " << addr;
+            log_error << "parse address failed, address: " << addr;
             return false;
         }
 

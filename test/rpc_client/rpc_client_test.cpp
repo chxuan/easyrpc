@@ -15,7 +15,7 @@ void rpc_client_test::run()
     bool ok = client_->connect("127.0.0.1:8888").connect_timeout(3).request_timeout(3).run();
     if (!ok)
     {
-        log_error() << "connect server failed";
+        log_error << "connect server failed";
         return;
     }
 
@@ -25,24 +25,24 @@ void rpc_client_test::run()
 void rpc_client_test::stop()
 {
     client_->stop();
-    log_info() << "rpc client stoped";
+    log_info << "rpc client stoped";
 }
 
 void rpc_client_test::session_status_callback(bool established, const std::string& session_id)
 {
     if (established)
     {
-        log_info() << "session established, session id: " << session_id;
+        log_info << "session established, session id: " << session_id;
     }
     else 
     {
-        log_warn() << "session closed, session id: " << session_id;
+        log_warn << "session closed, session id: " << session_id;
     }
 }
 
 void rpc_client_test::received_sub_message(const std::shared_ptr<google::protobuf::Message>& message)
 {
-    log_info() << message->DebugString();
+    log_info << message->DebugString();
 }
 
 void rpc_client_test::call()
@@ -53,6 +53,6 @@ void rpc_client_test::call()
 
     client_->call(0x0001, message, [](const std::shared_ptr<result>& ret)
     {
-        log_info() << ret->message()->DebugString();
+        log_info << ret->message()->DebugString();
     });
 }

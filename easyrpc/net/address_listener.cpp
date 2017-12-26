@@ -25,7 +25,7 @@ bool address_listener::listen(const std::string& ip, unsigned short port)
     }
     catch(std::exception& e)
     {
-        log_error() << e.what();
+        log_error << e.what();
         return false;
     }
 

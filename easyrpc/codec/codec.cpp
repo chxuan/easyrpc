@@ -83,7 +83,7 @@ void codec::decode_header(const std::vector<char>& buffer)
     else
     {
         reset();
-        log_error() << "invaild header, message_name_len: " << header_.message_name_len << 
+        log_error << "invaild header, message_name_len: " << header_.message_name_len << 
             ", message_data_len: " << header_.message_data_len;
     }
 }

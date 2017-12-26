@@ -62,7 +62,7 @@ std::string tcp_session::get_session_id()
             if (!ec && !ec2)
             {
                 session_id_ = local_endpoint.address().to_string() + ":"
-                    + std::to_string(local_endpoint.port()) + "#"
+                    + std::to_string(local_endpoint.port()) + "&"
                     + remote_endpoint.address().to_string() + ":"
                     + std::to_string(remote_endpoint.port());
             }
@@ -102,7 +102,7 @@ void tcp_session::async_write_loop()
         }
         else
         {
-            log_warn() << ec.message();
+            log_warn << ec.message();
             send_queue_.clear();
         }
     });

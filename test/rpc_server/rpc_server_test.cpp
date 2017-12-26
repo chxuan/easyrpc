@@ -15,13 +15,13 @@ void rpc_server_test::run()
     bool ok = server_->listen("0.0.0.0:8888").ios_threads(4).work_threads(4).run();
     if (!ok)
     {
-        log_error() << "rpc server start failed";
+        log_error<< "rpc server start failed";
         return;
     }
 
     pub_thread_ = std::make_shared<std::thread>(std::bind(&rpc_server_test::publish_thread, this));
 
-    log_info() << "rpc server start...";
+    log_info << "rpc server start...";
 }
 
 void rpc_server_test::stop()
@@ -32,7 +32,7 @@ void rpc_server_test::stop()
     {
         pub_thread_->join();
     }
-    log_info() << "rpc server stoped";
+    log_info << "rpc server stoped";
 }
 
 void rpc_server_test::session_status_callback(bool established, const std::string& session_id)
@@ -40,17 +40,17 @@ void rpc_server_test::session_status_callback(bool established, const std::strin
     if (established)
     {
         client_session_id_ = session_id;
-        log_info() << "session established, session id: " << session_id;
+        log_info << "session established, session id: " << session_id;
     }
     else 
     {
-        log_warn() << "session closed, session id: " << session_id;
+        log_warn << "session closed, session id: " << session_id;
     }
 }
 
 void rpc_server_test::echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
 {
-    log_info() << req->message()->DebugString();
+    log_info << req->message()->DebugString();
     rsp->set_response(req->message());
 }
 

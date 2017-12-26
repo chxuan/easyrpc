@@ -58,11 +58,11 @@ void router::router_thread(int func_id,
         }
         catch (std::exception& e)
         {
-            log_warn() << e.what();
+            log_warn << e.what();
         }
     }
     else
     {
-        log_warn() << "route failed, func id: " << func_id;
+        log_warn << "route failed, func id: " << func_id;
     }
 }

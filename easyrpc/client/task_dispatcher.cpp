@@ -73,7 +73,7 @@ void task_dispatcher::deal_rpc_result(const std::shared_ptr<result>& ret)
     }
     else
     {
-        log_warn() << "dispatch failed, serial num: " << ret->serial_num() 
+        log_warn << "dispatch failed, serial num: " << ret->serial_num() 
             << ", message name: " << ret->message()->GetDescriptor()->full_name();
     }
 }
@@ -97,7 +97,7 @@ void task_dispatcher::check_request_timeout()
     {
         if (current_time - begin->second.begin_time >= request_timeout_)
         {
-            log_warn() << "request timeout, serial_num: " << begin->first;
+            log_warn << "request timeout, serial_num: " << begin->first;
             begin = tasks_.erase(begin);
         }
         else
