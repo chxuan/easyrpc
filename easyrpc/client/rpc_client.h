@@ -8,8 +8,8 @@
 #pragma once
 
 #include "easyrpc/net/tcp_client.h"
-#include "easyrpc/client/result.h"
-#include "easyrpc/client/task.h"
+#include "result.h"
+#include "task.h"
 
 class task_dispatcher;
 

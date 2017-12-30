@@ -8,7 +8,7 @@
 #pragma once
 
 #include "easyrpc/net/tcp_server.h"
-#include "easyrpc/server/router.h"
+#include "router.h"
 
 class rpc_server : public tcp_server
 {

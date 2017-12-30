@@ -1,8 +1,8 @@
 #include "router.h"
+#include "request.h"
+#include "response.h"
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/net/sig.h"
-#include "easyrpc/server/request.h"
-#include "easyrpc/server/response.h"
 
 router::router()
 {
