@@ -26,19 +26,18 @@ public:
     tcp_server& ios_threads(int num);
     tcp_server& work_threads(int num);
     void set_session_status_callback(const std::function<void(bool, const std::string&)>& func);
-    void publish(const std::string& session_id, 
-                 const std::shared_ptr<google::protobuf::Message>& message);
+    void publish(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message);
 
     virtual bool run();
     virtual void stop();
 
 private slots:
-    void handle_session_status_changed(bool established, const std::string& session_id);
+    void deal_session_status_changed(bool established, const std::string& session_id);
 
 protected:
     int work_threads_ = 4;
 
 private:
     std::shared_ptr<address_listen_manager> listen_manager_;
-    std::function<void(bool, const std::string&)> session_status_callback_ = nullptr;
+    std::function<void(bool, const std::string&)> session_status_callback_;
 };

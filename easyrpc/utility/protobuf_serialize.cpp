@@ -5,7 +5,7 @@ std::string protobuf_serialize::serialize(const std::shared_ptr<google::protobuf
 {
     if (!message->IsInitialized())
     {
-        log_warn << "message initialized failed";
+        log_warn << "Message initialized failed";
         return "";
     }
 
@@ -17,26 +17,26 @@ std::shared_ptr<google::protobuf::Message> protobuf_serialize::unserialize(const
 {
     if (message_name.empty())
     {
-        log_warn << "message name is empty";
+        log_warn << "Message name is empty";
         return nullptr;
     }
 
     auto message = create_message(message_name);
     if (message == nullptr)
     {
-        log_warn<< "message is nullptr";
+        log_warn<< "Message is nullptr";
         return nullptr;
     }
 
     if (!message->ParseFromString(body))
     {
-        log_warn << "parse from string failed, message name: " << message_name;
+        log_warn << "Parse from string failed, message name: " << message_name;
         return nullptr;
     }
 
     if (!message->IsInitialized())
     {
-        log_warn << "message initialized failed, message name: " << message_name;
+        log_warn << "Message initialized failed, message name: " << message_name;
         return nullptr;
     }
 

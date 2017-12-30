@@ -9,7 +9,7 @@
 tcp_client::tcp_client()
 {
     codec_ = std::make_shared<client_codec>();
-    qt_connect(session_status_changed, std::bind(&tcp_client::handle_session_status_changed,
+    qt_connect(session_status_changed, std::bind(&tcp_client::deal_session_status_changed, 
                                                  this, std::placeholders::_1, std::placeholders::_2));
 }
 
@@ -90,7 +90,7 @@ bool tcp_client::parse_network_address()
         return true;
     }
 
-    log_warn << "parse address failed, address: " << connect_address_;
+    log_warn << "Parse address failed, address: " << connect_address_;
     return false;
 }
 
@@ -133,7 +133,7 @@ void tcp_client::reconnect()
     });
 }
 
-void tcp_client::handle_session_status_changed(bool established, const std::string& session_id)
+void tcp_client::deal_session_status_changed(bool established, const std::string& session_id)
 {
     if (session_status_callback_)
     {

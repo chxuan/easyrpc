@@ -23,6 +23,7 @@ public:
     void stop();
 
 private:
+    void register_handler();
     void session_status_callback(bool established, const std::string& session_id);
     void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
     void publish_thread();

@@ -9,8 +9,8 @@
 tcp_server::tcp_server()
 {
     listen_manager_ = std::make_shared<address_listen_manager>();
-    qt_connect(session_status_changed, std::bind(&tcp_server::handle_session_status_changed,
-                                             this, std::placeholders::_1, std::placeholders::_2));
+    qt_connect(session_status_changed, std::bind(&tcp_server::deal_session_status_changed, 
+                                                 this, std::placeholders::_1, std::placeholders::_2));
 }
 
 tcp_server::~tcp_server()
@@ -47,15 +47,14 @@ void tcp_server::set_session_status_callback(const std::function<void(bool, cons
     session_status_callback_ = func;
 }
 
-void tcp_server::publish(const std::string& session_id, 
-                         const std::shared_ptr<google::protobuf::Message>& message)
+void tcp_server::publish(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message)
 {
     if (message)
     {
         auto session = singletion<tcp_session_manager>::get_instance().get_session(session_id);
         if (session)
         {
-            auto network_data = session->get_codec()->encode(-1, 0, message);
+            auto network_data = session->get_codec()->encode(-1, message);
             session->async_write(network_data);
         }
     }
@@ -72,7 +71,7 @@ void tcp_server::stop()
     singletion<tcp_session_manager>::get_instance().clear();
 }
 
-void tcp_server::handle_session_status_changed(bool established, const std::string& session_id)
+void tcp_server::deal_session_status_changed(bool established, const std::string& session_id)
 {
     if (!established)
     {

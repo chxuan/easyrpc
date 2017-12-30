@@ -14,5 +14,5 @@ class request;
 class response;
 
 extern qt_signal<bool, std::string> session_status_changed;
-extern qt_signal<int, std::shared_ptr<request>, std::shared_ptr<response>> complete_server_decode_data;
+extern qt_signal<std::shared_ptr<request>, std::shared_ptr<response>> complete_server_decode_data;
 extern qt_signal<std::shared_ptr<result>> complete_client_decode_data;

@@ -47,7 +47,7 @@ void io_service_pool::stop_io_services()
 {
     for (auto& ios : ios_pool_)
     {
-        if (ios != nullptr)
+        if (ios)
         {
             ios->stop();
         }
@@ -58,12 +58,9 @@ void io_service_pool::stop_threads()
 {
     for (auto& t : threads_)
     {
-        if (t != nullptr)
+        if (t && t->joinable())
         {
-            if (t->joinable())
-            {
-                t->join();
-            }
+            t->join();
         }
     }       
 }

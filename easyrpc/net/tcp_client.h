@@ -30,7 +30,7 @@ public:
     void async_write(const std::shared_ptr<std::string>& network_data);
 
 private slots:
-    void handle_session_status_changed(bool established, const std::string& session_id);
+    void deal_session_status_changed(bool established, const std::string& session_id);
 
 private:
     void create_io_service_pool();
@@ -48,5 +48,5 @@ private:
     std::shared_ptr<io_service_pool> pool_;
     std::shared_ptr<tcp_session> session_;
     boost::asio::ip::tcp::resolver::iterator endpoint_iter_;
-    std::function<void(bool, const std::string&)> session_status_callback_ = nullptr;
+    std::function<void(bool, const std::string&)> session_status_callback_;
 };

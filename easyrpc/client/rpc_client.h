@@ -21,9 +21,7 @@ public:
 
     virtual bool run();
     virtual void stop();
-    int call(int func_id,
-             const std::shared_ptr<google::protobuf::Message>& message, 
-             const result_handler& handler);
+    int call(const std::shared_ptr<google::protobuf::Message>& message, const result_handler& handler);
     void bind(const sub_handler& handler);
 
 private:

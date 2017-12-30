@@ -1,4 +1,5 @@
 #include "rpc_server.h"
+#include "easyrpc/utility/logger.h"
 
 rpc_server::~rpc_server()
 {
@@ -9,6 +10,7 @@ bool rpc_server::run()
 {
     if (router_.route_table_size() == 0)
     {
+        log_warn << "Route table is empty";
         return false;
     }
 
@@ -27,7 +29,7 @@ void rpc_server::stop()
     router_.stop();
 }
 
-void rpc_server::bind(int func_id, const function_t& handler)
+void rpc_server::bind(const std::string& message_name, const function_t& handler)
 {
-    router_.bind(func_id, handler);
+    router_.bind(message_name, handler);
 }

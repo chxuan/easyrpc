@@ -14,8 +14,7 @@
 class request;
 class response;
 
-using function_t = std::function<void(const std::shared_ptr<request>&, 
-                                      const std::shared_ptr<response>&)>;
+using function_t = std::function<void(const std::shared_ptr<request>&, const std::shared_ptr<response>&)>;
 
 class router
 {
@@ -25,20 +24,16 @@ public:
 
     void run(int work_threads);
     std::size_t route_table_size();
-    void bind(int func_id, const function_t& handler);
+    void bind(const std::string& message_name, const function_t& handler);
     void stop();
 
 private slots:
-    void handle_complete_server_decode_data(int func_id, 
-                                            const std::shared_ptr<request>& req,
-                                            const std::shared_ptr<response>& rsp);
+    void deal_complete_server_decode_data(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
 
 private:
-    void router_thread(int func_id, 
-                       const std::shared_ptr<request>& req, 
-                       const std::shared_ptr<response>& rsp);
+    void router_thread(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
 
 private:
     thread_pool threadpool_;
-    std::unordered_map<int, function_t> route_table_;
+    std::unordered_map<std::string, function_t> route_table_;
 };

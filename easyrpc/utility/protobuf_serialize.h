@@ -14,8 +14,7 @@ class protobuf_serialize
 {
 public:
     static std::string serialize(const std::shared_ptr<google::protobuf::Message>& message);
-    static std::shared_ptr<google::protobuf::Message> unserialize(const std::string& message_name,
-                                                                  const std::string& body);
+    static std::shared_ptr<google::protobuf::Message> unserialize(const std::string& message_name, const std::string& body);
 
 private:
     static std::shared_ptr<google::protobuf::Message> create_message(const std::string& message_name);

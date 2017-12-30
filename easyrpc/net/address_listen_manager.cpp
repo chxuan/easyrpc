@@ -57,7 +57,7 @@ bool address_listen_manager::listen()
         unsigned short port = 0;
         if (!utiltiy::get_ip_and_port(addr, ip, port))
         {
-            log_error << "parse address failed, address: " << addr;
+            log_error << "Parse address failed, address: " << addr;
             return false;
         }
 

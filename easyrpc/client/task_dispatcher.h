@@ -26,7 +26,7 @@ public:
     void clear();
 
 private slots:
-    void handle_complete_client_decode_data(const std::shared_ptr<result>& ret);
+    void deal_complete_client_decode_data(const std::shared_ptr<result>& ret);
 
 private:
     void dispatch_thread(const std::shared_ptr<result>& ret);
@@ -42,5 +42,5 @@ private:
     std::mutex mutex_;
     atimer<boost::posix_time::seconds> timer_;
     thread_pool threadpool_;
-    sub_handler sub_handler_ = nullptr;
+    sub_handler sub_handler_;
 };

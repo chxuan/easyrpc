@@ -3,8 +3,7 @@
 #include "easyrpc/net/sig.h"
 #include "easyrpc/client/result.h"
 
-void client_codec::handle_decode_data(const packet_body& body, 
-                                      const std::shared_ptr<tcp_session>& session)
+void client_codec::handle_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session)
 {
 
     (void)session;

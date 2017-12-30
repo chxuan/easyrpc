@@ -7,11 +7,9 @@ codec::codec()
     reset();
 }
 
-std::shared_ptr<std::string> codec::encode(int serial_num, 
-                                           int func_id,
-                                           const std::shared_ptr<google::protobuf::Message>& message) 
+std::shared_ptr<std::string> codec::encode(int serial_num, const std::shared_ptr<google::protobuf::Message>& message) 
 {
-    auto body = encode_body(serial_num, func_id, message);
+    auto body = encode_body(serial_num, message);
     auto header = encode_header(body);
     return make_network_data(header, body);
 }
@@ -47,13 +45,10 @@ packet_header codec::encode_header(const packet_body& body)
     return header;
 }
 
-packet_body codec::encode_body(int serial_num, 
-                               int func_id, 
-                               const std::shared_ptr<google::protobuf::Message>& message)
+packet_body codec::encode_body(int serial_num, const std::shared_ptr<google::protobuf::Message>& message)
 {
     packet_body body;
     body.serial_num = serial_num;
-    body.func_id = func_id;
     body.message_name = message->GetDescriptor()->full_name();
     body.message_data = protobuf_serialize::serialize(message);
 
@@ -66,7 +61,6 @@ std::shared_ptr<std::string> codec::make_network_data(const packet_header& heade
 
     copy_to_buffer(header, network_data);
     copy_to_buffer(body.serial_num, network_data);
-    copy_to_buffer(body.func_id, network_data);
     copy_to_buffer(body.message_name, network_data);
     copy_to_buffer(body.message_data, network_data);
 
@@ -93,7 +87,6 @@ void codec::decode_body(const std::vector<char>& buffer, const std::shared_ptr<t
     int pos = 0;
 
     copy_from_buffer(body_.serial_num, pos, buffer);
-    copy_from_buffer(body_.func_id, pos, buffer);
     copy_from_buffer(body_.message_name, pos, header_.message_name_len, buffer);
     copy_from_buffer(body_.message_data, pos, header_.message_data_len, buffer);
 
@@ -110,7 +103,7 @@ void codec::prepare_decode_header()
 void codec::prepare_decode_body()
 {
     decode_header_ = false;
-    next_recv_bytes_ = 2 * sizeof(int) + header_.message_name_len + header_.message_data_len;
+    next_recv_bytes_ = sizeof(int) + header_.message_name_len + header_.message_data_len;
 }
 
 void codec::copy_from_buffer(std::string& str, int& pos, int len, const std::vector<char>& buffer)

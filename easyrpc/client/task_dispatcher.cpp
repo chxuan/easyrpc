@@ -5,7 +5,7 @@
 
 task_dispatcher::task_dispatcher() 
 {
-    qt_connect(complete_client_decode_data, std::bind(&task_dispatcher::handle_complete_client_decode_data, 
+    qt_connect(complete_client_decode_data, std::bind(&task_dispatcher::deal_complete_client_decode_data, 
                                                       this, std::placeholders::_1));
 }
 
@@ -46,7 +46,7 @@ void task_dispatcher::clear()
     tasks_.clear();
 }
 
-void task_dispatcher::handle_complete_client_decode_data(const std::shared_ptr<result>& ret)
+void task_dispatcher::deal_complete_client_decode_data(const std::shared_ptr<result>& ret)
 {
     threadpool_.add_task(std::bind(&task_dispatcher::dispatch_thread, this, ret));
 }
@@ -73,7 +73,7 @@ void task_dispatcher::deal_rpc_result(const std::shared_ptr<result>& ret)
     }
     else
     {
-        log_warn << "dispatch failed, serial num: " << ret->serial_num() 
+        log_warn << "Dispatch failed, serial num: " << ret->serial_num() 
             << ", message name: " << ret->message()->GetDescriptor()->full_name();
     }
 }

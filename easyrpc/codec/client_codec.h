@@ -12,6 +12,5 @@
 class client_codec : public codec
 {
 protected:
-    virtual void handle_decode_data(const packet_body& body, 
-                                    const std::shared_ptr<tcp_session>& session);
+    virtual void handle_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session);
 };

@@ -2,12 +2,13 @@
 #include "../proto/code/proto_message.pb.h"
 #include "easyrpc/easyrpc.h"
 
+using namespace std::placeholders;
+
 rpc_client_test::rpc_client_test()
 {
     client_ = std::make_shared<rpc_client>();
-    client_->set_session_status_callback(std::bind(&rpc_client_test::session_status_callback, this,
-                                                   std::placeholders::_1, std::placeholders::_2));
-    client_->bind(std::bind(&rpc_client_test::received_sub_message, this, std::placeholders::_1));
+    client_->set_session_status_callback(std::bind(&rpc_client_test::session_status_callback, this, _1, _2));
+    client_->bind(std::bind(&rpc_client_test::received_sub_message, this, _1));
 }
 
 void rpc_client_test::run()
@@ -51,7 +52,7 @@ void rpc_client_test::call()
     message->set_name("Jack");
     message->set_age(20);
 
-    client_->call(0x0001, message, [](const std::shared_ptr<result>& ret)
+    client_->call(message, [](const std::shared_ptr<result>& ret)
     {
         log_info << ret->message()->DebugString();
     });

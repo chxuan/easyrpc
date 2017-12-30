@@ -23,7 +23,6 @@ struct packet_header
 struct packet_body
 {
     int serial_num;
-    int func_id;
     std::string message_name;
     std::string message_data;
 };
@@ -34,22 +33,17 @@ public:
     codec();
     virtual ~codec() = default;
 
-    std::shared_ptr<std::string> encode(int serial_num, 
-                                        int func_id, 
-                                        const std::shared_ptr<google::protobuf::Message>& message);
+    std::shared_ptr<std::string> encode(int serial_num, const std::shared_ptr<google::protobuf::Message>& message);
     void decode(const std::vector<char>& buffer, const std::shared_ptr<tcp_session>& session);
     void reset();
     int get_next_recv_bytes();
 
 protected:
-    virtual void handle_decode_data(const packet_body& body, 
-                                    const std::shared_ptr<tcp_session>& session) = 0;
+    virtual void handle_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session) = 0;
 
 private:
     packet_header encode_header(const packet_body& body);
-    packet_body encode_body(int serial_num, 
-                            int func_id, 
-                            const std::shared_ptr<google::protobuf::Message>& message); 
+    packet_body encode_body(int serial_num, const std::shared_ptr<google::protobuf::Message>& message); 
     std::shared_ptr<std::string> make_network_data(const packet_header& header, const packet_body& body);
 
     void decode_header(const std::vector<char>& buffer);

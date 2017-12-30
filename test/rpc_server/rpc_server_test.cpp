@@ -2,12 +2,13 @@
 #include "../proto/code/proto_message.pb.h"
 #include "easyrpc/easyrpc.h"
 
+using namespace std::placeholders;
+
 rpc_server_test::rpc_server_test()
 {
     server_ = std::make_shared<rpc_server>();
-    server_->set_session_status_callback(std::bind(&rpc_server_test::session_status_callback, this,
-                                                   std::placeholders::_1, std::placeholders::_2));
-    server_->bind(0x0001, std::bind(&rpc_server_test::echo, this, std::placeholders::_1, std::placeholders::_2));
+    server_->set_session_status_callback(std::bind(&rpc_server_test::session_status_callback, this, _1, _2));
+    register_handler();
 }
 
 void rpc_server_test::run()
@@ -33,6 +34,11 @@ void rpc_server_test::stop()
         pub_thread_->join();
     }
     log_info << "rpc server stoped";
+}
+
+void rpc_server_test::register_handler()
+{
+    server_->bind(request_person_info_message::descriptor()->full_name(), std::bind(&rpc_server_test::echo, this, _1, _2));
 }
 
 void rpc_server_test::session_status_callback(bool established, const std::string& session_id)
