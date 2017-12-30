@@ -13,6 +13,8 @@ A modern RPC framework based on protobuf
     #include "easyrpc/easyrpc.h"
     #include "common.pb.h"
     
+    using namespace std::placeholders;
+
     void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
     {
         rsp->set_response(req->message());
@@ -23,9 +25,7 @@ A modern RPC framework based on protobuf
         // 1.创建rpc服务器对象
         auto server = std::make_shared<rpc_server>();
         // 2.绑定echo函数
-        // 0x0001为函数id
-        server->bind(0x0001, std::bind(echo, 
-                                       std::placeholders::_1, std::placeholders::_2));
+        server->bind(echo_message::descriptor()->full_name(), std::bind(echo, _1, _2));
     
         // 3.配置监听参数并启动事件循环（非阻塞）
         // 服务端将采用4个io线程和4个work线程服务
@@ -49,11 +49,11 @@ A modern RPC framework based on protobuf
         client->connect("127.0.0.1:8888").request_timeout(3).run();
     
         auto req = std::make_shared<echo_message>();
-        req->set_echo_str("Hello world");
-        req->set_echo_num(100);
+        req->set_str("Hello world");
+        req->set_num(1024);
 
         // 3.异步调用echo函数
-        client->call(0x0001, message, [](const std::shared_ptr<result>& ret)
+        client->call(message, [](const std::shared_ptr<result>& ret)
         {
             log_info() << ret->message()->DebugString();
         });

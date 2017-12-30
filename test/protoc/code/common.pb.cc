@@ -80,8 +80,8 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::echo_message, name_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::echo_message, age_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::echo_message, str_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::echo_message, num_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::auto_weather_message, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -122,13 +122,13 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n\014common.proto\")\n\014echo_message\022\014\n\004name\030\001"
-      " \001(\t\022\013\n\003age\030\002 \001(\005\":\n\024auto_weather_messag"
-      "e\022\021\n\tcity_name\030\001 \001(\t\022\017\n\007weather\030\002 \001(\tb\006p"
-      "roto3"
+      "\n\014common.proto\"(\n\014echo_message\022\013\n\003str\030\001 "
+      "\001(\t\022\013\n\003num\030\002 \001(\005\":\n\024auto_weather_message"
+      "\022\021\n\tcity_name\030\001 \001(\t\022\017\n\007weather\030\002 \001(\tb\006pr"
+      "oto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 125);
+      descriptor, 124);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "common.proto", &protobuf_RegisterTypes);
 }
@@ -150,8 +150,8 @@ struct StaticDescriptorInitializer {
 void echo_message::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int echo_message::kNameFieldNumber;
-const int echo_message::kAgeFieldNumber;
+const int echo_message::kStrFieldNumber;
+const int echo_message::kNumFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 echo_message::echo_message()
@@ -167,17 +167,17 @@ echo_message::echo_message(const echo_message& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.name().size() > 0) {
-    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  str_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.str().size() > 0) {
+    str_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.str_);
   }
-  age_ = from.age_;
+  num_ = from.num_;
   // @@protoc_insertion_point(copy_constructor:echo_message)
 }
 
 void echo_message::SharedCtor() {
-  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  age_ = 0;
+  str_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  num_ = 0;
   _cached_size_ = 0;
 }
 
@@ -187,7 +187,7 @@ echo_message::~echo_message() {
 }
 
 void echo_message::SharedDtor() {
-  name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  str_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void echo_message::SetCachedSize(int size) const {
@@ -219,8 +219,8 @@ void echo_message::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  age_ = 0;
+  str_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  num_ = 0;
   _internal_metadata_.Clear();
 }
 
@@ -234,30 +234,30 @@ bool echo_message::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string name = 1;
+      // string str = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_name()));
+                input, this->mutable_str()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->name().data(), static_cast<int>(this->name().length()),
+            this->str().data(), static_cast<int>(this->str().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "echo_message.name"));
+            "echo_message.str"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // int32 age = 2;
+      // int32 num = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &age_)));
+                 input, &num_)));
         } else {
           goto handle_unusual;
         }
@@ -290,19 +290,19 @@ void echo_message::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string name = 1;
-  if (this->name().size() > 0) {
+  // string str = 1;
+  if (this->str().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->name().data(), static_cast<int>(this->name().length()),
+      this->str().data(), static_cast<int>(this->str().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "echo_message.name");
+      "echo_message.str");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->name(), output);
+      1, this->str(), output);
   }
 
-  // int32 age = 2;
-  if (this->age() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->age(), output);
+  // int32 num = 2;
+  if (this->num() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->num(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -319,20 +319,20 @@ void echo_message::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string name = 1;
-  if (this->name().size() > 0) {
+  // string str = 1;
+  if (this->str().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->name().data(), static_cast<int>(this->name().length()),
+      this->str().data(), static_cast<int>(this->str().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "echo_message.name");
+      "echo_message.str");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->name(), target);
+        1, this->str(), target);
   }
 
-  // int32 age = 2;
-  if (this->age() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->age(), target);
+  // int32 num = 2;
+  if (this->num() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->num(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -352,18 +352,18 @@ size_t echo_message::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // string name = 1;
-  if (this->name().size() > 0) {
+  // string str = 1;
+  if (this->str().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->name());
+        this->str());
   }
 
-  // int32 age = 2;
-  if (this->age() != 0) {
+  // int32 num = 2;
+  if (this->num() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->age());
+        this->num());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -395,12 +395,12 @@ void echo_message::MergeFrom(const echo_message& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.name().size() > 0) {
+  if (from.str().size() > 0) {
 
-    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+    str_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.str_);
   }
-  if (from.age() != 0) {
-    set_age(from.age());
+  if (from.num() != 0) {
+    set_num(from.num());
   }
 }
 
@@ -428,8 +428,8 @@ void echo_message::Swap(echo_message* other) {
 }
 void echo_message::InternalSwap(echo_message* other) {
   using std::swap;
-  name_.Swap(&other->name_);
-  swap(age_, other->age_);
+  str_.Swap(&other->str_);
+  swap(num_, other->num_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }

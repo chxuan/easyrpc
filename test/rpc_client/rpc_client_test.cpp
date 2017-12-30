@@ -1,5 +1,5 @@
 #include "rpc_client_test.h"
-#include "../proto/code/proto_message.pb.h"
+#include "../protoc/code/common.pb.h"
 #include "easyrpc/easyrpc.h"
 
 using namespace std::placeholders;
@@ -48,9 +48,9 @@ void rpc_client_test::received_sub_message(const std::shared_ptr<google::protobu
 
 void rpc_client_test::call()
 {
-    auto message = std::make_shared<request_person_info_message>();
-    message->set_name("Jack");
-    message->set_age(20);
+    auto message = std::make_shared<echo_message>();
+    message->set_str("Hello world");
+    message->set_num(1024);
 
     client_->call(message, [](const std::shared_ptr<result>& ret)
     {

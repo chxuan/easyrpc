@@ -142,32 +142,32 @@ class echo_message : public ::google::protobuf::Message /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // string name = 1;
-  void clear_name();
-  static const int kNameFieldNumber = 1;
-  const ::std::string& name() const;
-  void set_name(const ::std::string& value);
+  // string str = 1;
+  void clear_str();
+  static const int kStrFieldNumber = 1;
+  const ::std::string& str() const;
+  void set_str(const ::std::string& value);
   #if LANG_CXX11
-  void set_name(::std::string&& value);
+  void set_str(::std::string&& value);
   #endif
-  void set_name(const char* value);
-  void set_name(const char* value, size_t size);
-  ::std::string* mutable_name();
-  ::std::string* release_name();
-  void set_allocated_name(::std::string* name);
+  void set_str(const char* value);
+  void set_str(const char* value, size_t size);
+  ::std::string* mutable_str();
+  ::std::string* release_str();
+  void set_allocated_str(::std::string* str);
 
-  // int32 age = 2;
-  void clear_age();
-  static const int kAgeFieldNumber = 2;
-  ::google::protobuf::int32 age() const;
-  void set_age(::google::protobuf::int32 value);
+  // int32 num = 2;
+  void clear_num();
+  static const int kNumFieldNumber = 2;
+  ::google::protobuf::int32 num() const;
+  void set_num(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:echo_message)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr name_;
-  ::google::protobuf::int32 age_;
+  ::google::protobuf::internal::ArenaStringPtr str_;
+  ::google::protobuf::int32 num_;
   mutable int _cached_size_;
   friend struct ::protobuf_common_2eproto::TableStruct;
   friend void ::protobuf_common_2eproto::InitDefaultsecho_messageImpl();
@@ -305,71 +305,71 @@ class auto_weather_message : public ::google::protobuf::Message /* @@protoc_inse
 #endif  // __GNUC__
 // echo_message
 
-// string name = 1;
-inline void echo_message::clear_name() {
-  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string str = 1;
+inline void echo_message::clear_str() {
+  str_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& echo_message::name() const {
-  // @@protoc_insertion_point(field_get:echo_message.name)
-  return name_.GetNoArena();
+inline const ::std::string& echo_message::str() const {
+  // @@protoc_insertion_point(field_get:echo_message.str)
+  return str_.GetNoArena();
 }
-inline void echo_message::set_name(const ::std::string& value) {
+inline void echo_message::set_str(const ::std::string& value) {
   
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:echo_message.name)
+  str_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:echo_message.str)
 }
 #if LANG_CXX11
-inline void echo_message::set_name(::std::string&& value) {
+inline void echo_message::set_str(::std::string&& value) {
   
-  name_.SetNoArena(
+  str_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:echo_message.name)
+  // @@protoc_insertion_point(field_set_rvalue:echo_message.str)
 }
 #endif
-inline void echo_message::set_name(const char* value) {
+inline void echo_message::set_str(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:echo_message.name)
+  str_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:echo_message.str)
 }
-inline void echo_message::set_name(const char* value, size_t size) {
+inline void echo_message::set_str(const char* value, size_t size) {
   
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  str_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:echo_message.name)
+  // @@protoc_insertion_point(field_set_pointer:echo_message.str)
 }
-inline ::std::string* echo_message::mutable_name() {
+inline ::std::string* echo_message::mutable_str() {
   
-  // @@protoc_insertion_point(field_mutable:echo_message.name)
-  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:echo_message.str)
+  return str_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* echo_message::release_name() {
-  // @@protoc_insertion_point(field_release:echo_message.name)
+inline ::std::string* echo_message::release_str() {
+  // @@protoc_insertion_point(field_release:echo_message.str)
   
-  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return str_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void echo_message::set_allocated_name(::std::string* name) {
-  if (name != NULL) {
+inline void echo_message::set_allocated_str(::std::string* str) {
+  if (str != NULL) {
     
   } else {
     
   }
-  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
-  // @@protoc_insertion_point(field_set_allocated:echo_message.name)
+  str_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), str);
+  // @@protoc_insertion_point(field_set_allocated:echo_message.str)
 }
 
-// int32 age = 2;
-inline void echo_message::clear_age() {
-  age_ = 0;
+// int32 num = 2;
+inline void echo_message::clear_num() {
+  num_ = 0;
 }
-inline ::google::protobuf::int32 echo_message::age() const {
-  // @@protoc_insertion_point(field_get:echo_message.age)
-  return age_;
+inline ::google::protobuf::int32 echo_message::num() const {
+  // @@protoc_insertion_point(field_get:echo_message.num)
+  return num_;
 }
-inline void echo_message::set_age(::google::protobuf::int32 value) {
+inline void echo_message::set_num(::google::protobuf::int32 value) {
   
-  age_ = value;
-  // @@protoc_insertion_point(field_set:echo_message.age)
+  num_ = value;
+  // @@protoc_insertion_point(field_set:echo_message.num)
 }
 
 // -------------------------------------------------------------------

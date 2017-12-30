@@ -2,8 +2,8 @@ syntax = "proto3";
 
 message echo_message
 {
-    string name = 1;
-    int32 age = 2;
+    string str = 1;
+    int32 num = 2;
 }
 
 message auto_weather_message

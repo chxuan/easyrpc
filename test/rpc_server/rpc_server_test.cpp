@@ -1,5 +1,5 @@
 #include "rpc_server_test.h"
-#include "../proto/code/proto_message.pb.h"
+#include "../protoc/code/common.pb.h"
 #include "easyrpc/easyrpc.h"
 
 using namespace std::placeholders;
@@ -38,7 +38,7 @@ void rpc_server_test::stop()
 
 void rpc_server_test::register_handler()
 {
-    server_->bind(request_person_info_message::descriptor()->full_name(), std::bind(&rpc_server_test::echo, this, _1, _2));
+    server_->bind(echo_message::descriptor()->full_name(), std::bind(&rpc_server_test::echo, this, _1, _2));
 }
 
 void rpc_server_test::session_status_callback(bool established, const std::string& session_id)
@@ -67,9 +67,9 @@ void rpc_server_test::publish_thread()
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         if (!client_session_id_.empty())
         {
-            auto message = std::make_shared<request_person_info_message>();
-            message->set_name("Tom");
-            message->set_age(25);
+            auto message = std::make_shared<auto_weather_message>();
+            message->set_city_name("ChengDu");
+            message->set_weather("Sunny");
 
             server_->publish(client_session_id_, message);
         }
