@@ -37,7 +37,6 @@ private:
     bool start_listen();
     bool listen(const std::string& ip, unsigned short port);
     void accept();
-    void deal_client_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
     void deal_session_closed(const std::string& session_id);
     void deal_session_established(const std::shared_ptr<tcp_session>& session);
 
