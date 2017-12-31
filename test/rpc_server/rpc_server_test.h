@@ -18,7 +18,8 @@ class response;
 class rpc_server_test
 {
 public:
-    rpc_server_test();
+    ~rpc_server_test();
+
     void run();
     void stop();
 

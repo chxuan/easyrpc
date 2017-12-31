@@ -13,6 +13,7 @@
 class rpc_server : public tcp_server
 {
 public:
+    rpc_server(const std::string& host, int ios_threads = 4, int work_threads = 4);
     virtual ~rpc_server();
 
     virtual bool run();
@@ -21,5 +22,6 @@ public:
     void bind(const std::string& message_name, const function_t& handler);
 
 private:
+    int work_threads_;
     router router_;
 };

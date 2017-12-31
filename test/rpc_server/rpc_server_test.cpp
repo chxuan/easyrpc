@@ -4,16 +4,18 @@
 
 using namespace std::placeholders;
 
-rpc_server_test::rpc_server_test()
+rpc_server_test::~rpc_server_test()
 {
-    server_ = std::make_shared<rpc_server>();
-    server_->set_session_status_callback(std::bind(&rpc_server_test::session_status_callback, this, _1, _2));
-    register_handler();
+    stop();
 }
 
 void rpc_server_test::run()
 {
-    bool ok = server_->listen("0.0.0.0:8888").ios_threads(4).work_threads(4).run();
+    server_ = std::make_shared<rpc_server>("0.0.0.0:8888", 4, 4);
+    server_->set_session_status_callback(std::bind(&rpc_server_test::session_status_callback, this, _1, _2));
+    register_handler();
+
+    bool ok = server_->run();
     if (!ok)
     {
         log_error<< "rpc server start failed";
@@ -28,12 +30,16 @@ void rpc_server_test::run()
 void rpc_server_test::stop()
 {
     server_stoped_ = true;
-    server_->stop();
-    if (pub_thread_)
+
+    if (pub_thread_ && pub_thread_->joinable())
     {
         pub_thread_->join();
     }
-    log_info << "rpc server stoped";
+
+    if (server_)
+    {
+        server_->stop();
+    }
 }
 
 void rpc_server_test::register_handler()

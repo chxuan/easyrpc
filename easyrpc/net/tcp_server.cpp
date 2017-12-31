@@ -1,15 +1,15 @@
 #include "tcp_server.h"
 #include "sig.h"
-#include "address_listener.h"
 #include "tcp_session.h"
 #include "io_service_pool.h"
-#include "tcp_session_manager.h"
+#include "tcp_session_cache.h"
 #include "easyrpc/codec/server_codec.h"
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/utility/utiltiy.h"
 
-tcp_server::tcp_server() 
-    : pool_(std::make_shared<io_service_pool>(4)), 
+tcp_server::tcp_server(const std::string& host, int ios_threads)
+    : host_(host),
+    pool_(std::make_shared<io_service_pool>(ios_threads)), 
     acceptor_(pool_->get_io_service())
 {
     qt_connect(session_status_changed, std::bind(&tcp_server::deal_session_status_changed, 
@@ -21,24 +21,6 @@ tcp_server::~tcp_server()
     stop();
 }
 
-tcp_server& tcp_server::listen(const std::string& host)
-{
-    host_ = host;
-    return *this;
-}
-
-tcp_server& tcp_server::ios_threads(int num)
-{
-    ios_threads_ = num;
-    return *this;
-}
-
-tcp_server& tcp_server::work_threads(int num)
-{
-    work_threads_ = num;
-    return *this;
-}
-
 void tcp_server::set_session_status_callback(const std::function<void(bool, const std::string&)>& func)
 {
     session_status_callback_ = func;
@@ -48,7 +30,7 @@ void tcp_server::publish(const std::string& session_id, const std::shared_ptr<go
 {
     if (message)
     {
-        auto session = manager_->get_session(session_id);
+        auto session = session_cache_->get_session(session_id);
         if (session)
         {
             auto network_data = session->get_codec()->encode(-1, message);
@@ -59,7 +41,7 @@ void tcp_server::publish(const std::string& session_id, const std::shared_ptr<go
 
 bool tcp_server::run()
 {
-    manager_ = std::make_shared<tcp_session_manager>();
+    session_cache_ = std::make_shared<tcp_session_cache>();
     return start_listen();
 }
 
@@ -67,9 +49,9 @@ void tcp_server::stop()
 {
     pool_->stop();
 
-    if (manager_)
+    if (session_cache_)
     {
-        manager_->clear();
+        session_cache_->clear();
     }
 }
 
@@ -77,7 +59,7 @@ void tcp_server::deal_session_status_changed(bool established, const std::string
 {
     if (!established)
     {
-        manager_->remove_session(session_id);
+        session_cache_->remove_session(session_id);
     }
 
     if (session_status_callback_)

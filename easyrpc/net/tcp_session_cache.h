@@ -1,6 +1,6 @@
 /**
- * @file tcp_session_manager.h
- * @brief tcp会话管理
+ * @file tcp_session_cache.h
+ * @brief tcp会话缓存
  * @author chxuan, 787280310@qq.com
  * @version 1.0.0
  * @date 2017-12-01
@@ -13,7 +13,7 @@
 
 class tcp_session;
 
-class tcp_session_manager
+class tcp_session_cache
 {
 public:
     std::shared_ptr<tcp_session> get_session(const std::string& session_id);

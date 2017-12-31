@@ -1,6 +1,13 @@
 #include "rpc_server.h"
 #include "easyrpc/utility/logger.h"
 
+rpc_server::rpc_server(const std::string& host, int ios_threads, int work_threads)
+    : tcp_server(host, ios_threads), 
+    work_threads_(work_threads)
+{
+
+}
+
 rpc_server::~rpc_server()
 {
     stop();
