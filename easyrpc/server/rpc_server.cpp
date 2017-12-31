@@ -36,7 +36,12 @@ void rpc_server::stop()
     router_.stop();
 }
 
-void rpc_server::bind(const std::string& message_name, const function_t& handler)
+void rpc_server::bind(const std::string& message_name, const request_handler& func)
 {
-    router_.bind(message_name, handler);
+    router_.bind(message_name, func);
+}
+
+void rpc_server::deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
+{
+    router_.route(req, rsp);
 }

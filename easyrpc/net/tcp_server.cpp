@@ -94,7 +94,8 @@ bool tcp_server::listen(const std::string& ip, unsigned short port)
 
 void tcp_server::accept()
 {
-    std::shared_ptr<codec> codec = std::make_shared<server_codec>();
+    std::shared_ptr<codec> codec = std::make_shared<server_codec>(std::bind(&tcp_server::deal_client_request, 
+                                                                            this, std::placeholders::_1, std::placeholders::_2));
     auto session = std::make_shared<tcp_session>(codec, pool_->get_io_service(), 
                                                  std::bind(&tcp_server::deal_session_closed, this, std::placeholders::_1));
     acceptor_.async_accept(session->get_socket(), [this, session](boost::system::error_code ec)
@@ -106,6 +107,11 @@ void tcp_server::accept()
         }
         accept();
     });
+}
+
+void tcp_server::deal_client_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
+{
+    deal_request(req, rsp);
 }
 
 void tcp_server::deal_session_established(const std::shared_ptr<tcp_session>& session)

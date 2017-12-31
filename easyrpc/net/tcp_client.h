@@ -8,7 +8,6 @@
 #pragma once
 
 #include <boost/asio.hpp>
-#include "easyrpc/utility/qt_connect.h"
 
 class codec;
 class tcp_session;

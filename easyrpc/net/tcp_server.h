@@ -12,8 +12,9 @@
 #include <boost/asio.hpp>
 #include <google/protobuf/message.h>
 #include "easyrpc/utility/utiltiy.h"
-#include "easyrpc/utility/qt_connect.h"
 
+class request;
+class response;
 class io_service_pool;
 class tcp_session;
 class tcp_session_cache;
@@ -29,10 +30,14 @@ public:
     virtual bool run();
     virtual void stop();
 
+protected:
+    virtual void deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp) = 0;
+
 private:
     bool start_listen();
     bool listen(const std::string& ip, unsigned short port);
     void accept();
+    void deal_client_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
     void deal_session_closed(const std::string& session_id);
     void deal_session_established(const std::shared_ptr<tcp_session>& session);
 

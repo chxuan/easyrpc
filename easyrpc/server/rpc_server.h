@@ -18,8 +18,10 @@ public:
 
     virtual bool run();
     virtual void stop();
+    void bind(const std::string& message_name, const request_handler& func);
 
-    void bind(const std::string& message_name, const function_t& handler);
+protected:
+    virtual void deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
 
 private:
     int work_threads_;

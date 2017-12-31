@@ -9,31 +9,27 @@
 
 #include <unordered_map>
 #include "easyrpc/utility/thread_pool.h"
-#include "easyrpc/utility/qt_connect.h"
 
 class request;
 class response;
 
-using function_t = std::function<void(const std::shared_ptr<request>&, const std::shared_ptr<response>&)>;
+using request_handler = std::function<void(const std::shared_ptr<request>&, const std::shared_ptr<response>&)>;
 
 class router
 {
 public:
-    router();
     ~router();
 
     void run(int work_threads);
     std::size_t route_table_size();
-    void bind(const std::string& message_name, const function_t& handler);
+    void bind(const std::string& message_name, const request_handler& func);
     void stop();
-
-private slots:
-    void deal_complete_server_decode_data(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
+    void route(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
 
 private:
-    void router_thread(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
+    void route_thread(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
 
 private:
     thread_pool threadpool_;
-    std::unordered_map<std::string, function_t> route_table_;
+    std::unordered_map<std::string, request_handler> route_table_;
 };
