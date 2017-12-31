@@ -16,10 +16,10 @@
 class task_dispatcher
 {
 public:
-    task_dispatcher();
+    task_dispatcher(int request_timeout);
     ~task_dispatcher();
 
-    void run(time_t request_timeout);
+    void run();
     void add_result_handler(int serial_num, const result_handler& handler);
     void bind(const sub_handler& handler);
     void stop();

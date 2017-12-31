@@ -16,7 +16,7 @@ class task_dispatcher;
 class rpc_client : public tcp_client
 {
 public:
-    rpc_client();
+    rpc_client(const std::string& address, int request_timeout = 10);
     virtual ~rpc_client();
 
     virtual bool run();

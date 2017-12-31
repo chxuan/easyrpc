@@ -6,8 +6,9 @@
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/codec/client_codec.h"
 
-tcp_client::tcp_client() 
-    : pool_(std::make_shared<io_service_pool>(1))
+tcp_client::tcp_client(const std::string& address)
+    : address_(address),
+    pool_(std::make_shared<io_service_pool>(1))
 {
     codec_ = std::make_shared<client_codec>();
     qt_connect(session_status_changed, std::bind(&tcp_client::deal_session_status_changed, 
@@ -17,24 +18,6 @@ tcp_client::tcp_client()
 tcp_client::~tcp_client()
 {
     stop();
-}
-
-tcp_client& tcp_client::connect(const std::string& address)
-{
-    address_ = address;
-    return *this;
-}
-
-tcp_client& tcp_client::connect_timeout(time_t seconds)
-{
-    connect_timeout_ = seconds;
-    return *this;
-}
-
-tcp_client& tcp_client::request_timeout(time_t seconds)
-{
-    request_timeout_ = seconds;
-    return *this;
 }
 
 void tcp_client::set_session_status_callback(const std::function<void(bool, const std::string&)>& func)
@@ -90,23 +73,17 @@ bool tcp_client::parse_connect_address()
 
 bool tcp_client::connect(boost::asio::ip::tcp::socket& socket)
 {
-    time_t begin_time = time(nullptr);
-    while (true)
+    try
     {
-        try
-        {
-            boost::asio::connect(socket, endpoint_iter_);
-            return true;
-        }
-        catch (std::exception& e)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(20));
-            if (time(nullptr) - begin_time >= connect_timeout_)
-            {
-                return false;
-            }
-        }
+        boost::asio::connect(socket, endpoint_iter_);
     }
+    catch (std::exception& e)
+    {
+        log_warn << e.what() << ", address: " << address_;
+        return false;
+    }
+
+    return true;
 }
 
 void tcp_client::reconnect()

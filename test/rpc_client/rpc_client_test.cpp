@@ -4,19 +4,21 @@
 
 using namespace std::placeholders;
 
-rpc_client_test::rpc_client_test()
+rpc_client_test::~rpc_client_test()
 {
-    client_ = std::make_shared<rpc_client>();
-    client_->set_session_status_callback(std::bind(&rpc_client_test::session_status_callback, this, _1, _2));
-    client_->bind(std::bind(&rpc_client_test::received_sub_message, this, _1));
+    stop();
 }
 
 void rpc_client_test::run()
 {
-    bool ok = client_->connect("127.0.0.1:8888").connect_timeout(3).request_timeout(3).run();
+    client_ = std::make_shared<rpc_client>("127.0.0.1:8888", 3);
+    client_->set_session_status_callback(std::bind(&rpc_client_test::session_status_callback, this, _1, _2));
+    client_->bind(std::bind(&rpc_client_test::received_sub_message, this, _1));
+
+    bool ok = client_->run();
     if (!ok)
     {
-        log_error << "connect server failed";
+        log_error << "Connect server failed";
         return;
     }
 
@@ -25,8 +27,10 @@ void rpc_client_test::run()
 
 void rpc_client_test::stop()
 {
-    client_->stop();
-    log_info << "rpc client stoped";
+    if (client_)
+    {
+        client_->stop();
+    }
 }
 
 void rpc_client_test::session_status_callback(bool established, const std::string& session_id)

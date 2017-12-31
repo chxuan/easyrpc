@@ -3,7 +3,8 @@
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/net/sig.h"
 
-task_dispatcher::task_dispatcher() 
+task_dispatcher::task_dispatcher(int request_timeout)
+    : request_timeout_(request_timeout)
 {
     qt_connect(complete_client_decode_data, std::bind(&task_dispatcher::deal_complete_client_decode_data, 
                                                       this, std::placeholders::_1));
@@ -14,9 +15,8 @@ task_dispatcher::~task_dispatcher()
     stop();
 }
 
-void task_dispatcher::run(time_t request_timeout)
+void task_dispatcher::run()
 {
-    request_timeout_ = request_timeout;
     threadpool_.init_thread_size(1);
     timer_.bind([this]{ check_request_timeout(); });
     timer_.start(1);

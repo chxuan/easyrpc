@@ -3,9 +3,10 @@
 #include "easyrpc/codec/codec.h"
 #include "task_dispatcher.h"
 
-rpc_client::rpc_client()
+rpc_client::rpc_client(const std::string& address, int request_timeout)
+    : tcp_client(address)
 {
-    dispatcher_ = std::make_shared<task_dispatcher>();
+    dispatcher_ = std::make_shared<task_dispatcher>(request_timeout);
 }
 
 rpc_client::~rpc_client()
@@ -17,7 +18,7 @@ bool rpc_client::run()
 {
     if (tcp_client::run())
     {
-        dispatcher_->run(request_timeout_);
+        dispatcher_->run();
         return true;
     }
 

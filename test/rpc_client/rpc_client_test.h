@@ -15,7 +15,8 @@ class rpc_client;
 class rpc_client_test
 {
 public:
-    rpc_client_test();
+    ~rpc_client_test();
+    
     void run();
     void stop();
 
