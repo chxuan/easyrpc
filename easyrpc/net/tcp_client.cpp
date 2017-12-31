@@ -3,13 +3,13 @@
 #include "io_service_pool.h"
 #include "easyrpc/utility/utiltiy.h"
 #include "easyrpc/utility/logger.h"
-#include "easyrpc/codec/client_codec.h"
+#include "easyrpc/codec/codec.h"
 
 tcp_client::tcp_client(const std::string& address)
     : address_(address),
     pool_(std::make_shared<io_service_pool>(1))
 {
-    codec_ = std::make_shared<client_codec>();
+
 }
 
 tcp_client::~tcp_client()

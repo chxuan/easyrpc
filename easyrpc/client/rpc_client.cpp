@@ -1,12 +1,13 @@
 #include "rpc_client.h"
 #include "easyrpc/utility/logger.h"
-#include "easyrpc/codec/codec.h"
+#include "easyrpc/codec/client_codec.h"
 #include "task_dispatcher.h"
 
 rpc_client::rpc_client(const std::string& address, int request_timeout)
     : tcp_client(address)
 {
     dispatcher_ = std::make_shared<task_dispatcher>(request_timeout);
+    codec_ = std::make_shared<client_codec>(std::bind(&task_dispatcher::dispatch, dispatcher_, std::placeholders::_1));
 }
 
 rpc_client::~rpc_client()

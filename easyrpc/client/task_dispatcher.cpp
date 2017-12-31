@@ -1,13 +1,11 @@
 #include "task_dispatcher.h"
 #include "result.h"
 #include "easyrpc/utility/logger.h"
-#include "easyrpc/net/sig.h"
 
 task_dispatcher::task_dispatcher(int request_timeout)
     : request_timeout_(request_timeout)
 {
-    qt_connect(complete_client_decode_data, std::bind(&task_dispatcher::deal_complete_client_decode_data, 
-                                                      this, std::placeholders::_1));
+
 }
 
 task_dispatcher::~task_dispatcher()
@@ -46,7 +44,7 @@ void task_dispatcher::clear()
     tasks_.clear();
 }
 
-void task_dispatcher::deal_complete_client_decode_data(const std::shared_ptr<result>& ret)
+void task_dispatcher::dispatch(const std::shared_ptr<result>& ret)
 {
     threadpool_.add_task(std::bind(&task_dispatcher::dispatch_thread, this, ret));
 }

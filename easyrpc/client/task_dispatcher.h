@@ -11,7 +11,6 @@
 #include "task.h"
 #include "easyrpc/utility/atimer.h"
 #include "easyrpc/utility/thread_pool.h"
-#include "easyrpc/utility/qt_connect.h"
 
 class task_dispatcher
 {
@@ -24,9 +23,7 @@ public:
     void bind(const sub_handler& handler);
     void stop();
     void clear();
-
-private slots:
-    void deal_complete_client_decode_data(const std::shared_ptr<result>& ret);
+    void dispatch(const std::shared_ptr<result>& ret);
 
 private:
     void dispatch_thread(const std::shared_ptr<result>& ret);
