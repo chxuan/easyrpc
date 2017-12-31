@@ -15,6 +15,7 @@
 #include "easyrpc/utility/qt_connect.h"
 
 class io_service_pool;
+class tcp_session;
 class tcp_session_cache;
 
 class tcp_server
@@ -28,13 +29,12 @@ public:
     virtual bool run();
     virtual void stop();
 
-private slots:
-    void deal_session_status_changed(bool established, const std::string& session_id);
-
 private:
     bool start_listen();
     bool listen(const std::string& ip, unsigned short port);
     void accept();
+    void deal_session_closed(const std::string& session_id);
+    void deal_session_established(const std::shared_ptr<tcp_session>& session);
 
 private:
     std::string host_;

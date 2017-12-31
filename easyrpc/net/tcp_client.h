@@ -25,13 +25,13 @@ public:
     virtual void stop();
     void async_write(const std::shared_ptr<std::string>& network_data);
 
-private slots:
-    void deal_session_status_changed(bool established, const std::string& session_id);
 
 private:
     bool parse_connect_address();
     bool connect(boost::asio::ip::tcp::socket& socket);
     void reconnect();
+    void deal_session_established();
+    void deal_session_closed(const std::string& session_id);
 
 protected:
     std::shared_ptr<codec> codec_;

@@ -1,5 +1,4 @@
 #include "tcp_server.h"
-#include "sig.h"
 #include "tcp_session.h"
 #include "io_service_pool.h"
 #include "tcp_session_cache.h"
@@ -12,8 +11,7 @@ tcp_server::tcp_server(const std::string& host, int ios_threads)
     pool_(std::make_shared<io_service_pool>(ios_threads)), 
     acceptor_(pool_->get_io_service())
 {
-    qt_connect(session_status_changed, std::bind(&tcp_server::deal_session_status_changed, 
-                                                 this, std::placeholders::_1, std::placeholders::_2));
+
 }
 
 tcp_server::~tcp_server()
@@ -33,8 +31,7 @@ void tcp_server::publish(const std::string& session_id, const std::shared_ptr<go
         auto session = session_cache_->get_session(session_id);
         if (session)
         {
-            auto network_data = session->get_codec()->encode(-1, message);
-            session->async_write(network_data);
+            session->async_write(session->get_codec()->encode(-1, message));
         }
     }
 }
@@ -52,19 +49,6 @@ void tcp_server::stop()
     if (session_cache_)
     {
         session_cache_->clear();
-    }
-}
-
-void tcp_server::deal_session_status_changed(bool established, const std::string& session_id)
-{
-    if (!established)
-    {
-        session_cache_->remove_session(session_id);
-    }
-
-    if (session_status_callback_)
-    {
-        session_status_callback_(established, session_id);
     }
 }
 
@@ -111,13 +95,34 @@ bool tcp_server::listen(const std::string& ip, unsigned short port)
 void tcp_server::accept()
 {
     std::shared_ptr<codec> codec = std::make_shared<server_codec>();
-    auto session = std::make_shared<tcp_session>(codec, pool_->get_io_service());
+    auto session = std::make_shared<tcp_session>(codec, pool_->get_io_service(), 
+                                                 std::bind(&tcp_server::deal_session_closed, this, std::placeholders::_1));
     acceptor_.async_accept(session->get_socket(), [this, session](boost::system::error_code ec)
     {
         if (!ec)
         {
             session->run();
+            deal_session_established(session);
         }
         accept();
     });
 }
+
+void tcp_server::deal_session_established(const std::shared_ptr<tcp_session>& session)
+{
+    session_cache_->add_session(session->get_session_id(), session);
+    if (session_status_callback_)
+    {
+        session_status_callback_(true, session->get_session_id());
+    }
+}
+
+void tcp_server::deal_session_closed(const std::string& session_id)
+{
+    session_cache_->remove_session(session_id);
+    if (session_status_callback_)
+    {
+        session_status_callback_(false, session_id);
+    }
+}
+

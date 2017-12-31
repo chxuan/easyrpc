@@ -15,7 +15,8 @@ class codec;
 class tcp_session : public std::enable_shared_from_this<tcp_session>
 {
 public:
-    tcp_session(const std::shared_ptr<codec>& dec, boost::asio::io_service& ios);
+    tcp_session(const std::shared_ptr<codec>& dec, boost::asio::io_service& ios, 
+                const std::function<void(const std::string&)>& closed_callback);
     ~tcp_session();
 
     void run();
@@ -31,12 +32,13 @@ private:
     void async_read();
     void set_no_delay();
     void resize_buffer(int size);
-    void handle_session_closed();
+    void deal_session_closed();
 
 private:
     std::shared_ptr<codec> codec_;
     boost::asio::io_service& ios_;
     boost::asio::ip::tcp::socket socket_;
+    std::function<void(const std::string&)> closed_callback_;
     threadsafe_list<std::shared_ptr<std::string>> send_queue_;
     std::vector<char> buffer_;
     std::atomic<bool> established_{ false };

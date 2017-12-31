@@ -1,5 +1,4 @@
 #include "tcp_client.h"
-#include "sig.h"
 #include "tcp_session.h"
 #include "io_service_pool.h"
 #include "easyrpc/utility/utiltiy.h"
@@ -11,8 +10,6 @@ tcp_client::tcp_client(const std::string& address)
     pool_(std::make_shared<io_service_pool>(1))
 {
     codec_ = std::make_shared<client_codec>();
-    qt_connect(session_status_changed, std::bind(&tcp_client::deal_session_status_changed, 
-                                                 this, std::placeholders::_1, std::placeholders::_2));
 }
 
 tcp_client::~tcp_client()
@@ -34,10 +31,12 @@ bool tcp_client::run()
         return false;
     }
 
-    session_ = std::make_shared<tcp_session>(codec_, pool_->get_io_service());
+    session_ = std::make_shared<tcp_session>(codec_, pool_->get_io_service(), 
+                                             std::bind(&tcp_client::deal_session_closed, this, std::placeholders::_1));
     if (connect(session_->get_socket()))
     {
         session_->run();
+        deal_session_established();
         return true;
     }
 
@@ -96,6 +95,7 @@ void tcp_client::reconnect()
         {
             codec_->reset();
             session_->run();
+            deal_session_established();
         }
         else if (ec != boost::asio::error::already_connected)
         {
@@ -104,15 +104,20 @@ void tcp_client::reconnect()
     });
 }
 
-void tcp_client::deal_session_status_changed(bool established, const std::string& session_id)
+void tcp_client::deal_session_established()
 {
     if (session_status_callback_)
     {
-        session_status_callback_(established, session_id);
+        session_status_callback_(true, session_->get_session_id());
+    }
+}
+
+void tcp_client::deal_session_closed(const std::string& session_id)
+{
+    if (session_status_callback_)
+    {
+        session_status_callback_(false, session_id);
     }
 
-    if (!established)
-    {
-        reconnect();
-    }
+    reconnect();
 }
