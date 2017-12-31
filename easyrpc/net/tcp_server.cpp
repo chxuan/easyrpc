@@ -1,6 +1,6 @@
 #include "tcp_server.h"
 #include "sig.h"
-#include "address_listen_manager.h"
+#include "address_listener.h"
 #include "tcp_session.h"
 #include "tcp_session_manager.h"
 #include "easyrpc/utility/singletion.h"
@@ -8,7 +8,6 @@
 
 tcp_server::tcp_server()
 {
-    listen_manager_ = std::make_shared<address_listen_manager>();
     qt_connect(session_status_changed, std::bind(&tcp_server::deal_session_status_changed, 
                                                  this, std::placeholders::_1, std::placeholders::_2));
 }
@@ -18,21 +17,15 @@ tcp_server::~tcp_server()
     stop();
 }
 
-tcp_server& tcp_server::listen(const std::string& address)
+tcp_server& tcp_server::listen(const std::string& host)
 {
-    listen_manager_->init_network_address(address);
-    return *this;
-}
-
-tcp_server& tcp_server::listen(const std::vector<std::string>& addresses)
-{
-    listen_manager_->init_network_address(addresses);
+    host_ = host;
     return *this;
 }
 
 tcp_server& tcp_server::ios_threads(int num)
 {
-    listen_manager_->init_ios_threads(num);
+    ios_threads_ = num;
     return *this;
 }
 
@@ -62,12 +55,16 @@ void tcp_server::publish(const std::string& session_id, const std::shared_ptr<go
 
 bool tcp_server::run()
 {
-    return listen_manager_->start_listen();
+    listener_ = std::make_shared<address_listener>(host_, ios_threads_);
+    return listener_->start_listen();
 }
 
 void tcp_server::stop()
 {
-    listen_manager_->stop_listen();
+    if (listener_)
+    {
+        listener_->stop_listen();
+    }
     singletion<tcp_session_manager>::get_instance().clear();
 }
 

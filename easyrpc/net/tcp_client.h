@@ -11,8 +11,8 @@
 #include "easyrpc/utility/qt_connect.h"
 
 class codec;
-class io_service_pool;
 class tcp_session;
+class io_service_pool;
 
 class tcp_client
 {
@@ -33,8 +33,7 @@ private slots:
     void deal_session_status_changed(bool established, const std::string& session_id);
 
 private:
-    void create_io_service_pool();
-    bool parse_network_address();
+    bool parse_connect_address();
     bool connect(boost::asio::ip::tcp::socket& socket);
     void reconnect();
 
@@ -43,7 +42,7 @@ protected:
     time_t request_timeout_ = 3;
 
 private:
-    std::string connect_address_;
+    std::string address_;
     time_t connect_timeout_ = 3;
     std::shared_ptr<io_service_pool> pool_;
     std::shared_ptr<tcp_session> session_;

@@ -1,12 +1,13 @@
 #include "tcp_client.h"
 #include "sig.h"
-#include "io_service_pool.h"
 #include "tcp_session.h"
+#include "io_service_pool.h"
 #include "easyrpc/utility/utiltiy.h"
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/codec/client_codec.h"
 
-tcp_client::tcp_client()
+tcp_client::tcp_client() 
+    : pool_(std::make_shared<io_service_pool>(1))
 {
     codec_ = std::make_shared<client_codec>();
     qt_connect(session_status_changed, std::bind(&tcp_client::deal_session_status_changed, 
@@ -20,7 +21,7 @@ tcp_client::~tcp_client()
 
 tcp_client& tcp_client::connect(const std::string& address)
 {
-    connect_address_ = address;
+    address_ = address;
     return *this;
 }
 
@@ -43,9 +44,9 @@ void tcp_client::set_session_status_callback(const std::function<void(bool, cons
 
 bool tcp_client::run()
 {
-    create_io_service_pool();
+    pool_->run();
 
-    if (!parse_network_address())
+    if (!parse_connect_address())
     {
         return false;
     }
@@ -71,18 +72,11 @@ void tcp_client::async_write(const std::shared_ptr<std::string>& network_data)
     session_->async_write(network_data);
 }
 
-void tcp_client::create_io_service_pool()
-{
-    pool_ = std::make_shared<io_service_pool>();
-    pool_->init_pool_size(1);
-    pool_->run();
-}
-
-bool tcp_client::parse_network_address()
+bool tcp_client::parse_connect_address()
 {
     std::string ip;
     unsigned short port = 0;
-    if (utiltiy::get_ip_and_port(connect_address_, ip, port))
+    if (utiltiy::get_ip_and_port(address_, ip, port))
     {
         boost::asio::ip::tcp::resolver resolver(pool_->get_io_service());
         boost::asio::ip::tcp::resolver::query query(boost::asio::ip::tcp::v4(), ip, std::to_string(port));
@@ -90,7 +84,7 @@ bool tcp_client::parse_network_address()
         return true;
     }
 
-    log_warn << "Parse address failed, address: " << connect_address_;
+    log_warn << "Parse address failed, address: " << address_;
     return false;
 }
 

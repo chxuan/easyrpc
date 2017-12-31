@@ -1,11 +1,6 @@
 #include "io_service_pool.h"
 
-io_service_pool::~io_service_pool()
-{
-    stop();
-}
-
-void io_service_pool::init_pool_size(int size)
+io_service_pool::io_service_pool(int size)
 {
     for (int i = 0; i < size; ++i)
     {
@@ -14,6 +9,11 @@ void io_service_pool::init_pool_size(int size)
         ios_pool_.emplace_back(ios);
         work_pool_.emplace_back(work);
     }
+}
+
+io_service_pool::~io_service_pool()
+{
+    stop();
 }
 
 void io_service_pool::run()
