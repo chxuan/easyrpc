@@ -19,7 +19,7 @@ public:
     tcp_client(const std::string& address);
     virtual ~tcp_client();
 
-    void set_session_status_callback(const std::function<void(bool, const std::string&)>& func);
+    void set_connection_notify(const std::function<void(bool, const std::string&)>& func);
     virtual bool run();
     virtual void stop();
     void async_write(const std::shared_ptr<std::string>& network_data);
@@ -29,8 +29,8 @@ private:
     bool parse_connect_address();
     bool connect(boost::asio::ip::tcp::socket& socket);
     void reconnect();
-    void deal_session_established();
-    void deal_session_closed(const std::string& session_id);
+    void deal_connection_created();
+    void deal_connection_closed(const std::string& session_id);
 
 protected:
     std::shared_ptr<codec> codec_;
@@ -40,5 +40,5 @@ private:
     std::shared_ptr<io_service_pool> pool_;
     std::shared_ptr<tcp_session> session_;
     boost::asio::ip::tcp::resolver::iterator endpoint_iter_;
-    std::function<void(bool, const std::string&)> session_status_callback_;
+    std::function<void(bool, const std::string&)> notify_func_;
 };

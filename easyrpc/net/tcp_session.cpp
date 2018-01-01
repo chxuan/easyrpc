@@ -21,12 +21,12 @@ void tcp_session::run()
 {
     set_no_delay();
     async_read();
-    established_ = true;
+    active_ = true;
 }
 
 void tcp_session::close()
 {
-    established_ = false;
+    active_ = false;
     if (socket_.is_open())
     {
         boost::system::error_code ignore_ec;
@@ -120,9 +120,9 @@ void tcp_session::async_read()
             codec_->decode(buffer_, self);
             async_read();
         }
-        else if (established_ && ec != boost::asio::error::operation_aborted)
+        else if (active_ && ec != boost::asio::error::operation_aborted)
         {
-            deal_session_closed();
+            deal_connection_closed();
         }
     });
 }
@@ -139,7 +139,7 @@ void tcp_session::resize_buffer(int size)
     buffer_.resize(size);
 }
 
-void tcp_session::deal_session_closed()
+void tcp_session::deal_connection_closed()
 {
     close();
     closed_callback_(get_session_id());

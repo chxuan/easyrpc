@@ -8,9 +8,8 @@
 #pragma once
 
 #include <memory>
-#include <google/protobuf/message.h>
-
-class rpc_client;
+#include "../protoc/code/common.pb.h"
+#include "easyrpc/easyrpc.h"
 
 class rpc_client_test
 {
@@ -21,9 +20,10 @@ public:
     void stop();
 
 private:
-    void session_status_callback(bool established, const std::string& session_id);
+    void deal_connection_notify(bool created, const std::string& session_id);
     void received_sub_message(const std::shared_ptr<google::protobuf::Message>& message);
     void call();
+    std::shared_ptr<google::protobuf::Message> make_echo_message();
 
 private:
     std::shared_ptr<rpc_client> client_;

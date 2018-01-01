@@ -9,12 +9,8 @@
 
 #include <memory>
 #include <thread>
-#include <atomic>
 #include "../protoc/code/common.pb.h"
-
-class rpc_server;
-class request;
-class response;
+#include "easyrpc/easyrpc.h"
 
 class rpc_server_test
 {
@@ -26,7 +22,7 @@ public:
 
 private:
     void register_handler();
-    void session_status_callback(bool established, const std::string& session_id);
+    void deal_connection_notify(const connection_status& status);
     void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
     void publish_thread();
     std::shared_ptr<google::protobuf::Message> make_auto_weather();

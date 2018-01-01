@@ -19,9 +19,9 @@ tcp_server::~tcp_server()
     stop();
 }
 
-void tcp_server::set_session_status_callback(const std::function<void(bool, const std::string&)>& func)
+void tcp_server::set_connection_notify(const notify_handler& func)
 {
-    session_status_callback_ = func;
+    notify_func_ = func;
 }
 
 void tcp_server::send_message(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message)
@@ -98,33 +98,35 @@ void tcp_server::accept()
                                                                             this, std::placeholders::_1, 
                                                                             std::placeholders::_2));
     auto session = std::make_shared<tcp_session>(codec, pool_->get_io_service(), 
-                                                 std::bind(&tcp_server::deal_session_closed, this, std::placeholders::_1));
+                                                 std::bind(&tcp_server::deal_connection_closed, this, std::placeholders::_1));
     acceptor_.async_accept(session->get_socket(), [this, session](boost::system::error_code ec)
     {
         if (!ec)
         {
             session->run();
-            deal_session_established(session);
+            deal_connection_created(session);
         }
         accept();
     });
 }
 
-void tcp_server::deal_session_established(const std::shared_ptr<tcp_session>& session)
+void tcp_server::deal_connection_created(const std::shared_ptr<tcp_session>& session)
 {
     session_cache_->add_session(session->get_session_id(), session);
-    if (session_status_callback_)
+    ++connection_counts_;
+    if (notify_func_)
     {
-        session_status_callback_(true, session->get_session_id());
+        notify_func_(connection_status{ true, session->get_session_id(), connection_counts_ });
     }
 }
 
-void tcp_server::deal_session_closed(const std::string& session_id)
+void tcp_server::deal_connection_closed(const std::string& session_id)
 {
     session_cache_->remove_session(session_id);
-    if (session_status_callback_)
+    --connection_counts_;
+    if (notify_func_)
     {
-        session_status_callback_(false, session_id);
+        notify_func_(connection_status{ false, session_id, connection_counts_ });
     }
 }
 

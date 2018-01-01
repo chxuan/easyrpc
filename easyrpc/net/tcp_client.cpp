@@ -17,9 +17,9 @@ tcp_client::~tcp_client()
     stop();
 }
 
-void tcp_client::set_session_status_callback(const std::function<void(bool, const std::string&)>& func)
+void tcp_client::set_connection_notify(const std::function<void(bool, const std::string&)>& func)
 {
-    session_status_callback_ = func;
+    notify_func_ = func;
 }
 
 bool tcp_client::run()
@@ -32,11 +32,11 @@ bool tcp_client::run()
     }
 
     session_ = std::make_shared<tcp_session>(codec_, pool_->get_io_service(), 
-                                             std::bind(&tcp_client::deal_session_closed, this, std::placeholders::_1));
+                                             std::bind(&tcp_client::deal_connection_closed, this, std::placeholders::_1));
     if (connect(session_->get_socket()))
     {
         session_->run();
-        deal_session_established();
+        deal_connection_created();
         return true;
     }
 
@@ -95,7 +95,7 @@ void tcp_client::reconnect()
         {
             codec_->reset();
             session_->run();
-            deal_session_established();
+            deal_connection_created();
         }
         else if (ec != boost::asio::error::already_connected)
         {
@@ -104,19 +104,19 @@ void tcp_client::reconnect()
     });
 }
 
-void tcp_client::deal_session_established()
+void tcp_client::deal_connection_created()
 {
-    if (session_status_callback_)
+    if (notify_func_)
     {
-        session_status_callback_(true, session_->get_session_id());
+        notify_func_(true, session_->get_session_id());
     }
 }
 
-void tcp_client::deal_session_closed(const std::string& session_id)
+void tcp_client::deal_connection_closed(const std::string& session_id)
 {
-    if (session_status_callback_)
+    if (notify_func_)
     {
-        session_status_callback_(false, session_id);
+        notify_func_(false, session_id);
     }
 
     reconnect();

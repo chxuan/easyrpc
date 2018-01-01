@@ -1,5 +1,4 @@
 #include "rpc_server_test.h"
-#include "easyrpc/easyrpc.h"
 
 using namespace std::placeholders;
 
@@ -11,7 +10,7 @@ rpc_server_test::~rpc_server_test()
 void rpc_server_test::run()
 {
     server_ = std::make_shared<rpc_server>("0.0.0.0:8888", 4, 4);
-    server_->set_session_status_callback(std::bind(&rpc_server_test::session_status_callback, this, _1, _2));
+    server_->set_connection_notify(std::bind(&rpc_server_test::deal_connection_notify, this, _1));
     register_handler();
 
     bool ok = server_->run();
@@ -46,17 +45,19 @@ void rpc_server_test::register_handler()
     server_->bind(echo_message::descriptor()->full_name(), std::bind(&rpc_server_test::echo, this, _1, _2));
 }
 
-void rpc_server_test::session_status_callback(bool established, const std::string& session_id)
+void rpc_server_test::deal_connection_notify(const connection_status& status)
 {
-    if (established)
+    if (status.created)
     {
-        client_session_id_ = session_id;
-        log_info << "session established, session id: " << session_id;
+        client_session_id_ = status.session_id;
+        log_info << "Connection created: " << status.session_id;
     }
     else 
     {
-        log_warn << "session closed, session id: " << session_id;
+        log_warn << "Connection closed: " << status.session_id;
     }
+
+    log_info << "Connection counts: " << status.connection_counts;
 }
 
 void rpc_server_test::echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)

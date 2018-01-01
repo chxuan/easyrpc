@@ -32,7 +32,7 @@ private:
     void async_read();
     void set_no_delay();
     void resize_buffer(int size);
-    void deal_session_closed();
+    void deal_connection_closed();
 
 private:
     std::shared_ptr<codec> codec_;
@@ -41,6 +41,6 @@ private:
     std::function<void(const std::string&)> closed_callback_;
     threadsafe_list<std::shared_ptr<std::string>> send_queue_;
     std::vector<char> buffer_;
-    std::atomic<bool> established_{ false };
+    std::atomic<bool> active_{ false };
     std::string session_id_;
 };
