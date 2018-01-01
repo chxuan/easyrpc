@@ -10,6 +10,7 @@
 #include <memory>
 #include <thread>
 #include <atomic>
+#include "../protoc/code/common.pb.h"
 
 class rpc_server;
 class request;
@@ -28,6 +29,7 @@ private:
     void session_status_callback(bool established, const std::string& session_id);
     void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
     void publish_thread();
+    std::shared_ptr<google::protobuf::Message> make_auto_weather();
 
 private:
     std::shared_ptr<rpc_server> server_;

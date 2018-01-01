@@ -26,7 +26,7 @@ public:
     virtual ~tcp_server();
 
     void set_session_status_callback(const std::function<void(bool, const std::string&)>& func);
-    void publish(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message);
+    void send_message(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message);
     virtual bool run();
     virtual void stop();
 

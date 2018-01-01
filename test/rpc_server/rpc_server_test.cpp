@@ -1,5 +1,4 @@
 #include "rpc_server_test.h"
-#include "../protoc/code/common.pb.h"
 #include "easyrpc/easyrpc.h"
 
 using namespace std::placeholders;
@@ -73,12 +72,16 @@ void rpc_server_test::publish_thread()
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         if (!client_session_id_.empty())
         {
-            auto message = std::make_shared<auto_weather_message>();
-            message->set_city_name("ChengDu");
-            message->set_weather("Sunny");
-
-            server_->publish(client_session_id_, message);
+            server_->send_message(client_session_id_, make_auto_weather());
         }
     }
 }
 
+std::shared_ptr<google::protobuf::Message> rpc_server_test::make_auto_weather()
+{
+    auto message = std::make_shared<auto_weather_message>();
+    message->set_city_name("ChengDu");
+    message->set_weather("Sunny");
+
+    return message;
+}

@@ -8,7 +8,7 @@
 #pragma once
 
 #include <list>
-#include <mutex>
+#include "lock_shared.h"
 
 template<typename T>
 class threadsafe_list
@@ -16,41 +16,41 @@ class threadsafe_list
 public:
     void emplace_back(const T& t)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        lock_shared lock(mutex_);
         list_.emplace_back(t);
     }
 
     T front()
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        lock_shared lock(mutex_, true);
         return list_.front();
     }
 
     void pop_front()
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        lock_shared lock(mutex_);
         list_.pop_front();
     }
 
     void clear()
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        lock_shared lock(mutex_);
         list_.clear();
     }
 
     bool empty()
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        lock_shared lock(mutex_, true);
         return list_.empty();
     }
 
     std::size_t size()
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        lock_shared lock(mutex_, true);
         return list_.size();
     }
 
 private:
     std::list<T> list_;
-    std::mutex mutex_;
+    shared_mutex mutex_;
 };

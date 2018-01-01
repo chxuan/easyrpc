@@ -24,7 +24,7 @@ void tcp_server::set_session_status_callback(const std::function<void(bool, cons
     session_status_callback_ = func;
 }
 
-void tcp_server::publish(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message)
+void tcp_server::send_message(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message)
 {
     if (message)
     {

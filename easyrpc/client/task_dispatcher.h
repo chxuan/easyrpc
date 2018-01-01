@@ -11,6 +11,7 @@
 #include "task.h"
 #include "easyrpc/utility/atimer.h"
 #include "easyrpc/utility/thread_pool.h"
+#include "easyrpc/utility/lock_shared.h"
 
 class task_dispatcher
 {
@@ -36,7 +37,7 @@ private:
 private:
     time_t request_timeout_;
     std::unordered_map<int, task> tasks_;
-    std::mutex mutex_;
+    shared_mutex mutex_;
     atimer<boost::posix_time::seconds> timer_;
     thread_pool threadpool_;
     sub_handler sub_handler_;

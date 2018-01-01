@@ -9,7 +9,7 @@
 
 #include <unordered_map>
 #include <memory>
-#include <mutex>
+#include "easyrpc/utility/lock_shared.h"
 
 class tcp_session;
 
@@ -17,12 +17,11 @@ class tcp_session_cache
 {
 public:
     std::shared_ptr<tcp_session> get_session(const std::string& session_id);
-    void add_session(const std::string& session_id, 
-                     const std::shared_ptr<tcp_session>& session);
+    void add_session(const std::string& session_id, const std::shared_ptr<tcp_session>& session);
     void remove_session(const std::string& session_id);
     void clear();
 
 private:
     std::unordered_map<std::string, std::shared_ptr<tcp_session>> sessions_;
-    std::mutex mutex_;
+    shared_mutex mutex_;
 };

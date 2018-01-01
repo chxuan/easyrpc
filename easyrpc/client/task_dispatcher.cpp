@@ -22,7 +22,7 @@ void task_dispatcher::run()
 
 void task_dispatcher::add_result_handler(int serial_num, const result_handler& handler)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    lock_shared lock(mutex_);
     tasks_.emplace(serial_num, task{ handler, time(nullptr) });
 }
 
@@ -40,7 +40,7 @@ void task_dispatcher::stop()
 
 void task_dispatcher::clear()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    lock_shared lock(mutex_);
     tasks_.clear();
 }
 
@@ -86,7 +86,7 @@ void task_dispatcher::deal_sub_result(const std::shared_ptr<result>& ret)
 
 void task_dispatcher::check_request_timeout()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    lock_shared lock(mutex_);
     time_t current_time = time(nullptr);
     auto begin = tasks_.begin();
     auto end = tasks_.end();
@@ -107,7 +107,7 @@ void task_dispatcher::check_request_timeout()
 
 bool task_dispatcher::get_task(int serial_num, task& t)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    lock_shared lock(mutex_, true);
     auto iter = tasks_.find(serial_num);
     if (iter != tasks_.end())
     {
@@ -120,6 +120,6 @@ bool task_dispatcher::get_task(int serial_num, task& t)
 
 void task_dispatcher::remove_task(int serial_num)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    lock_shared lock(mutex_);
     tasks_.erase(serial_num);
 }
