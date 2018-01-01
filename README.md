@@ -23,13 +23,14 @@ A modern RPC framework based on protobuf
     int main()
     {
         // 1.创建rpc服务器对象
-        auto server = std::make_shared<rpc_server>();
+        // 服务端将采用1个io线程和2个work线程服务
+        auto server = std::make_shared<rpc_server>("0.0.0.0:8888", 1, 2);
+
         // 2.绑定echo函数
         server->bind(echo_message::descriptor()->full_name(), std::bind(echo, _1, _2));
     
-        // 3.配置监听参数并启动事件循环（非阻塞）
-        // 服务端将采用4个io线程和4个work线程服务
-        server->listen("0.0.0.0:8888").ios_threads(4).work_threads(4).run();
+        // 3.启动事件循环（非阻塞）
+        server->run();
 
         std::cin.get();
         return 0;
@@ -44,9 +45,11 @@ A modern RPC framework based on protobuf
     int main()
     {   
         // 1.创建rpc客户端对象
-        auto client = std::make_shared<rpc_client>();
-        // 2.配置连接参数并启动事件循环（非阻塞）
-        client->connect("127.0.0.1:8888").request_timeout(3).run();
+        // 配置连接地址并设置请求超时为3秒
+        auto client = std::make_shared<rpc_client>("127.0.0.1:8888", 3);
+
+        // 2.启动事件循环（非阻塞）
+        client->run();
     
         auto req = std::make_shared<echo_message>();
         req->set_str("Hello world");
