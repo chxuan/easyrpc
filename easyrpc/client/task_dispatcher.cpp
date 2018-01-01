@@ -95,7 +95,7 @@ void task_dispatcher::check_request_timeout()
     {
         if (current_time - begin->second.begin_time >= request_timeout_)
         {
-            log_warn << "request timeout, serial_num: " << begin->first;
+            log_warn << "Request timeout, serial_num: " << begin->first;
             begin = tasks_.erase(begin);
         }
         else

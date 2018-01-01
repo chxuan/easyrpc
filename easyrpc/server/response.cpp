@@ -13,6 +13,10 @@ void response::set_response(const std::shared_ptr<google::protobuf::Message>& me
 {
     if (message)
     {
-        session_->async_write(session_->get_codec()->encode(serial_num_, message));
+        auto network_data = session_->get_codec()->encode(serial_num_, message);
+        if (network_data)
+        {
+            session_->async_write(network_data);
+        }
     }
 }

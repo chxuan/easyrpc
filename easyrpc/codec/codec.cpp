@@ -10,8 +10,13 @@ codec::codec()
 std::shared_ptr<std::string> codec::encode(int serial_num, const std::shared_ptr<google::protobuf::Message>& message) 
 {
     auto body = encode_body(serial_num, message);
-    auto header = encode_header(body);
-    return make_network_data(header, body);
+    if (!body.message_data.empty())
+    {
+        auto header = encode_header(body);
+        return make_network_data(header, body);
+    }
+
+    return nullptr;
 }
 
 void codec::decode(const std::vector<char>& buffer, const std::shared_ptr<tcp_session>& session)
@@ -91,7 +96,7 @@ void codec::decode_body(const std::vector<char>& buffer, const std::shared_ptr<t
     copy_from_buffer(body_.message_data, pos, header_.message_data_len, buffer);
 
     prepare_decode_header();
-    handle_decode_data(body_, session);
+    deal_decode_data(body_, session);
 }
 
 void codec::prepare_decode_header()

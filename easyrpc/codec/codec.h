@@ -39,7 +39,7 @@ public:
     int get_next_recv_bytes();
 
 protected:
-    virtual void handle_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session) = 0;
+    virtual void deal_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session) = 0;
 
 private:
     packet_header encode_header(const packet_body& body);

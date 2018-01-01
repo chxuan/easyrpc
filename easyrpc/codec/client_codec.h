@@ -19,7 +19,7 @@ public:
     client_codec(const result_handler& func);
 
 protected:
-    virtual void handle_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session);
+    virtual void deal_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session);
 
 private:
     result_handler func_;

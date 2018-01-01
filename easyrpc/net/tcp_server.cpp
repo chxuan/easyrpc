@@ -31,7 +31,11 @@ void tcp_server::send_message(const std::string& session_id, const std::shared_p
         auto session = session_cache_->get_session(session_id);
         if (session)
         {
-            session->async_write(session->get_codec()->encode(-1, message));
+            auto network_data = session->get_codec()->encode(-1, message);
+            if (network_data)
+            {
+                session->async_write(network_data);
+            }
         }
     }
 }

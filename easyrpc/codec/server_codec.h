@@ -20,7 +20,7 @@ public:
     server_codec(const request_handler& func);
 
 protected:
-    virtual void handle_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session);
+    virtual void deal_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session);
 
 private:
     request_handler func_;

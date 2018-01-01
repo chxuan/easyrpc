@@ -8,11 +8,14 @@ client_codec::client_codec(const result_handler& func)
 
 }
 
-void client_codec::handle_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session)
+void client_codec::deal_decode_data(const packet_body& body, const std::shared_ptr<tcp_session>& session)
 {
 
     (void)session;
-    auto ret = std::make_shared<result>(body.serial_num, 
-                                        protobuf_serialize::unserialize(body.message_name, body.message_data));
-    func_(ret);
+    auto message = protobuf_serialize::unserialize(body.message_name, body.message_data);
+    if (message)
+    {
+        auto ret = std::make_shared<result>(body.serial_num, message);
+        func_(ret);
+    }
 }
