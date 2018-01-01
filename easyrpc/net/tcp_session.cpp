@@ -74,6 +74,11 @@ std::string tcp_session::get_session_id()
 
 void tcp_session::async_write(const std::shared_ptr<std::string>& network_data)
 {
+    if (!active_)
+    {
+        return;
+    }
+
     auto self(shared_from_this());
     ios_.post([this, self, network_data]
     {
