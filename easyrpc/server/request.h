@@ -9,15 +9,11 @@
 
 #include <google/protobuf/message.h>
 
-class request
+struct request
 {
-public:
-    request(const std::shared_ptr<google::protobuf::Message>& message, const std::string& session_id);
+    request(const std::shared_ptr<google::protobuf::Message>& msg, const std::string& id)
+        : message(msg), session_id(id) {}
 
-    std::shared_ptr<google::protobuf::Message> message() const;
-    std::string session_id() const;
-
-private:
-    std::shared_ptr<google::protobuf::Message> message_;
-    std::string session_id_;
+    std::shared_ptr<google::protobuf::Message> message;
+    std::string session_id;
 };

@@ -7,18 +7,14 @@
  */
 #pragma once
 
-#include <google/protobuf/message.h>
+#include "easyrpc/codec/codec.h"
 
-class result
+struct result
 {
-public:
-    result(int serial_num, const std::shared_ptr<google::protobuf::Message>& message);
-
-    std::shared_ptr<google::protobuf::Message> message() const;
-    int serial_num() const;
-
-private:
-    int serial_num_;
-    std::shared_ptr<google::protobuf::Message> message_;
+    result(int serial, message_model mod, const std::shared_ptr<google::protobuf::Message>& msg)
+        : serial_num(serial), model(mod), message(msg) {}
+    int serial_num;
+    message_model model;
+    std::shared_ptr<google::protobuf::Message> message;
 };
 

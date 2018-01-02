@@ -7,7 +7,6 @@
  */
 #pragma once
 
-#include <memory>
 #include <thread>
 #include "../protoc/code/common.pb.h"
 #include "easyrpc/easyrpc.h"
@@ -15,6 +14,7 @@
 class rpc_server_test
 {
 public:
+    rpc_server_test();
     ~rpc_server_test();
 
     void run();

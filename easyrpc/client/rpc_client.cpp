@@ -39,7 +39,7 @@ int rpc_client::call(const std::shared_ptr<google::protobuf::Message>& message, 
         int serial_num = make_serial_num();
         dispatcher_->add_result_handler(serial_num, handler);
 
-        auto network_data = codec_->encode(serial_num, message);
+        auto network_data = codec_->encode(serial_num, message_model::rpc, message);
         if (network_data)
         {
             async_write(network_data);

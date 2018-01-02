@@ -15,7 +15,7 @@ void client_codec::deal_decode_data(const packet_body& body, const std::shared_p
     auto message = protobuf_serialize::unserialize(body.message_name, body.message_data);
     if (message)
     {
-        auto ret = std::make_shared<result>(body.serial_num, message);
+        auto ret = std::make_shared<result>(body.serial_num, body.model, message);
         func_(ret);
     }
 }

@@ -51,7 +51,7 @@ void task_dispatcher::dispatch(const std::shared_ptr<result>& ret)
 
 void task_dispatcher::dispatch_thread(const std::shared_ptr<result>& ret)
 {
-    if (ret->serial_num() >= 0)
+    if (ret->model == message_model::rpc)
     {
         deal_rpc_result(ret);
     }
@@ -64,15 +64,15 @@ void task_dispatcher::dispatch_thread(const std::shared_ptr<result>& ret)
 void task_dispatcher::deal_rpc_result(const std::shared_ptr<result>& ret)
 {
     task t;
-    if (get_task(ret->serial_num(), t))
+    if (get_task(ret->serial_num, t))
     {
-        remove_task(ret->serial_num());
+        remove_task(ret->serial_num);
         t.handler(ret);
     }
     else
     {
-        log_warn << "Dispatch failed, serial num: " << ret->serial_num() 
-            << ", message name: " << ret->message()->GetDescriptor()->full_name();
+        log_warn << "Dispatch failed, serial num: " << ret->serial_num 
+            << ", message name: " << ret->message->GetDescriptor()->full_name();
     }
 }
 
@@ -80,7 +80,7 @@ void task_dispatcher::deal_sub_result(const std::shared_ptr<result>& ret)
 {
     if (sub_handler_)
     {
-        sub_handler_(ret->message());
+        sub_handler_(ret);
     }
 }
 

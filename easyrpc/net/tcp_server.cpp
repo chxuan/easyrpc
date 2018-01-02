@@ -24,14 +24,14 @@ void tcp_server::set_connection_notify(const notify_handler& func)
     notify_func_ = func;
 }
 
-void tcp_server::send_message(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message)
+void tcp_server::publish(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message)
 {
     if (message)
     {
         auto session = session_cache_->get_session(session_id);
         if (session)
         {
-            auto network_data = session->get_codec()->encode(-1, message);
+            auto network_data = session->get_codec()->encode(make_serial_num(), message_model::pub_sub, message);
             if (network_data)
             {
                 session->async_write(network_data);
@@ -134,3 +134,13 @@ void tcp_server::deal_connection_closed(const std::string& session_id)
     }
 }
 
+int tcp_server::make_serial_num()
+{
+    static std::atomic<int> serial_num{ -1 };
+    if (++serial_num < 0)
+    {
+        serial_num = 0; 
+    }
+
+    return serial_num;
+}

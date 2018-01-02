@@ -7,13 +7,13 @@
  */
 #pragma once
 
-#include <memory>
 #include "../protoc/code/common.pb.h"
 #include "easyrpc/easyrpc.h"
 
 class rpc_client_test
 {
 public:
+    rpc_client_test();
     ~rpc_client_test();
     
     void run();
@@ -21,7 +21,7 @@ public:
 
 private:
     void deal_connection_notify(bool created, const std::string& session_id);
-    void received_sub_message(const std::shared_ptr<google::protobuf::Message>& message);
+    void deal_sub_message(const std::shared_ptr<result>& ret);
     void call();
     std::shared_ptr<google::protobuf::Message> make_echo_message();
 

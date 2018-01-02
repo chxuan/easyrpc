@@ -17,7 +17,7 @@ A modern RPC framework based on protobuf
 
     void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
     {
-        rsp->set_response(req->message());
+        rsp->set_response(req->message);
     }
     
     int main()
@@ -58,7 +58,7 @@ A modern RPC framework based on protobuf
         // 3.异步调用echo函数
         client->call(message, [](const std::shared_ptr<result>& ret)
         {
-            log_info() << ret->message()->DebugString();
+            log_info() << ret->message->DebugString();
         });
     
         std::cin.get();

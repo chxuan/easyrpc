@@ -36,7 +36,7 @@ public:
     virtual ~tcp_server();
 
     void set_connection_notify(const notify_handler& func);
-    void send_message(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message);
+    void publish(const std::string& session_id, const std::shared_ptr<google::protobuf::Message>& message);
     virtual bool run();
     virtual void stop();
 
@@ -49,6 +49,7 @@ private:
     void accept();
     void deal_connection_created(const std::shared_ptr<tcp_session>& session);
     void deal_connection_closed(const std::string& session_id);
+    int make_serial_num();
 
 private:
     std::string host_;

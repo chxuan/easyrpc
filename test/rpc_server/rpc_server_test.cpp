@@ -2,6 +2,13 @@
 
 using namespace std::placeholders;
 
+rpc_server_test::rpc_server_test()
+{
+    server_ = std::make_shared<rpc_server>("0.0.0.0:8888", 4, 4);
+    server_->set_connection_notify(std::bind(&rpc_server_test::deal_connection_notify, this, _1));
+    register_handler();
+}
+
 rpc_server_test::~rpc_server_test()
 {
     stop();
@@ -9,10 +16,6 @@ rpc_server_test::~rpc_server_test()
 
 void rpc_server_test::run()
 {
-    server_ = std::make_shared<rpc_server>("0.0.0.0:8888", 4, 4);
-    server_->set_connection_notify(std::bind(&rpc_server_test::deal_connection_notify, this, _1));
-    register_handler();
-
     bool ok = server_->run();
     if (!ok)
     {
@@ -34,10 +37,7 @@ void rpc_server_test::stop()
         pub_thread_->join();
     }
 
-    if (server_)
-    {
-        server_->stop();
-    }
+    server_->stop();
 }
 
 void rpc_server_test::register_handler()
@@ -62,8 +62,8 @@ void rpc_server_test::deal_connection_notify(const connection_status& status)
 
 void rpc_server_test::echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
 {
-    log_info << req->message()->DebugString();
-    rsp->set_response(req->message());
+    log_info << req->message->DebugString();
+    rsp->set_response(req->message);
 }
 
 void rpc_server_test::publish_thread()
@@ -73,7 +73,7 @@ void rpc_server_test::publish_thread()
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         if (!client_session_id_.empty())
         {
-            server_->send_message(client_session_id_, make_auto_weather());
+            server_->publish(client_session_id_, make_auto_weather());
         }
     }
 }

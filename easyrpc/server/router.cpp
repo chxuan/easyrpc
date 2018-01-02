@@ -36,7 +36,7 @@ void router::route(const std::shared_ptr<request>& req, const std::shared_ptr<re
 
 void router::route_thread(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
 {
-    auto iter = route_table_.find(req->message()->GetDescriptor()->full_name());
+    auto iter = route_table_.find(req->message->GetDescriptor()->full_name());
     if (iter != route_table_.end())
     {
         try
@@ -50,6 +50,6 @@ void router::route_thread(const std::shared_ptr<request>& req, const std::shared
     }
     else
     {
-        log_warn << "Route failed, message name: " << req->message()->GetDescriptor()->full_name();
+        log_warn << "Route failed, message name: " << req->message->GetDescriptor()->full_name();
     }
 }
