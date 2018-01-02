@@ -1,6 +1,6 @@
 /**
- * @file atimer.h
- * @brief 异步定时器
+ * @file task_timer.h
+ * @brief 任务定时器
  * @author chxuan, 787280310@qq.com
  * @version 1.0.0
  * @date 2017-11-05
@@ -16,11 +16,11 @@
 #include <boost/asio.hpp>
 
 template<typename Duration = boost::posix_time::milliseconds>
-class atimer
+class task_timer
 {
 public:
-    atimer() : work_(ios_), timer_(ios_), single_shot_(false) {}
-    ~atimer()
+    task_timer() : work_(ios_), timer_(ios_), single_shot_(false) {}
+    ~task_timer()
     {
         destroy();
     }
