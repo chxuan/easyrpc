@@ -28,10 +28,7 @@ void rpc_client_test::run()
 
 void rpc_client_test::stop()
 {
-    if (client_)
-    {
-        client_->stop();
-    }
+    client_->stop();
 }
 
 void rpc_client_test::deal_connection_notify(bool created, const std::string& session_id)
