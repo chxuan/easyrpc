@@ -9,7 +9,7 @@
 
 #include <unordered_map>
 #include <memory>
-#include "easyrpc/utility/lock_shared.h"
+#include "easyrpc/utility/shared_mutex.h"
 
 class tcp_session;
 
