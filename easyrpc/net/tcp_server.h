@@ -7,9 +7,6 @@
  */
 #pragma once
 
-#include <atomic>
-#include <memory>
-#include <functional>
 #include <boost/asio.hpp>
 #include <google/protobuf/message.h>
 
