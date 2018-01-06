@@ -58,7 +58,7 @@ A modern RPC framework based on protobuf
         // 3.异步调用echo函数
         client->call(message, [](const std::shared_ptr<result>& ret)
         {
-            log_info() << ret->message->DebugString();
+            log_info << ret->message->DebugString();
         });
     
         std::cin.get();
@@ -79,18 +79,11 @@ A modern RPC framework based on protobuf
 ## DONE
 
 * TCP长连接。
-* 异步调用。
+* rpc异步调用。
 * 日志记录。
 * worker线程池处理任务。
-* 客户端超时处理。
-* 支持发布/订阅模式。
-* 数据重发功能。
-
-## TODO
-
-* 服务注册、发现。
-* 支持HTTP/HTTPS协议。
-
+* 客户端请求超时处理。
+* 支持主动推送模式。
 
 ## License
 This software is licensed under the [MIT license][2]. © 2017 chxuan
