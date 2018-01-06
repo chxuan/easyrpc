@@ -12,7 +12,6 @@
 #include <functional>
 #include <boost/asio.hpp>
 #include <google/protobuf/message.h>
-#include "easyrpc/utility/utiltiy.h"
 
 class request;
 class response;
