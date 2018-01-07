@@ -41,7 +41,7 @@ void rpc_server::bind(const std::string& message_name, const request_handler& fu
     router_.bind(message_name, func);
 }
 
-void rpc_server::deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
+void rpc_server::deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res)
 {
-    router_.route(req, rsp);
+    router_.route(req, res);
 }

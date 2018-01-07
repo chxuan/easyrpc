@@ -21,7 +21,7 @@ public:
     void bind(const std::string& message_name, const request_handler& func);
 
 protected:
-    virtual void deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
+    virtual void deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res);
 
 private:
     int work_threads_;

@@ -60,10 +60,10 @@ void rpc_server_test::deal_connection_notify(const connection_status& status)
     log_info << "Connection counts: " << status.connection_counts;
 }
 
-void rpc_server_test::echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
+void rpc_server_test::echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res)
 {
     log_info << req->message->DebugString();
-    rsp->set_response(req->message);
+    res->set_response(req->message);
 }
 
 void rpc_server_test::publish_thread()

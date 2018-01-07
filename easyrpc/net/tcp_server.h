@@ -37,7 +37,7 @@ public:
     virtual void stop();
 
 protected:
-    virtual void deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp) = 0;
+    virtual void deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res) = 0;
 
 private:
     bool start_listen();

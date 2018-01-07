@@ -23,7 +23,7 @@ public:
 private:
     void register_handler();
     void deal_connection_notify(const connection_status& status);
-    void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp);
+    void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res);
     void publish_thread();
     std::shared_ptr<google::protobuf::Message> make_auto_weather();
 

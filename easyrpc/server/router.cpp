@@ -29,19 +29,19 @@ void router::stop()
     route_table_.clear();
 }
 
-void router::route(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
+void router::route(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res)
 {
-    threadpool_.add_task(std::bind(&router::route_thread, this, req, rsp));
+    threadpool_.add_task(std::bind(&router::route_thread, this, req, res));
 }
 
-void router::route_thread(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
+void router::route_thread(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res)
 {
     auto iter = route_table_.find(req->message->GetDescriptor()->full_name());
     if (iter != route_table_.end())
     {
         try
         {
-            iter->second(req, rsp);
+            iter->second(req, res);
         }
         catch (std::exception& e)
         {

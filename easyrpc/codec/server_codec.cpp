@@ -16,7 +16,7 @@ void server_codec::deal_decode_data(const packet_body& body, const std::shared_p
     if (message)
     {
         auto req = std::make_shared<request>(message, session->get_session_id());
-        auto rsp = std::make_shared<response>(session, body.serial_num);
-        func_(req, rsp);
+        auto res = std::make_shared<response>(session, body.serial_num);
+        func_(req, res);
     }
 }

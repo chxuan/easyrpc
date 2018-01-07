@@ -15,9 +15,9 @@ A modern RPC framework based on protobuf
     
     using namespace std::placeholders;
 
-    void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& rsp)
+    void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res)
     {
-        rsp->set_response(req->message);
+        res->set_response(req->message);
     }
     
     int main()
