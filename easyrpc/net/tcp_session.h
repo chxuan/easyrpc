@@ -21,7 +21,6 @@ public:
 
     void run();
     void close();
-    boost::asio::io_service& get_io_service();
     boost::asio::ip::tcp::socket& get_socket();
     std::shared_ptr<codec>& get_codec();
     std::string get_session_id();

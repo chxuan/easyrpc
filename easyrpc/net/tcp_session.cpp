@@ -35,11 +35,6 @@ void tcp_session::close()
     }
 }
 
-boost::asio::io_service& tcp_session::get_io_service()
-{
-    return ios_;
-}
-
 boost::asio::ip::tcp::socket& tcp_session::get_socket()
 {
     return socket_;
