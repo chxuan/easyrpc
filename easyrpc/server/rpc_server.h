@@ -18,7 +18,7 @@ public:
 
     virtual bool run();
     virtual void stop();
-    void bind(const std::string& message_name, const request_handler& func);
+    void route(const std::string& message_name, const request_handler& func);
 
 protected:
     virtual void deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res);

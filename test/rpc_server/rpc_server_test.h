@@ -21,7 +21,6 @@ public:
     void stop();
 
 private:
-    void register_handler();
     void deal_connection_notify(const connection_status& status);
     void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res);
     void publish_thread();

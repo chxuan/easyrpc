@@ -18,7 +18,7 @@ std::size_t router::route_table_size()
     return route_table_.size();
 }
 
-void router::bind(const std::string& message_name, const request_handler& func)
+void router::route(const std::string& message_name, const request_handler& func)
 {
     route_table_.emplace(message_name, func);
 }
@@ -29,7 +29,7 @@ void router::stop()
     route_table_.clear();
 }
 
-void router::route(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res)
+void router::do_route(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res)
 {
     threadpool_.add_task(std::bind(&router::route_thread, this, req, res));
 }

@@ -6,7 +6,7 @@ rpc_server_test::rpc_server_test()
 {
     server_ = std::make_shared<rpc_server>("0.0.0.0:8888", 4, 4);
     server_->set_connection_notify(std::bind(&rpc_server_test::deal_connection_notify, this, _1));
-    register_handler();
+    server_->route(echo_message::descriptor()->full_name(), std::bind(&rpc_server_test::echo, this, _1, _2));
 }
 
 rpc_server_test::~rpc_server_test()
@@ -38,11 +38,6 @@ void rpc_server_test::stop()
     }
 
     server_->stop();
-}
-
-void rpc_server_test::register_handler()
-{
-    server_->bind(echo_message::descriptor()->full_name(), std::bind(&rpc_server_test::echo, this, _1, _2));
 }
 
 void rpc_server_test::deal_connection_notify(const connection_status& status)

@@ -22,9 +22,9 @@ public:
 
     void run(int work_threads);
     std::size_t route_table_size();
-    void bind(const std::string& message_name, const request_handler& func);
+    void route(const std::string& message_name, const request_handler& func);
     void stop();
-    void route(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res);
+    void do_route(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res);
 
 private:
     void route_thread(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res);
