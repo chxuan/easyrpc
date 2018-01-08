@@ -26,8 +26,8 @@ A modern RPC framework based on protobuf
         // 服务端将采用1个io线程和2个work线程服务
         auto server = std::make_shared<rpc_server>("0.0.0.0:8888", 1, 2);
 
-        // 2.绑定echo函数
-        server->bind(echo_message::descriptor()->full_name(), std::bind(echo, _1, _2));
+        // 2.设置路由
+        server->route(echo_message::descriptor()->full_name(), std::bind(echo, _1, _2));
     
         // 3.启动事件循环（非阻塞）
         server->run();
