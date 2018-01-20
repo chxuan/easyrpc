@@ -9,6 +9,9 @@
 
 #include "codec.h"
 
+namespace easyrpc
+{
+
 class request;
 class response;
 
@@ -25,3 +28,5 @@ protected:
 private:
     request_handler func_;
 };
+
+}

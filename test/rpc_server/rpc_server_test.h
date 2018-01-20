@@ -11,6 +11,8 @@
 #include "../protoc/code/common.pb.h"
 #include "easyrpc/easyrpc.h"
 
+using namespace easyrpc;
+
 class rpc_server_test
 {
 public:

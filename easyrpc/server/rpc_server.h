@@ -10,6 +10,9 @@
 #include "easyrpc/net/tcp_server.h"
 #include "router.h"
 
+namespace easyrpc
+{
+
 class rpc_server : public tcp_server
 {
 public:
@@ -27,3 +30,5 @@ private:
     int work_threads_;
     router router_;
 };
+
+}

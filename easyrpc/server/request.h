@@ -9,6 +9,9 @@
 
 #include <google/protobuf/message.h>
 
+namespace easyrpc
+{
+
 struct request
 {
     request(const std::shared_ptr<google::protobuf::Message>& msg, const std::string& id)
@@ -17,3 +20,5 @@ struct request
     std::shared_ptr<google::protobuf::Message> message;
     std::string session_id;
 };
+
+}

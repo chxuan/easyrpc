@@ -13,6 +13,7 @@ A modern RPC framework based on protobuf
     #include "easyrpc/easyrpc.h"
     #include "common.pb.h"
     
+    using namespace easyrpc;
     using namespace std::placeholders;
 
     void echo(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res)
@@ -42,6 +43,8 @@ A modern RPC framework based on protobuf
     #include "easyrpc/easyrpc.h"
     #include "common.pb.h"
     
+    using namespace easyrpc;
+
     int main()
     {   
         // 1.创建rpc客户端对象

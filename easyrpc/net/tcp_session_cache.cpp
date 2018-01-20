@@ -1,5 +1,8 @@
 #include "tcp_session_cache.h"
 
+namespace easyrpc
+{
+
 std::shared_ptr<tcp_session> tcp_session_cache::get_session(const std::string& session_id)
 {
     lock_shared lock(mutex_, true);
@@ -28,4 +31,6 @@ void tcp_session_cache::clear()
 {
     lock_shared lock(mutex_);
     sessions_.clear();
+}
+
 }

@@ -2,6 +2,9 @@
 #include "easyrpc/utility/protobuf_serialize.h"
 #include "easyrpc/utility/logger.h"
 
+namespace easyrpc
+{
+
 codec::codec()
 {
     reset();
@@ -139,4 +142,6 @@ bool codec::is_vaild_header(int message_name_len, int message_data_len)
     }
 
     return false;
+}
+
 }

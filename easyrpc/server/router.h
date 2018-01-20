@@ -10,6 +10,9 @@
 #include <unordered_map>
 #include "easyrpc/utility/thread_pool.h"
 
+namespace easyrpc
+{
+
 class request;
 class response;
 
@@ -33,3 +36,5 @@ private:
     thread_pool threadpool_;
     std::unordered_map<std::string, request_handler> route_table_;
 };
+
+}

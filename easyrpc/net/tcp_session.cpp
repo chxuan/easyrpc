@@ -2,6 +2,9 @@
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/codec/codec.h"
 
+namespace easyrpc
+{
+
 tcp_session::tcp_session(const std::shared_ptr<codec>& dec, boost::asio::io_service& ios, 
                          const std::function<void(const std::string&)>& closed_callback)
     : codec_(dec), 
@@ -145,3 +148,4 @@ void tcp_session::deal_connection_closed()
     closed_callback_(get_session_id());
 }
 
+}

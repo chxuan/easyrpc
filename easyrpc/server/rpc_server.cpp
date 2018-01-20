@@ -1,6 +1,9 @@
 #include "rpc_server.h"
 #include "easyrpc/utility/logger.h"
 
+namespace easyrpc
+{
+
 rpc_server::rpc_server(const std::string& host, int ios_threads, int work_threads)
     : tcp_server(host, ios_threads), 
     work_threads_(work_threads)
@@ -44,4 +47,6 @@ void rpc_server::route(const std::string& message_name, const request_handler& f
 void rpc_server::deal_request(const std::shared_ptr<request>& req, const std::shared_ptr<response>& res)
 {
     router_.do_route(req, res);
+}
+
 }

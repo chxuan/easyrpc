@@ -11,6 +11,9 @@
 #include <memory>
 #include "easyrpc/utility/shared_mutex.h"
 
+namespace easyrpc
+{
+
 class tcp_session;
 
 class tcp_session_cache
@@ -25,3 +28,5 @@ private:
     std::unordered_map<std::string, std::shared_ptr<tcp_session>> sessions_;
     shared_mutex mutex_;
 };
+
+}

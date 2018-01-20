@@ -10,6 +10,9 @@
 #include <boost/asio.hpp>
 #include "easyrpc/utility/threadsafe_list.h"
 
+namespace easyrpc
+{
+
 class codec;
 
 class tcp_session : public std::enable_shared_from_this<tcp_session>
@@ -43,3 +46,5 @@ private:
     std::atomic<bool> active_{ false };
     std::string session_id_;
 };
+
+}

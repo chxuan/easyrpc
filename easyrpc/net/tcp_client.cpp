@@ -5,6 +5,9 @@
 #include "easyrpc/utility/logger.h"
 #include "easyrpc/codec/codec.h"
 
+namespace easyrpc
+{
+
 tcp_client::tcp_client(const std::string& address)
     : address_(address),
     pool_(std::make_shared<io_service_pool>(1))
@@ -120,4 +123,6 @@ void tcp_client::deal_connection_closed(const std::string& session_id)
     }
 
     reconnect();
+}
+
 }

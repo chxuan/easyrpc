@@ -10,6 +10,9 @@
 #include <functional>
 #include <memory>
 
+namespace easyrpc
+{
+
 class result;
 
 using result_handler = std::function<void(const std::shared_ptr<result>&)>; 
@@ -20,3 +23,5 @@ struct task
     result_handler handler;
     time_t begin_time;
 };
+
+}

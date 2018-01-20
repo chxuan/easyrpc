@@ -9,6 +9,9 @@
 
 #include "codec.h"
 
+namespace easyrpc
+{
+
 class result;
 
 using result_handler = std::function<void(const std::shared_ptr<result>&)>;
@@ -24,3 +27,5 @@ protected:
 private:
     result_handler func_;
 };
+
+}

@@ -9,6 +9,9 @@
 
 #include <boost/asio.hpp>
 
+namespace easyrpc
+{
+
 class codec;
 class tcp_session;
 class io_service_pool;
@@ -42,3 +45,5 @@ private:
     boost::asio::ip::tcp::resolver::iterator endpoint_iter_;
     std::function<void(bool, const std::string&)> notify_func_;
 };
+
+}

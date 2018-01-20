@@ -10,6 +10,9 @@
 #include "easyrpc/codec/codec.h"
 #include "easyrpc/net/tcp_session.h"
 
+namespace easyrpc
+{
+
 struct response
 {
     response(const std::shared_ptr<tcp_session>& sess, int serial)
@@ -30,3 +33,5 @@ struct response
     std::shared_ptr<tcp_session> session;
     int serial_num;
 };
+
+}

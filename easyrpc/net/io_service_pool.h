@@ -13,6 +13,9 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 
+namespace easyrpc
+{
+
 class io_service_pool
 {
 public:
@@ -33,3 +36,5 @@ private:
     std::vector<std::shared_ptr<std::thread>> threads_; 
     std::size_t next_io_service_ = 0;
 };
+
+}

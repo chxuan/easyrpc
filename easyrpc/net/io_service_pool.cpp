@@ -1,5 +1,8 @@
 #include "io_service_pool.h"
 
+namespace easyrpc
+{
+
 io_service_pool::io_service_pool(int size)
 {
     for (int i = 0; i < size; ++i)
@@ -63,4 +66,6 @@ void io_service_pool::stop_threads()
             t->join();
         }
     }       
+}
+
 }

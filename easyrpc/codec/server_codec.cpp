@@ -4,6 +4,9 @@
 #include "easyrpc/server/request.h"
 #include "easyrpc/server/response.h"
 
+namespace easyrpc
+{
+
 server_codec::server_codec(const request_handler& func)
     : func_(func)
 {
@@ -19,4 +22,6 @@ void server_codec::deal_decode_data(const packet_body& body, const std::shared_p
         auto res = std::make_shared<response>(session, body.serial_num);
         func_(req, res);
     }
+}
+
 }

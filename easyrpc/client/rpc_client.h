@@ -11,6 +11,9 @@
 #include "result.h"
 #include "task.h"
 
+namespace easyrpc
+{
+
 class task_dispatcher;
 
 class rpc_client : public tcp_client
@@ -30,3 +33,5 @@ private:
 private:
     std::shared_ptr<task_dispatcher> dispatcher_;
 };
+
+}

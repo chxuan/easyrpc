@@ -9,6 +9,9 @@
 
 #include "easyrpc/codec/codec.h"
 
+namespace easyrpc
+{
+
 struct result
 {
     result(int serial, message_model mod, const std::shared_ptr<google::protobuf::Message>& msg)
@@ -18,3 +21,4 @@ struct result
     std::shared_ptr<google::protobuf::Message> message;
 };
 
+}

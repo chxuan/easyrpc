@@ -3,6 +3,9 @@
 #include "easyrpc/codec/client_codec.h"
 #include "task_dispatcher.h"
 
+namespace easyrpc
+{
+
 rpc_client::rpc_client(const std::string& address, int request_timeout)
     : tcp_client(address)
 {
@@ -64,4 +67,6 @@ int rpc_client::make_serial_num()
     }
 
     return serial_num;
+}
+
 }

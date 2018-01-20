@@ -3,6 +3,9 @@
 #include "response.h"
 #include "easyrpc/utility/logger.h"
 
+namespace easyrpc
+{
+
 router::~router()
 {
     stop();
@@ -52,4 +55,6 @@ void router::route_thread(const std::shared_ptr<request>& req, const std::shared
     {
         log_warn << "Route failed, message name: " << req->message->GetDescriptor()->full_name();
     }
+}
+
 }

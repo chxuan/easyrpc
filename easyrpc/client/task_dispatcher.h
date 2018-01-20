@@ -13,6 +13,9 @@
 #include "easyrpc/utility/thread_pool.h"
 #include "easyrpc/utility/shared_mutex.h"
 
+namespace easyrpc
+{
+
 class task_dispatcher
 {
 public:
@@ -42,3 +45,5 @@ private:
     thread_pool threadpool_;
     sub_handler sub_handler_;
 };
+
+}

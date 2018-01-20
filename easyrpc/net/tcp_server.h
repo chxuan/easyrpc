@@ -10,6 +10,9 @@
 #include <boost/asio.hpp>
 #include <google/protobuf/message.h>
 
+namespace easyrpc
+{
+
 class request;
 class response;
 class io_service_pool;
@@ -55,3 +58,5 @@ private:
     notify_handler notify_func_;
     std::atomic<int> connection_counts_{ 0 };
 };
+
+}

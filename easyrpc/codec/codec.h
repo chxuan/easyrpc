@@ -12,6 +12,9 @@
 #include <vector>
 #include <google/protobuf/message.h>
 
+namespace easyrpc
+{
+
 class tcp_session;
 
 struct packet_header
@@ -99,3 +102,4 @@ void codec::copy_to_buffer(T& t, std::shared_ptr<std::string>& buffer)
     buffer->append(reinterpret_cast<const char*>(&t), sizeof(t));
 }
 
+}

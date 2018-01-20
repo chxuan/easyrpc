@@ -2,6 +2,9 @@
 #include "result.h"
 #include "easyrpc/utility/logger.h"
 
+namespace easyrpc
+{
+
 task_dispatcher::task_dispatcher(int request_timeout)
     : request_timeout_(request_timeout)
 {
@@ -122,4 +125,6 @@ void task_dispatcher::remove_task(int serial_num)
 {
     lock_shared lock(mutex_);
     tasks_.erase(serial_num);
+}
+
 }
